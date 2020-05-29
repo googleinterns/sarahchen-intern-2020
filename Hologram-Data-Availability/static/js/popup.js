@@ -30,7 +30,6 @@ window.onload = () => {
         if (xhr.readyState === 4) {
             let time = document.getElementById(time_id);
             time.innerHTML = xhr.responseText;
-            console.log(xhr.responseText);
         }
     }
     xhr.send();
@@ -44,7 +43,7 @@ function populate_info_buttons (item, index) {
     }
 }
 
-function populate_command(system) {
+function populate_command(system, remove) {
     let lst = []
     for (let i = 0; i < dates.length; ++i) {
         for (let j = 0; j < dataSources.length; ++j) {
@@ -52,9 +51,17 @@ function populate_command(system) {
         }
     }
     for (let i = 0; i < lst.length; ++i) {
-        document.getElementById(lst[i]).onclick = function(e) {
-            e.stopPropagation();
-            document.addEventListener("click", print_command(lst[i]));
+        if (remove) {
+            document.getElementById(lst[i]).onclick = function(e) {
+                e.stopPropagation();
+                document.removeEventListener("click", print_command(lst[i]));
+            }
+        }
+        else {
+            document.getElementById(lst[i]).onclick = function(e) {
+                e.stopPropagation();
+                document.addEventListener("click", print_command(lst[i]));
+            }
         }
     }
 }
@@ -79,7 +86,8 @@ function more_info(system) {
     let url = "http://localhost:8000/" + system;
     if (showing !== null) {
         // Hide text when user clicks the same system again
-        let text = document.getElementById(system);
+        populate_command(system, true);
+        let text = document.getElementById(showing);
         text.remove();
         if (showing === system) {
             showing = null;
@@ -90,7 +98,7 @@ function more_info(system) {
     xhr.onreadystatechange = () => {
         if (xhr.readyState === 4) {
             document.body.innerHTML += xhr.responseText;
-            populate_command(system);
+            populate_command(system, false);
         }
     }
     xhr.send();
