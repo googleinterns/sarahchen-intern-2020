@@ -1,2 +1,2 @@
-Hologram-Data-Availability/hda-web-server/bazel-*
-Hologram-Data-Availability/hda-web-server/.bazelrc
+hologram_dashboard/bazel-*
+hologram_dashboard/.vscode
