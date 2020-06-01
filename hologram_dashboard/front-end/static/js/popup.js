@@ -25,8 +25,10 @@ systemSources.forEach(populate_info_buttons);
 
 window.onload = () => {
     let xhr = new XMLHttpRequest();
+    //Once the window loads acquire refresh time
     xhr.open("GET", "http://localhost:8000/", true);
     xhr.onreadystatechange = () => {
+        // readyState of 4 is when the exchange is done
         if (xhr.readyState === 4) {
             let time = document.getElementById(time_id);
             time.innerHTML = xhr.responseText;
@@ -37,7 +39,7 @@ window.onload = () => {
 
 function populate_info_buttons (item, index) {
     document.getElementById(item).onclick = function(e) {
-        // prevent an item to have more than one event listener
+        // prevent an item to have more than one event listener and click itself
         e.stopPropagation();
         document.addEventListener("click", more_info(item));
     }
@@ -45,12 +47,15 @@ function populate_info_buttons (item, index) {
 
 function populate_command(system, remove) {
     let lst = []
+    //Acquire every single online/offline blocks
     for (let i = 0; i < dates.length; ++i) {
         for (let j = 0; j < dataSources.length; ++j) {
             lst.push(dataSources[j]+ "%" + dates[i] + "%" + system);
         }
     }
     for (let i = 0; i < lst.length; ++i) {
+        // manually remove the event listeners if the corresponding blocks are
+        // about to be removed
         if (remove) {
             document.getElementById(lst[i]).onclick = function(e) {
                 e.stopPropagation();
@@ -69,6 +74,7 @@ function populate_command(system, remove) {
 function print_command(clicked) {
     let xhr = new XMLHttpRequest();
     let info = clicked.split("%");
+    // acquire date so that it's formatted like 5-1-2020 as opposed to 5/1/2020
     let date = info[1].replace(new RegExp("/", "g"), "-");
     let url = "http://localhost:8000/" + info[2] + "/" + info[0] + "/" + date;
     xhr.open("GET", url, true);
@@ -85,11 +91,13 @@ function more_info(system) {
     let xhr = new XMLHttpRequest();
     let url = "http://localhost:8000/" + system;
     if (showing !== null) {
-        // Hide text when user clicks the same system again
-        populate_command(system, true);
-        let text = document.getElementById(showing);
+        // Need to remove whatever was showing before
+        populate_command(showing, true);
+        let text = document.getElementById(showing + "%TEXT");
         text.remove();
         if (showing === system) {
+            // If what was shown was the system clicked it means user simply
+            // wants to hide the dashboard
             showing = null;
             return;
         }
@@ -97,20 +105,11 @@ function more_info(system) {
     xhr.open("GET", url, true);
     xhr.onreadystatechange = () => {
         if (xhr.readyState === 4) {
-            document.body.innerHTML += xhr.responseText;
+            let body = document.getElementById("dashboard");
+            body.insertAdjacentHTML('afterend', xhr.responseText);
             populate_command(system, false);
         }
     }
     xhr.send();
     showing = system;
-}
-
-function update_button(btnText, moreText) {
-    for (let i = 0; i < systemSources.length; ++i) {
-        if(systemSources[i] + "_TEXT" === moreText.id) {
-            continue;
-        }
-        let tmpMoreText = document.getElementById(systemSources[i] + "_TEXT");
-        tmpMoreText.style.display = "none";
-    }
 }

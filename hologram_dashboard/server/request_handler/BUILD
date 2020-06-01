@@ -1,11 +1,11 @@
 package(default_visibility = ["//visibility:public"])
 
 cc_library(
-    name = "hda_lib",
+    name = "request_handler_lib",
     srcs = [
-        "hda.cpp",
+        "request_handler.cc",
     ],
-    hdrs = ["hda.h"],
+    hdrs = ["request_handler.h"],
     deps = [
         "@pistache//:pistache_lib",
     ],

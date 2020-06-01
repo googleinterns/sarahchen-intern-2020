@@ -13,47 +13,49 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
-#include "hda.h"
+#include "request_handler.h"
 #include <vector>
 #include <sstream>
 using namespace Pistache;
 using namespace std;
 
-HDAHandler::HDAHandler()
+RequestHandler::RequestHandler()
     :server(Address(Ipv4::any(), Port(8000))) {
         init();
 }
 
-HDAHandler::HDAHandler(Address Addr)
+RequestHandler::RequestHandler(Address Addr)
     :server(Addr) {
         init();
 }
 
-void HDAHandler::init() {
+void RequestHandler::init() {
     using namespace Rest;
     server.init();
     
+    // Binds the router with correct request methods
     Routes::Get(router, "/:system", 
-        Routes::bind(&HDAHandler::getDashboard, this));
+        Routes::bind(&RequestHandler::getDashboard, this));
     Routes::Get(router, "/:system/:source/:date", 
-        Routes::bind(&HDAHandler::sendCommand, this));
+        Routes::bind(&RequestHandler::sendCommand, this));
     Routes::Get(router, "/", 
-        Routes::bind(&HDAHandler::getLastRefreshed, this));
+        Routes::bind(&RequestHandler::getLastRefreshed, this));
 
     server.setHandler(router.handler());
 }
 
-void HDAHandler::start() {
+void RequestHandler::start() {
     server.serve();
 }
 
-void HDAHandler::getLastRefreshed(const Rest::Request& request, 
+void RequestHandler::getLastRefreshed(const Rest::Request& request, 
     Http::ResponseWriter response) {
+    // Information within the request is unnecessary
     UNUSED(request);
     response.send(Http::Code::Ok, "Wed May 19 15:46:11 2020");
 }
 
-void HDAHandler::getDashboard(const Rest::Request& request, 
+void RequestHandler::getDashboard(const Rest::Request& request, 
     Http::ResponseWriter response) {
     vector<string> dataSources {"SPAM", "PLAY_COUNTRY", 
         "APP_COUNTRY_PUBLISH_TIME", "QUERY_CATEGORY_SOURCE", 
@@ -61,10 +63,15 @@ void HDAHandler::getDashboard(const Rest::Request& request,
     vector<string> dates {"5/19/2020", "5/18/2020", "5/17/2020", "5/16/2020", 
         "5/15/2020", "5/14/2020", "5/13/2020"};
     string system_in = request.param(":system").as<string>();
+    string status = "111010111110001011100100111000100110001010000010100111010";
     auto stream = response.stream(Http::Code::Ok);
     const char* system = system_in.c_str();
+    // track the online or offline bits
+    int i = 0;
 
-    stream << "<div id=\"" << system << "_TEXT\">\n";
+    // Since the html file may be large, stream the data as we write it for
+    // more efficiency
+    stream << "<div id=\"" << system << "%TEXT\">\n";
     stream << "\t<br/>\n\t<p>" << system << "</p>\n";
 
     for(const string &data : dataSources) {
@@ -72,21 +79,22 @@ void HDAHandler::getDashboard(const Rest::Request& request,
         stream << "\t\t<span>" << data.c_str() << "&nbsp&nbsp</span>\n";
         for(const string& date : dates) {
             stream << "\t\t<div class=";
-            if (rand() % 2) {
+            if (status[i++] == '1') {
                 stream << "\"online\"";
             }
             else {
                 stream << "\"offline\"";
             }
-            stream << " title=\"" << date.c_str() << "\" id=\"" << data.c_str() << "%" << date.c_str() 
-                << "%" << system << "\"></div>\n";
+            stream << " title=\"" << date.c_str() << "\" id=\"" << data.c_str() 
+                << "%" << date.c_str() << "%" << system << "\"></div>\n";
         }
         stream << "\t</div>\n\n";
     }
+    stream << "</div>\n";
     stream.ends();
 }
 
-void HDAHandler::sendCommand(const Rest::Request& request, 
+void RequestHandler::sendCommand(const Rest::Request& request, 
     Http::ResponseWriter response) {
         string date = request.param(":date").as<string>();
         string system = request.param(":system").as<string>();

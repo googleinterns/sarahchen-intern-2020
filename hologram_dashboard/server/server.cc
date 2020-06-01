@@ -14,9 +14,10 @@
     limitations under the License.
 */
 
-#include "hda/hda.h"
+#include "request_handler/request_handler.h"
 
 int main() {
-    HDAHandler server;
+    // initiate and run the server
+    RequestHandler server;
     server.start();
 }

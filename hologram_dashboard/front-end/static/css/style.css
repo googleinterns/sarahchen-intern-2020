@@ -43,5 +43,9 @@ body {
 }
 
 button{
-    font-size: 10px
+    font-size: 10px;
+}
+
+.dashboard {
+    display: "table";
 }

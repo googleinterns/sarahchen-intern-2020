@@ -13,28 +13,35 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
-#include <pistache/http.h>
-#include <pistache/router.h>
-#include <pistache/endpoint.h>
+
+#include "request_handler/request_handler.h"
+#include <vector>
+#include <sstream>
 
 using namespace Pistache;
+using namespace std;
 
-class HDAHandler {
+class HandlerUnitTest: public RequestHandler {
     public:
-        HDAHandler();
+        void run() {
+            cout << "testing getDashboard\n";
+            test_getDashboard();
+            cout << "testing sendCommand\n";
+            test_sendCommand();
+            cout << "testing getLastRefreshed\n";
+            test_getLastRefreshed();
+        }
+        void test_getDashboard() {
 
-        HDAHandler(Address addr);
+        }
+        void test_sendCommand() {
 
-        void start();
-    private:
-        Rest::Router router;
-        Http::Endpoint server;
-
-        void getDashboard(const Rest::Request& request, Http::ResponseWriter response);
-
-        void sendCommand(const Rest::Request& request, Http::ResponseWriter response);
-
-        void getLastRefreshed(const Rest::Request& request, Http::ResponseWriter response);
-
-        void init();
+        }
+        void test_getLastRefreshed() {
+            
+        }
 };
+
+int main() {
+    return 0;
+}
