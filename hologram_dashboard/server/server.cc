@@ -16,8 +16,8 @@
 
 #include "request_handler/request_handler.h"
 
-int main() {
+int main(int argc, char* argv[]) {
     // initiate and run the server
-    DashboardServer server;
+    RequestHandler server;
     server.start();
 }

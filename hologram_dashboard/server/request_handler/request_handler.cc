@@ -19,17 +19,17 @@
 using namespace Pistache;
 using namespace std;
 
-DashboardServer::DashboardServer()
+RequestHandler::RequestHandler()
     :server(Address(Ipv4::any(), Port(8000))) {
         init();
 }
 
-DashboardServer::DashboardServer(Address Addr)
+RequestHandler::RequestHandler(Address Addr)
     :server(Addr) {
         init();
 }
 
-void DashboardServer::init() {
+void RequestHandler::init() {
     using namespace Rest;
     server.init();
     
@@ -44,7 +44,7 @@ void DashboardServer::init() {
     server.setHandler(router.handler());
 }
 
-void DashboardServer::start() {
+void RequestHandler::start() {
     server.serve();
 }
 
@@ -71,14 +71,14 @@ void RequestHandler::getDashboard(const Rest::Request& request,
 
     // Since the html file may be large, stream the data as we write it for
     // more efficiency
-    stream << "<div id=\"" << system << "%TEXT\">\n";
+    stream << "<table id=\"" << system << "%TEXT\">\n";
     stream << "\t<br/>\n\t<p>" << system << "</p>\n";
 
     for(const string &data : dataSources) {
-        stream << "\t<div class=\"inline\">\n";
-        stream << "\t\t<span>" << data.c_str() << "&nbsp&nbsp</span>\n";
+        stream << "\t<tr>\n";
+        stream << "\t\t<td>" << data.c_str() << "&nbsp&nbsp</td>\n";
         for(const string& date : dates) {
-            stream << "\t\t<div class=";
+            stream << "\t\t<td class=";
             if (status[i++] == '1') {
                 stream << "\"online\"";
             }
@@ -86,11 +86,11 @@ void RequestHandler::getDashboard(const Rest::Request& request,
                 stream << "\"offline\"";
             }
             stream << " title=\"" << date.c_str() << "\" id=\"" << data.c_str() 
-                << "%" << date.c_str() << "%" << system << "\"></div>\n";
+                << "%" << date.c_str() << "%" << system << "\"></td>\n";
         }
-        stream << "\t</div>\n\n";
+        stream << "\t</tr>\n\n";
     }
-    stream << "</div>\n";
+    stream << "</table>\n";
     stream.ends();
 }
 
