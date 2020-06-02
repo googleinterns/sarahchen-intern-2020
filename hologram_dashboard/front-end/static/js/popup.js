@@ -93,8 +93,8 @@ function more_info(system) {
     if (showing !== null) {
         // Need to remove whatever was showing before
         populate_command(showing, true);
-        let text = document.getElementById(showing + "%TEXT");
-        text.remove();
+        let text = document.getElementById("dashboard");
+        text.innerHTML = "";
         if (showing === system) {
             // If what was shown was the system clicked it means user simply
             // wants to hide the dashboard
@@ -106,7 +106,8 @@ function more_info(system) {
     xhr.onreadystatechange = () => {
         if (xhr.readyState === 4) {
             let body = document.getElementById("dashboard");
-            body.insertAdjacentHTML('afterend', xhr.responseText);
+            console.log(xhr.responseText);
+            body.insertAdjacentHTML('beforeend', xhr.responseText);
             populate_command(system, false);
         }
     }

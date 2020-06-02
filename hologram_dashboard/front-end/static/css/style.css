@@ -15,7 +15,7 @@
 */
 body {
     font-size: 10px;
-    min-width: 300px;
+    min-width: 280px;
     line-height: normal;
 }
 
@@ -28,6 +28,7 @@ body {
     width: 10px;
     background-color: chartreuse;
     display: inline-block;
+    border: 1px solid white;
 }
 
 .offline {
@@ -35,6 +36,7 @@ body {
     width: 10px;
     background-color: red;
     display: inline-block;
+    border: 1px solid white;
 }
 
 .date {
@@ -48,4 +50,10 @@ button{
 
 .dashboard {
     display: "table";
+}
+
+table {
+  font-size: 10px;
+  border-collapse: collapse;
+  border-spacing: 1px;
 }
