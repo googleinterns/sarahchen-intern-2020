@@ -19,17 +19,17 @@
 using namespace Pistache;
 using namespace std;
 
-RequestHandler::RequestHandler()
+DashboardServer::DashboardServer()
     :server(Address(Ipv4::any(), Port(8000))) {
         init();
 }
 
-RequestHandler::RequestHandler(Address Addr)
+DashboardServer::DashboardServer(Address Addr)
     :server(Addr) {
         init();
 }
 
-void RequestHandler::init() {
+void DashboardServer::init() {
     using namespace Rest;
     server.init();
     
@@ -44,7 +44,7 @@ void RequestHandler::init() {
     server.setHandler(router.handler());
 }
 
-void RequestHandler::start() {
+void DashboardServer::start() {
     server.serve();
 }
 

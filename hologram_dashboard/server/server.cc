@@ -18,6 +18,6 @@
 
 int main() {
     // initiate and run the server
-    RequestHandler server;
+    DashboardServer server;
     server.start();
 }

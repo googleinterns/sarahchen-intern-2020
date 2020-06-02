@@ -22,27 +22,6 @@ using namespace Pistache;
 class RequestHandler {
     public:
         /*
-        * Requires: Nothing
-        * Modifies: router, server
-        * Effect: Constructs a request handler using default port of 8000
-        */
-        RequestHandler();
-
-        /*
-        * Requires: Addr is a valid address
-        * Modifies: router, server
-        * Effect: Constructs a request handler using user defined address
-        */
-        RequestHandler(Address addr);
-
-        /*
-        * Requires: nothing
-        * Modifies: router, server
-        * Effect: Starts servicing requests from the server
-        */        
-        void start();
-    protected:
-        /*
         * Requires: request is a valid request of form /{system}
         * Modifies: response
         * Effect: Constructs the html code for the dashboard of the specific
@@ -67,6 +46,30 @@ class RequestHandler {
         */
         void getLastRefreshed(const Rest::Request& request, 
             Http::ResponseWriter response);
+};
+
+class DashboardServer {
+    public: 
+        /*
+        * Requires: Nothing
+        * Modifies: router, server
+        * Effect: Constructs a request handler using default port of 8000
+        */
+        DashboardServer();
+
+        /*
+        * Requires: Addr is a valid address
+        * Modifies: router, server
+        * Effect: Constructs a request handler using user defined address
+        */
+        DashboardServer(Address addr);
+
+        /*
+        * Requires: nothing
+        * Modifies: router, server
+        * Effect: Starts servicing requests from the server
+        */        
+        void start();
     private:
         Rest::Router router;
         Http::Endpoint server;
