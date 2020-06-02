@@ -30,7 +30,6 @@ Apache header:
     limitations under the License.
 
 ## Server 
-
 Follow the following steps to run the server 
     1.  install bazel following the steps of 
         https://docs.bazel.build/versions/3.2.0/install.html
