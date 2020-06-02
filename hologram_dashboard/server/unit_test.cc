@@ -20,8 +20,8 @@
 #include <pistache/peer.h>
 #include <pistache/router.h>
 #include <iostream>
-#include "httplib.h"
-#include "gtest/gtest.h"
+#include <pistache/tests/httplib.h>
+#include <gtest/gtest.h>
 using namespace Pistache;
 using namespace Pistache::Rest;
 
@@ -36,7 +36,7 @@ TEST(test_get_last_refreshed, last_refreshed_valid_input) {
 TEST(test_get_dashboard, dashboard_valid_input) {
     httplib::Client client("localhost", Port(8000));
     auto res = client.Get("/CHIPPER");
-    std::ifstream ifs("test.txt");
+    std::ifstream ifs("test.html");
     std::string correct_html;
     while(ifs.good()) {
         getline(ifs, correct_html);
