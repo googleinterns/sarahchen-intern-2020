@@ -1,16 +1,17 @@
 ## Preparation
-    1.  clone the repository 
+    1.  Clone the repository 
         git clone https://github.com/googleinterns/sarahchen-intern-2020.git
-    2.  navigate into the "hologram_dashboard" folder
+    2.  Navigate into the "hologram_dashboard" folder
         cd hologram_dashboard
 
 ## Server 
 Follow the following steps to run the server 
-    1.  install bazel following the steps of 
+    1.  Install bazel by following the steps of 
         https://docs.bazel.build/versions/3.2.0/install.html
+        for your specific system eg. ubuntu
     2.  Build the server from the hologram_dashboard folder
         bazel build //server
-    3.  run the server to start listening on port 8000
+    3.  Run the server to start listening on port 8000
         bazel run //server
 
 ## Extension
