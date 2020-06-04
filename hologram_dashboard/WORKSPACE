@@ -55,7 +55,7 @@ new_git_repository(
 cc_library(
     name = "pistache_lib",
     srcs = glob(["src/**/*.cc"]),
-    hdrs = glob(["include/pistache/**/*.h", "tests/httplib.h"]),
+    hdrs = glob(["include/pistache/**/*.h"]),
     includes = ["include/"],
     visibility = ["//visibility:public"]
 )""",
@@ -63,3 +63,13 @@ cc_library(
     init_submodules = 1,
     remote = "https://github.com/oktal/pistache",
 )
+
+# Protobuf
+http_archive(
+    name = "com_google_protobuf",
+    strip_prefix = "protobuf-master",
+    urls = ["https://github.com/protocolbuffers/protobuf/archive/master.zip"],
+)
+
+load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
+protobuf_deps()
