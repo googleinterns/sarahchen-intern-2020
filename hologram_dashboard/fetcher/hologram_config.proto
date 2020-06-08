@@ -13,9 +13,16 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
-#include "fetcher.h"
 
-int main() {
-    std::cout << "Hi\n";
-    return 0;
+syntax = "proto2";
+package hologramAvailability;
+import "fetcher/enums.proto";
+
+message HologramConfig {
+    optional DataType source_type = 1;
+    optional Pipeline kvick_corpus = 2;
+}
+
+message HologramConfigSet {
+    repeated HologramConfig configs = 1;
 }

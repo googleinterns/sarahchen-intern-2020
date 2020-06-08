@@ -16,35 +16,9 @@
 
 syntax = "proto2";
 package hologramAvailability;
+import "fetcher/enums.proto";
 
 message HologramDataAvailability {
-  // Listing of different data sources
-  enum DataType {
-     PLAY_COUNTRY = 0;
-     APP_COUNTRY_PUBLISH_TIME = 1;
-     SPAM = 2;
-     QUERY_CATEGORY_SOURCE = 3;
-     APPS_DAILY_DATA_SOURCE = 4;
-     UNIFIED_USER_DATA_SOURCE = 5;
-     TEST_CODE = 6;
-     DEVICE_INTEGRITY_SOURCE = 7; 
-     SHIELD_ID = 8;
-     SERVER_EXPERIMENT = 9; 
-     APPS_TITLE_TIER = 10;
-     APP_TYPE_SOURCE = 11;
-     ANDROID_SPAM_ABUSE = 12;
-     USER_EXPERIMENT_ID_AND_TEST_CODE = 13;
-     USER_ATTRIBUTE = 14;
-     PRIME_MERIDIAN= 15;
-  }
-
-  // Details about the status and what’s causing errors
-  enum StatusType {
-      UNKNOWN = 0;
-      SUCCESS = 1;
-      DATA_NOT_INJECTED = 2;
-  }
-
   // Specification about which data source is currently accessed
   optional DataType data_source = 1;
 

@@ -1,0 +1,53 @@
+/*
+    Copyright 2020 Google LLC
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+syntax = "proto2";
+package hologramAvailability;
+
+enum DataType {
+    PLAY_COUNTRY = 0;
+    APP_COUNTRY_PUBLISH_TIME = 1;
+    SPAM = 2;
+    QUERY_CATEGORY_SOURCE = 3;
+    APPS_DAILY_DATA_SOURCE = 4;
+    UNIFIED_USER_DATA_SOURCE = 5;
+    TEST_CODE = 6;
+    DEVICE_INTEGRITY_SOURCE = 7; 
+    SHIELD_ID = 8;
+    SERVER_EXPERIMENT = 9; 
+    APPS_TITLE_TIER = 10;
+    APP_TYPE_SOURCE = 11;
+    ANDROID_SPAM_ABUSE = 12;
+    USER_EXPERIMENT_ID_AND_TEST_CODE = 13;
+    USER_ATTRIBUTE = 14;
+    PRIME_MERIDIAN= 15;
+ }
+
+ enum StatusType {
+     UNKNOWN = 0;
+     SUCCESS = 1;
+     DATA_NOT_INJECTED = 2;
+ }
+
+ enum Pipeline {
+    HOLOGRAM_DEFAULT = 0;
+    HOLOGRAM_SPAM = 1;
+    HOLOGRAM_USER_ATTRIBUTE = 2;
+    HOLOGRAM_USER_EXPERIMENT_ID_AND_TEST_CODE = 3;
+    HOLOGRAM_ANDROID_SPAM_ABUSE = 4;
+    HOLOGRAM_PRIME_MERIDIAN = 5;
+}
+    

@@ -13,9 +13,19 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
-#include "fetcher.h"
+#include <iostream>
+#include <string>
+#include <unordered_map>
+#include <gflags/gflags.h>
+#include "fetcher/hologram_availability.pb.h"
+#include "fetcher/hologram_config.pb.h"
 
-int main() {
-    std::cout << "Hi\n";
-    return 0;
-}
+using namespace std;
+class HologramAvailabilityFetcher {
+    public:
+        HologramAvailabilityFetcher();
+    private:
+        unordered_map<string, string> kvick_config;
+		unordered_map<string, string> kvick_time;
+		unordered_map<string, string> kvick_location;
+};
