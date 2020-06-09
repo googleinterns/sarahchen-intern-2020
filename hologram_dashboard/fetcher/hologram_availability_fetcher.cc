@@ -14,39 +14,21 @@
     limitations under the License.
 */
 #include "hologram_availability_fetcher.h"
+using namespace wireless_android_play_analytics
 
-
-HologramException::HologramException() 
-    :message("Undefined Error") {}
-
-HologramException::HologramException(std::string message_in) 
-    :message(message_in) {}
-
-HologramException::~HologramException() {}
-
-const char* HologramException::what() {
-    return message.c_str();
-}
-
-HologramAvailabilityFetcher::HologramAvailabilityFetcher(){}
-
-HologramAvailabilityFetcher::HologramAvailabilityFetcher
-    (std::unordered_map<std::string, std::string> kvick_folder){}
-
-HologramAvailabilityFetcher::HologramAvailabilityFetcher
-    (std::string hologram_config_path){}
-
-HologramAvailabilityFetcher::HologramAvailabilityFetcher
-    (std::string hologram_config_path, std::unordered_map<std::string, std::string> kvick_folder){}
+HologramAvailabilityFetcher::HologramAvailabilityFetcher() {}
 
 void HologramAvailabilityFetcher::parseCommand() {}
 
+StatusType HologramAvailabilityFetcher::fetchStatus(std::string date, 
+    std::string source, std::string batch_job_cell_loc) {
+        return StatusType();
+}
+
+void HologramAvailabilityFetcher::loadProtoFromDatabase() {}
+
 void HologramAvailabilityFetcher::populateConfigs(std::string path) {}
 
-wireless_android_play_analytics::StatusType HologramAvailabilityFetcher::fetchStatus
-    (std::string date, std::string source, std::string location) {
-        return wireless_android_play_analytics::StatusType();
-    }
+void HologramAvailabilityFetcher::populateData() {}
 
-void HologramAvailabilityFetcher::populateSource
-    (wireless_android_play_analytics::HologramDataAvailability& data) {}
+void HologramAvailabilityFetcher::sendToDatabase() {}
