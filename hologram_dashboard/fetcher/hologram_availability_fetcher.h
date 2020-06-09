@@ -18,133 +18,61 @@
 #include <string>
 #include <unordered_map>
 #include <gflags/gflags.h>
+#include <assert.h>
 #include "fetcher/fetcher_lib/hologram_availability.pb.h"
 #include "fetcher/fetcher_lib/hologram_config.pb.h"
 
 DEFINE_string(chipper_batch_job_cell, "undefined", "Specifies the server on which chipper file location is stored");
 DEFINE_string(chipper_GDPR_batch_job_cell, "undefined", "Specifies the server on which chipperGDPR file location is stored");
 DEFINE_string(prime_meridian_batch_job_cell, "undefined", "Specifies the server on which prime meridian file location is stored");
-DEFINE_string(path)
+DEFINE_string(config_file_path, "undefined", "Specifies where the config file can be located");
+
 namespace wireless_android_play_analytics {
     class HologramAvailabilityFetcher {
     public:
         /* 
-        * Requires: Nothing
-        * Modifies: Nothing
-        * Effects: Default constructor without any settings
+        * Default constructs the fetcher and begins to parse command and 
+        * populate the necessary data
         */
         HologramAvailabilityFetcher();
 
         /* 
-        * Requires: kvick_folder_in includes exactly all the systems and has 
-        *           valid mappings
-        * Modifies: kvick_folder
-        * Effects: Non-default constructor to populate the mapping between
-        *          systems and their disk locations
-        */
-        HologramAvailabilityFetcher(std::unordered_map<std::string, std::string> kvick_folder);
-
-        /* 
-        * Requires: hologram_config_path is a valid path
-        * Modifies: hologram_configs
-        * Effects: Non-default constructor to populate configs of hologram
-        */
-        HologramAvailabilityFetcher(std::string hologram_config_path);
-
-        /* 
-        * Requires: kvick_folder_in includes exactly all the systems and has 
-        *           valid mappings, hologram_config_path is a valid path
-        * Modifies: kvick_folder, hologram_config
-        * Effects: Non-default constructor to populate the mapping between
-        *          systems and their disk locations and configs
-        */
-        HologramAvailabilityFetcher(std::string hologram_config_path,
-                                    std::unordered_map<std::string, std::string> kvick_folder_in);
-
-        /* 
-        * Requires: None
-        * Modifies: kvick_folder
-        * Effects: Parses gflag commands, and throws an error if the requires
-        *          flags are not set
+        * Parse gflag commands to ensure the fetcher are given all the necessary
+        * information to proceed
         */
         void parseCommand();
+    private:
+        std::unordered_map<std::string, std::string> kvick_folder;
+        wireless_android_play_analytics::HologramConfigSet hologram_configs;
+        std::unordered_map<std:: string, wireless_android_play_analytics::HologramDataAvailability> data_sources;
 
         /* 
-        * Requires: kvick_folder and hologram_configs are populated
-        * Modifies: data_sources
-        * Effects: Populate the status of every data source for the past 7 days
-        *          including today
+        * Fetch the status of a specific data source given its batch job cell
+        * and date
+        */
+        wireless_android_play_analytics::StatusType fetchStatus(std::string date, std::string source,
+                                                                std::string batch_job_cell_loc);
+
+        /* 
+        * Check the database to see if previous protos exist, if it does load it
+        * otherwise, create brand new protos 
+        */
+        void loadProtoFromDatabase();
+
+        /* 
+        * Read the given config file to populate hologram_configs
+        */
+        void populateConfigs(std::string path);
+
+        /* 
+        * Check the disk for today's done file and make the necessary changes to
+        * the corresponding sources
         */
         void populateData();
 
         /* 
-        * Requires: None
-        * Modifies: None
-        * Effects: Sends data_sources to database
+        * Send the updated hologram availability information to the database
         */
         void sendToDatabase();
-
-        /* 
-        * Requires: path is a valid path to a config file
-        * Modifies: hologram_configs
-        * Effects: populate information on configs of the hologram
-        */
-        void populateConfigs(std::string path);
-
-    private:
-        std::unordered_map<std::string, std::string> kvick_folder;
-        wireless_android_play_analytics::HologramConfigSet hologram_configs;
-        wireless_android_play_analytics::HologramDataAvailability data_sources;
-
-        /* 
-        * Requires: date is of correct format, source and location are valid
-        * Modifies: filesystem
-        * Effects: Check the file system to figure out if the data sources are
-        *          included in the specified day's pipeline
-        */
-        wireless_android_play_analytics::StatusType fetchStatus(std::string date, std::string source,
-                                                                std::string location);
-
-        /* 
-        * Requires: data is valid
-        * Modifies: data
-        * Effects: populates the status of a source for the current day and 
-        *          past 6 days
-        */
-        void populateSource(wireless_android_play_analytics::HologramDataAvailability &data);
-    };
-
-    class HologramException : virtual public std::exception {
-    public:
-        /* 
-        * Requires: None
-        * Modifies: message
-        * Effects: Constructs the default error message
-        */
-        HologramException();
-
-        /* 
-        * Requires: None
-        * Modifies: message
-        * Effects: Constructs a custom error message
-        */
-        HologramException(std::string message_in);
-
-        /* 
-        * Requires: None
-        * Modifies: None
-        * Effects: destructor for the exception
-        */
-        virtual ~HologramException();
-
-        /* 
-        * Requires: None
-        * Modifies: None
-        * Effects: Returns the error message
-        */
-        virtual const char *what();
-
-    private:
-        std::string message;
     };
 } // namespace wireless_android_play_analytics
