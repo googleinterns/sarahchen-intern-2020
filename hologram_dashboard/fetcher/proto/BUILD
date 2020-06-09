@@ -28,11 +28,3 @@ cc_proto_library(
     name = "hologram_config_cc_proto",
     deps = [":hologram_config_proto"],
 )
-
-cc_library(
-    name = "fetcher_lib",
-    srcs = ["hologram_availability_fetcher.cc"],
-    hdrs = ["hologram_availability_fetcher.h"],
-    deps = [":hologram_availability_cc_proto", ":hologram_config_cc_proto", 
-    "@com_github_gflags_gflags//:gflags"],
-)
