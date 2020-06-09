@@ -13,19 +13,24 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
-#include <iostream>
-#include <string>
-#include <unordered_map>
-#include <gflags/gflags.h>
-#include "fetcher/hologram_availability.pb.h"
-#include "fetcher/hologram_config.pb.h"
 
-using namespace std;
-class HologramAvailabilityFetcher {
-    public:
-        HologramAvailabilityFetcher();
-    private:
-        unordered_map<string, string> kvick_config;
-		unordered_map<string, string> kvick_time;
-		unordered_map<string, string> kvick_location;
-};
+syntax = "proto2";
+package wireless_android_play_analytics;
+import "fetcher/fetcher_lib/enums.proto";
+
+message HologramDataAvailability {
+  // Specification about which data source is currently accessed
+  optional DataType data_source = 1;
+
+  // Specification about the status of the data source
+  message DataSourceDetail {
+      optional int64 date = 1;
+      optional StatusType status = 2;
+  }
+  
+  // Current day status
+  optional DataSourceDetail latest_status = 2;
+
+  // An array of status of up to the last 7 days.
+  repeated DataSourceDetail history = 3;
+}

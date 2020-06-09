@@ -15,10 +15,10 @@
 */
 
 syntax = "proto2";
-package hologramAvailability;
+package wireless_android_play_analytics;
 
 enum DataType {
-    PLAY_COUNTRY = 0;
+    UNKNOWN_DATA_TYPE = 0;
     APP_COUNTRY_PUBLISH_TIME = 1;
     SPAM = 2;
     QUERY_CATEGORY_SOURCE = 3;
@@ -34,6 +34,7 @@ enum DataType {
     USER_EXPERIMENT_ID_AND_TEST_CODE = 13;
     USER_ATTRIBUTE = 14;
     PRIME_MERIDIAN= 15;
+    PLAY_COUNTRY = 16;
  }
 
  enum StatusType {
@@ -43,11 +44,12 @@ enum DataType {
  }
 
  enum Pipeline {
-    HOLOGRAM_DEFAULT = 0;
-    HOLOGRAM_SPAM = 1;
-    HOLOGRAM_USER_ATTRIBUTE = 2;
-    HOLOGRAM_USER_EXPERIMENT_ID_AND_TEST_CODE = 3;
-    HOLOGRAM_ANDROID_SPAM_ABUSE = 4;
-    HOLOGRAM_PRIME_MERIDIAN = 5;
+    UNKNOWN_PIPELINE = 0;
+    HOLOGRAM_DEFAULT = 1;
+    HOLOGRAM_SPAM = 2;
+    HOLOGRAM_USER_ATTRIBUTE = 3;
+    HOLOGRAM_USER_EXPERIMENT_ID_AND_TEST_CODE = 4;
+    HOLOGRAM_ANDROID_SPAM_ABUSE = 5;
+    HOLOGRAM_PRIME_MERIDIAN = 6;
 }
     
