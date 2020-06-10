@@ -1,7 +1,7 @@
 package(default_visibility = ["//visibility:public"])
 
 cc_binary(
-    name = "fetcher",
+    name = "fetcher_main",
     srcs = ["fetcher_main.cc"],
     deps = [
         "//fetcher:fetcher_lib"
