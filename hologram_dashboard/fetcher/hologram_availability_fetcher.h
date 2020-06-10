@@ -31,14 +31,19 @@ DEFINE_string(config_file_path, "",
     "Specifies where the config file can be located.");
 
 namespace wireless_android_play_analytics {
-class HologramAvailabilityFetcher {
+class HologramDataFetcher {
+    // Fetches DONE file, organize information in HologramDataAvailability proto
+    // and store the information into a database.
+    public:
+        virtual void Process() = 0;
+};
+
+class HologramAvailabilityFetcher: public HologramDataFetcher {
 
 public:
-    // Default constructs the fetcher and begins to parse command and 
-    // populate the necessary data
-    HologramAvailabilityFetcher();
+    void Process() override;
 
-    // Send the updated hologram availability information to the database
+    // Send the updated hologram availability information to the database.
     void WriteIntoDatabase();
 
 private:

@@ -46,11 +46,11 @@ enum DataSource {
     UNKNOWN = 0;
     // For a specified data source, running on a specified system, 
     // DATA_NOT_INGESTED_ON_TIME implies the newest data source is not ingested 
-    // into the system before it starts 
+    // into the system before it starts.
     DATA_NOT_INGESTED_ON_TIME = 1;
     // For a specified data source, running on a specified system, SUCCESS 
     // implies the newest data source is ingested into the system before it
-    // starts
+    // starts.
     SUCCESS = 2;
 }
 

@@ -17,7 +17,9 @@
 #include "hologram_availability_fetcher.h"
 
 namespace wireless_android_play_analytics{
-HologramAvailabilityFetcher::HologramAvailabilityFetcher() {}
+void HologramAvailabilityFetcher::Process() {
+    // TODO(alexanderlin): add implementation.
+}
 
 void HologramAvailabilityFetcher::WriteIntoDatabase() {}
 } // namespace wireless_android_play_analytics

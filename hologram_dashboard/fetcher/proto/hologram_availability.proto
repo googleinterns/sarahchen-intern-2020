@@ -28,10 +28,10 @@ message DataSourceDetail {
 
 // Next tag: 4
 message HologramDataAvailability {
-  // Specification about which data source is currently accessed
+  // Specification about which data source is currently accessed.
   optional DataSource data_source = 1;
   
-  // Current day status
+  // Current day status.
   optional DataSourceDetail latest_status = 2;
 
   // An array of status of up to the last 7 days.
