@@ -28,5 +28,5 @@ message HologramConfig {
 
 // Next tag: 2
 message HologramConfigSet {
-    repeated HologramConfig configs = 1;
+    repeated HologramConfig data_source_config = 1;
 }
