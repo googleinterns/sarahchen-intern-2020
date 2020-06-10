@@ -19,8 +19,8 @@
 #include <unordered_map>
 #include <gflags/gflags.h>
 #include <assert.h>
-#include "fetcher/fetcher_lib/hologram_availability.pb.h"
-#include "fetcher/fetcher_lib/hologram_config.pb.h"
+#include "fetcher/proto/hologram_availability.pb.h"
+#include "fetcher/proto/hologram_config.pb.h"
 
 DEFINE_string(chipper_batch_job_cell, "undefined", "Specifies the server on which chipper file location is stored");
 DEFINE_string(chipper_GDPR_batch_job_cell, "undefined", "Specifies the server on which chipperGDPR file location is stored");

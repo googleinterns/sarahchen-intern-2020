@@ -16,7 +16,7 @@
 
 syntax = "proto2";
 package wireless_android_play_analytics;
-import "fetcher/fetcher_lib/enums.proto";
+import "fetcher/proto/enums.proto";
 
 message DataSourceDetail {
     optional int64 date = 1;

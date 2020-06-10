@@ -15,7 +15,7 @@
 */
 
 syntax = "proto2";
-package wireless_android_play_analytics,
+package wireless_android_play_analytics;
 
 enum DataType {
     UNKNOWN_DATA_TYPE = 0;
@@ -50,6 +50,6 @@ enum DataType {
     HOLOGRAM_PRIME_MERIDIAN = 3;
     HOLOGRAM_SPAM = 4;
     HOLOGRAM_USER_ATTRIBUTE = 5;
-    HOLOGRAM_USER_ATTRIBUTE = 6;
+    HOLOGRAM_USER_EXPERIMENT_ID_AND_TEST_CODE = 6;
 }
     

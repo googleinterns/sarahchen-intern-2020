@@ -14,7 +14,7 @@
     limitations under the License.
 */
 #include "hologram_availability_fetcher.h"
-using namespace wireless_android_play_analytics
+using namespace wireless_android_play_analytics;
 
 HologramAvailabilityFetcher::HologramAvailabilityFetcher() {}
 
