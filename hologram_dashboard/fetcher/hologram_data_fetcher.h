@@ -14,12 +14,14 @@
 *   limitations under the License.
 */
 
-#include "hologram_availability_fetcher.h"
+namespace wireless_android_play_analytics {
 
-namespace wireless_android_play_analytics{
+// Fetches DONE file, organize information in HologramDataAvailability proto
+// and store the information into a database.
+class HologramDataFetcher {
+    
+    public:
+        virtual void Process() = 0;
+};
 
-void HologramAvailabilityFetcher::Process() {
-    // TODO(alexanderlin): add implementation.
 }
-
-} // namespace wireless_android_play_analytics

@@ -11,7 +11,7 @@ cc_binary(
 cc_library(
     name = "fetcher_lib",
     srcs = ["hologram_availability_fetcher.cc"],
-    hdrs = ["hologram_availability_fetcher.h"],
+    hdrs = ["hologram_availability_fetcher.h", "hologram_data_fetcher.h"],
     deps = ["//fetcher/proto:hologram_availability_cc_proto", "//fetcher/proto:hologram_config_cc_proto", 
     "@com_github_gflags_gflags//:gflags"],
 )

@@ -22,6 +22,7 @@
 #include <assert.h>
 #include "fetcher/proto/hologram_availability.pb.h"
 #include "fetcher/proto/hologram_config.pb.h"
+#include "hologram_data_fetcher.h"
 
 DEFINE_string(chipper_batch_job_cell, "", 
     "The job running cell of Chipper Batch.");
@@ -31,20 +32,11 @@ DEFINE_string(config_file_path, "",
     "Specifies where the config file can be located.");
 
 namespace wireless_android_play_analytics {
-class HologramDataFetcher {
-    // Fetches DONE file, organize information in HologramDataAvailability proto
-    // and store the information into a database.
-    public:
-        virtual void Process() = 0;
-};
 
 class HologramAvailabilityFetcher: public HologramDataFetcher {
 
 public:
     void Process() override;
-
-    // Send the updated hologram availability information to the database.
-    void WriteIntoDatabase();
 
 private:
     std::unordered_map<std::string, std::string> kvick_folder_;
