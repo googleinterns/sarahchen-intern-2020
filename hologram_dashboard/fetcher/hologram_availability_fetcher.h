@@ -37,10 +37,9 @@ namespace wireless_android_play_analytics {
         HologramAvailabilityFetcher();
 
         /* 
-        * Parse gflag commands to ensure the fetcher are given all the necessary
-        * information to proceed
+        * Send the updated hologram availability information to the database
         */
-        void parseCommand();
+        void sendToDatabase();
     private:
         std::unordered_map<std::string, std::string> kvick_folder;
         wireless_android_play_analytics::HologramConfigSet hologram_configs;
@@ -71,8 +70,9 @@ namespace wireless_android_play_analytics {
         void populateData();
 
         /* 
-        * Send the updated hologram availability information to the database
+        * Parse gflag commands to ensure the fetcher are given all the necessary
+        * information to proceed
         */
-        void sendToDatabase();
+        void parseCommand();
     };
 } // namespace wireless_android_play_analytics
