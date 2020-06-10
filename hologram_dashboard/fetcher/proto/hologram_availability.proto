@@ -18,15 +18,14 @@ syntax = "proto2";
 package wireless_android_play_analytics;
 import "fetcher/fetcher_lib/enums.proto";
 
+message DataSourceDetail {
+    optional int64 date = 1;
+    optional StatusType status = 2;
+}
+
 message HologramDataAvailability {
   // Specification about which data source is currently accessed
   optional DataType data_source = 1;
-
-  // Specification about the status of the data source
-  message DataSourceDetail {
-      optional int64 date = 1;
-      optional StatusType status = 2;
-  }
   
   // Current day status
   optional DataSourceDetail latest_status = 2;
