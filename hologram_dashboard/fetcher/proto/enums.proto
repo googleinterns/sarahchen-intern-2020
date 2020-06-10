@@ -15,6 +15,7 @@
 */
 
 syntax = "proto2";
+
 package wireless_android_play_analytics;
 
 enum DataType {

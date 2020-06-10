@@ -33,6 +33,7 @@ DEFINE_string(config_file_path, "",
 
 namespace wireless_android_play_analytics {
 class HologramAvailabilityFetcher {
+
 public:
     /* 
     * Default constructs the fetcher and begins to parse command and 
@@ -43,13 +44,13 @@ public:
     /* 
     * Send the updated hologram availability information to the database
     */
-    void SendToDatabase();
+    void WriteIntoDatabase();
 
 private:
-    std::unordered_map<std::string, std::string> kvick_folder;
-    HologramConfigSet hologram_configs;
+    std::unordered_map<std::string, std::string> kvick_folder_;
+    HologramConfigSet hologram_configs_;
     std::unordered_map<std::string, HologramDataAvailability> 
-        data_sources_availability_map;
+        data_sources_availability_map_;
 };
 
 } // namespace wireless_android_play_analytics
