@@ -14,21 +14,8 @@
     limitations under the License.
 */
 #include "hologram_availability_fetcher.h"
-using namespace wireless_android_play_analytics;
-
+namespace wireless_android_play_analytics{
 HologramAvailabilityFetcher::HologramAvailabilityFetcher() {}
 
-void HologramAvailabilityFetcher::parseCommand() {}
-
-StatusType HologramAvailabilityFetcher::fetchStatus(std::string date, 
-    std::string source, std::string batch_job_cell_loc) {
-        return StatusType();
-}
-
-void HologramAvailabilityFetcher::loadProtoFromDatabase() {}
-
-void HologramAvailabilityFetcher::populateConfigs(std::string path) {}
-
-void HologramAvailabilityFetcher::populateData() {}
-
 void HologramAvailabilityFetcher::SendToDatabase() {}
+} // namespace wireless_android_play_analytics

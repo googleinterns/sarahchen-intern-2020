@@ -18,6 +18,7 @@ syntax = "proto2";
 package wireless_android_play_analytics;
 
 enum DataType {
+    // Specify different data sources
     UNKNOWN_DATA_TYPE = 0;
     ANDROID_SPAM_ABUSE = 1;
     APPS_DAILY_DATA_SOURCE = 2;
@@ -38,12 +39,14 @@ enum DataType {
  }
 
  enum StatusType {
+     // Specify the status of data sources for each corpus
      UNKNOWN = 0;
      DATA_NOT_INJECTED = 1;
      SUCCESS = 2;
  }
 
- enum Pipeline {
+ enum Corpus {
+    // Specify the pipeline of data sources
     UNKNOWN_PIPELINE = 0;
     HOLOGRAM_ANDROID_SPAM_ABUSE = 1;
     HOLOGRAM_DEFAULT = 2;

@@ -20,7 +20,7 @@ import "fetcher/proto/enums.proto";
 
 message HologramConfig {
     optional DataType source_type = 1;
-    optional Pipeline kvick_corpus = 2;
+    optional Corpus kvick_corpus = 2;
 }
 
 message HologramConfigSet {
