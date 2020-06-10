@@ -46,7 +46,7 @@ namespace wireless_android_play_analytics {
         std::unordered_map<std:: string, wireless_android_play_analytics::HologramDataAvailability> data_sources;
 
         /* 
-        * Fetch the status of a specific data source given its batch job cell
+        * Fetches the status of a specific data source given its batch job cell
         * and date
         */
         wireless_android_play_analytics::StatusType fetchStatus(std::string date, std::string source,
