@@ -22,7 +22,7 @@ import "fetcher/proto/enums.proto";
 
 // Next tag: 3
 message HologramConfig {
-    optional DataType source_type = 1;
+    optional DataSource source_type = 1;
     optional Corpus kvick_corpus = 2;
 }
 

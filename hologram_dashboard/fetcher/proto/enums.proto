@@ -18,9 +18,9 @@ syntax = "proto2";
 
 package wireless_android_play_analytics;
 
-// Specify different data sources
+// Specify different data sources.
 // Next tag: 17
-enum DataType {
+enum DataSource {
     UNKNOWN_DATA_TYPE = 0;
     ANDROID_SPAM_ABUSE = 1;
     APPS_DAILY_DATA_SOURCE = 2;
@@ -40,18 +40,21 @@ enum DataType {
     USER_EXPERIMENT_ID_AND_TEST_CODE = 16;
  }
 
- // Specify the status of data sources for each corpus
+ // Specify the status of data sources for each corpus.
  // Next tag: 3
  enum StatusType {
     UNKNOWN = 0;
-    // For a specific data source, running on a specific system, this flag
-    // implies the newest data source is not ingested into the system before it
-    // starts 
+    // For a specified data source, running on a specified system, 
+    // DATA_NOT_INGESTED_ON_TIME implies the newest data source is not ingested 
+    // into the system before it starts 
     DATA_NOT_INGESTED_ON_TIME = 1;
+    // For a specified data source, running on a specified system, SUCCESS 
+    // implies the newest data source is ingested into the system before it
+    // starts
     SUCCESS = 2;
 }
 
- // Specify the pipeline of data sources
+ // Specify the pipeline of data sources.
  // Next tag: 7
  enum Corpus {
     UNKNOWN_PIPELINE = 0;
