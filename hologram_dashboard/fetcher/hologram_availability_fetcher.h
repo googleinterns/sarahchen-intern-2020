@@ -39,7 +39,7 @@ public:
     void Process() override;
 
 private:
-    std::unordered_map<std::string, std::string> kvick_folder_;
+    std::unordered_map<std::string, std::string> system_to_cell_map_;
     HologramConfigSet hologram_configs_;
     std::unordered_map<std::string, HologramDataAvailability> 
         data_sources_availability_map_;
