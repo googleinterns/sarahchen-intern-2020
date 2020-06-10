@@ -31,4 +31,4 @@ void HologramAvailabilityFetcher::populateConfigs(std::string path) {}
 
 void HologramAvailabilityFetcher::populateData() {}
 
-void HologramAvailabilityFetcher::sendToDatabase() {}
+void HologramAvailabilityFetcher::SendToDatabase() {}

@@ -28,51 +28,54 @@ DEFINE_string(prime_meridian_batch_job_cell, "undefined", "Specifies the server 
 DEFINE_string(config_file_path, "undefined", "Specifies where the config file can be located");
 
 namespace wireless_android_play_analytics {
-    class HologramAvailabilityFetcher {
-    public:
-        /* 
-        * Default constructs the fetcher and begins to parse command and 
-        * populate the necessary data
-        */
-        HologramAvailabilityFetcher();
+class HologramAvailabilityFetcher {
+public:
+    /* 
+    * Default constructs the fetcher and begins to parse command and 
+    * populate the necessary data
+    */
+    HologramAvailabilityFetcher();
 
-        /* 
-        * Send the updated hologram availability information to the database
-        */
-        void sendToDatabase();
-    private:
-        std::unordered_map<std::string, std::string> kvick_folder;
-        wireless_android_play_analytics::HologramConfigSet hologram_configs;
-        std::unordered_map<std:: string, wireless_android_play_analytics::HologramDataAvailability> data_sources;
+    /* 
+    * Send the updated hologram availability information to the database
+    */
+    void SendToDatabase();
 
-        /* 
-        * Fetches the status of a specific data source given its batch job cell
-        * and date
-        */
-        wireless_android_play_analytics::StatusType fetchStatus(std::string date, std::string source,
-                                                                std::string batch_job_cell_loc);
+private:
+    std::unordered_map<std::string, std::string> kvick_folder;
+    HologramConfigSet hologram_configs;
+    std::unordered_map<std::string, HologramDataAvailability> 
+        data_sources_availability_map;
 
-        /* 
-        * Check the database to see if previous protos exist, if it does load it
-        * otherwise, create brand new protos 
-        */
-        void loadProtoFromDatabase();
+    /* 
+    * Fetches the status of a specific data source given its batch job cell
+    * and date
+    */
+    StatusType fetchStatus(std::string date, std::string source,
+        std::string batch_job_cell_loc);
 
-        /* 
-        * Read the given config file to populate hologram_configs
-        */
-        void populateConfigs(std::string path);
+    /* 
+    * Checks the database to see if previous protos exist, if it does load it
+    * otherwise, create brand new protos 
+    */
+    void loadProtoFromDatabase();
 
-        /* 
-        * Check the disk for today's done file and make the necessary changes to
-        * the corresponding sources
-        */
-        void populateData();
+    /* 
+    * Reads the given config file to populate hologram_configs
+    */
+    void populateConfigs(std::string path);
 
-        /* 
-        * Parse gflag commands to ensure the fetcher are given all the necessary
-        * information to proceed
-        */
-        void parseCommand();
-    };
+    /* 
+    * Checks the disk for today's done file and make the necessary changes to
+    * the corresponding sources
+    */
+    void populateData();
+
+    /* 
+    * Parses gflag commands to ensure the fetcher are given all the necessary
+    * information to proceed
+    */
+    void parseCommand();
+};
+
 } // namespace wireless_android_play_analytics
