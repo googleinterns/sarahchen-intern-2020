@@ -15,6 +15,14 @@ cc_library(
             "hologram_data_fetcher_lib"],
 )
 
+cc_test(
+    name = "hologram_data_source_availability_fetcher_test",
+    srcs = ["hologram_data_source_availability_fetcher_test.cc"],
+    deps = [
+        "@com_google_gtest//:gtest",
+    ],
+)
+
 cc_binary(
     name = "fetcher_main",
     srcs = ["fetcher_main.cc"],
