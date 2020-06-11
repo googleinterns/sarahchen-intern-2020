@@ -25,20 +25,14 @@ void HologramDataSourceAvailabilityFetcher::Process() {
 void HologramDataSourceAvailabilityFetcher::
     AcquireConfig(const std::string& path) {
     std::ifstream ins(path);
-    google::protobuf::TextFormat::Parser P;
     std::string config_content;
+    google::protobuf::io::IstreamInputStream config_stream(&ins);
     
     // Path must be valid.
     assert(ins.good());
 
-    while(ins.good()) {   
-        std::string tmp; 
-        getline(ins, tmp);
-        config_content += tmp + "\n";
-    }
-
     // If either the file doesn't exist this will return false.
-    assert(P.ParseFromString(config_content, &hologram_configs_));
-}
-
+    assert(google::protobuf::TextFormat::Parse(&config_stream, 
+                                                &hologram_configs_));
+    }
 } // namespace wireless_android_play_analytics
