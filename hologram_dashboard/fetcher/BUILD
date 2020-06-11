@@ -1,11 +1,8 @@
 package(default_visibility = ["//visibility:public"])
 
-cc_binary(
-    name = "fetcher_main",
-    srcs = ["fetcher_main.cc"],
-    deps = [
-        "hologram_data_source_availabiliity_fetcher"
-    ],
+cc_library(
+    name = "hologram_data_fetcher_lib",
+    hdrs = ["hologram_data_fetcher.h"]
 )
 
 cc_library(
@@ -18,7 +15,10 @@ cc_library(
             "hologram_data_fetcher_lib"],
 )
 
-cc_library(
-    name = "hologram_data_fetcher_lib",
-    hdrs = ["hologram_data_fetcher.h"]
+cc_binary(
+    name = "fetcher_main",
+    srcs = ["fetcher_main.cc"],
+    deps = [
+        "hologram_data_source_availabiliity_fetcher"
+    ],
 )
