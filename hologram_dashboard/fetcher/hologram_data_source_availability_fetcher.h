@@ -20,6 +20,9 @@
 #include <unordered_map>
 #include <gflags/gflags.h>
 #include <assert.h>
+#include <fstream>
+#include <google/protobuf/text_format.h>
+#include <google/protobuf/io/zero_copy_stream_impl.h>
 #include "fetcher/proto/hologram_availability.pb.h"
 #include "fetcher/proto/hologram_config.pb.h"
 #include "hologram_data_fetcher.h"
@@ -43,6 +46,8 @@ private:
     HologramConfigSet hologram_configs_;
     std::unordered_map<std::string, HologramDataAvailability> 
         data_sources_availability_map_;
+
+    void AcquireConfig(const std::string& path);
 };
 
 } // namespace wireless_android_play_analytics
