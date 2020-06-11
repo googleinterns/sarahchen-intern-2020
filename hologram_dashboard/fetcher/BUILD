@@ -4,12 +4,12 @@ cc_binary(
     name = "fetcher_main",
     srcs = ["fetcher_main.cc"],
     deps = [
-        "//fetcher:fetcher_lib"
+        "hologram_data_source_availabiliity_fetcher"
     ],
 )
 
 cc_library(
-    name = "fetcher_lib",
+    name = "hologram_data_source_availabiliity_fetcher",
     srcs = ["hologram_data_source_availabiliity_fetcher.cc"],
     hdrs = ["hologram_data_source_availability_fetcher.h", 
             "hologram_data_fetcher.h"],
