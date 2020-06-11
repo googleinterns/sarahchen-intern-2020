@@ -14,11 +14,11 @@
 *   limitations under the License.
 */
 
-#include "hologram_availability_fetcher.h"
+#include "hologram_data_source_availability_fetcher.h"
 
 namespace wireless_android_play_analytics{
 
-void HologramAvailabilityFetcher::Process() {
+void HologramDataSourceAvailabilityFetcher::Process() {
     // TODO(alexanderlin): add implementation.
 }
 

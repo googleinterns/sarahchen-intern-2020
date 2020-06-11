@@ -33,7 +33,7 @@ DEFINE_string(config_file_path, "",
 
 namespace wireless_android_play_analytics {
 
-class HologramAvailabilityFetcher: public HologramDataFetcher {
+class HologramDataSourceAvailabilityFetcher: public HologramDataFetcher {
 
 public:
     void Process() override;
