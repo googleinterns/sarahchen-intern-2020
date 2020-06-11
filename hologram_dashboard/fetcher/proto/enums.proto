@@ -1,0 +1,68 @@
+/*
+*   Copyright 2020 Google LLC
+*
+*   Licensed under the Apache License, Version 2.0 (the "License");
+*   you may not use this file except in compliance with the License.
+*   You may obtain a copy of the License at
+*
+*       https://www.apache.org/licenses/LICENSE-2.0
+*
+*   Unless required by applicable law or agreed to in writing, software
+*   distributed under the License is distributed on an "AS IS" BASIS,
+*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+*   See the License for the specific language governing permissions and
+*   limitations under the License.
+*/
+
+syntax = "proto2";
+
+package wireless_android_play_analytics;
+
+// Specify different data sources.
+// Next tag: 17
+enum DataSource {
+    UNKNOWN_DATA_TYPE = 0;
+    ANDROID_SPAM_ABUSE = 1;
+    APPS_DAILY_DATA_SOURCE = 2;
+    APPS_TITLE_TIER = 3;
+    APP_COUNTRY_PUBLISH_TIME = 4;
+    APP_TYPE_SOURCE = 5;
+    DEVICE_INTEGRITY_SOURCE = 6;
+    PLAY_COUNTRY = 7;
+    PRIME_MERIDIAN = 8;
+    QUERY_CATEGORY_SOURCE = 9;
+    SERVER_EXPERIMENT = 10;
+    SHIELD_ID = 11;
+    SPAM = 12;
+    TEST_CODE = 13;
+    UNIFIED_USER_DATA_SOURCE = 14;
+    USER_ATTRIBUTE = 15;
+    USER_EXPERIMENT_ID_AND_TEST_CODE = 16;
+ }
+
+ // Specify the status of data sources for each corpus.
+ // Next tag: 3
+ enum StatusType {
+    UNKNOWN = 0;
+    // For a specified data source, running on a specified system, 
+    // DATA_NOT_INGESTED_ON_TIME implies the newest data source is not ingested 
+    // into the system before it starts.
+    DATA_NOT_INGESTED_ON_TIME = 1;
+    // For a specified data source, running on a specified system, SUCCESS 
+    // implies the newest data source is ingested into the system before it
+    // starts.
+    SUCCESS = 2;
+}
+
+ // Specify the pipeline of data sources.
+ // Next tag: 7
+ enum Corpus {
+    UNKNOWN_PIPELINE = 0;
+    HOLOGRAM_ANDROID_SPAM_ABUSE = 1;
+    HOLOGRAM_DEFAULT = 2;
+    HOLOGRAM_PRIME_MERIDIAN = 3;
+    HOLOGRAM_SPAM = 4;
+    HOLOGRAM_USER_ATTRIBUTE = 5;
+    HOLOGRAM_USER_EXPERIMENT_ID_AND_TEST_CODE = 6;
+}
+    
