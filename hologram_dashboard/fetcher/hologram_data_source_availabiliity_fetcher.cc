@@ -34,5 +34,6 @@ void HologramDataSourceAvailabilityFetcher::
     // If either the file doesn't exist this will return false.
     assert(google::protobuf::TextFormat::Parse(&config_stream, 
                                                 &hologram_configs_));
-    }
+}
+
 } // namespace wireless_android_play_analytics
