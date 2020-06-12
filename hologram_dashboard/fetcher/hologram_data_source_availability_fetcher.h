@@ -19,6 +19,7 @@
 #include <string>
 #include <unordered_map>
 #include <gflags/gflags.h>
+#include <gtest/gtest.h>
 #include <assert.h>
 #include <fstream>
 #include <google/protobuf/text_format.h>
@@ -27,12 +28,12 @@
 #include "fetcher/proto/hologram_config.pb.h"
 #include "hologram_data_fetcher.h"
 
-DEFINE_string(chipper_batch_job_cell, "", 
-    "The job running cell of Chipper Batch.");
-DEFINE_string(chipper_gdpr_batch_job_cell, "", 
-    "The job running cell of Chipper GDPR pipeline.");
-DEFINE_string(config_file_path, "", 
-    "Specifies where the config file can be located.");
+// DEFINE_string(chipper_batch_job_cell, "", 
+//     "The job running cell of Chipper Batch.");
+// DEFINE_string(chipper_gdpr_batch_job_cell, "", 
+//     "The job running cell of Chipper GDPR pipeline.");
+// DEFINE_string(config_file_path, "", 
+//     "Specifies where the config file can be located.");
 
 namespace wireless_android_play_analytics {
 
@@ -42,6 +43,7 @@ public:
     void Process() override;
 
 private:
+    FRIEND_TEST(FetcherTest, AcquireConfigTest);
     // Poulates hologram_config_ and ends the program if the path provided leads
     // to wrong file or malformed file.
     void AcquireConfig(const std::string& config_file_path);

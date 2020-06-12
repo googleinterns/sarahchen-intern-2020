@@ -12,6 +12,7 @@ cc_library(
     deps = ["//fetcher/proto:hologram_availability_cc_proto", 
             "//fetcher/proto:hologram_config_cc_proto", 
             "@com_github_gflags_gflags//:gflags",
+            "@com_google_gtest//:gtest",
             "hologram_data_fetcher_lib"],
 )
 
@@ -19,8 +20,10 @@ cc_test(
     name = "hologram_data_source_availability_fetcher_test",
     srcs = ["hologram_data_source_availability_fetcher_test.cc"],
     deps = [
-        "@com_google_gtest//:gtest",
+
+        "hologram_data_source_availabiliity_fetcher",
     ],
+    data = ["hologram_config.config", "hologram_config_malformed.config"]
 )
 
 cc_binary(

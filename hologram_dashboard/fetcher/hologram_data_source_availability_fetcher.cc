@@ -24,7 +24,7 @@ void HologramDataSourceAvailabilityFetcher::Process() {
 
 void HologramDataSourceAvailabilityFetcher::
     AcquireConfig(const std::string& config_file_path) {
-    std::ifstream ins(path);
+    std::ifstream ins(config_file_path);
     // Path must be valid.
     assert(ins.good());
     google::protobuf::io::IstreamInputStream config_stream(&ins);
