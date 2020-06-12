@@ -22,4 +22,16 @@ void HologramDataSourceAvailabilityFetcher::Process() {
     // TODO(alexanderlin): add implementation.
 }
 
+void HologramDataSourceAvailabilityFetcher::
+    AcquireConfig(const std::string& config_file_path) {
+    std::ifstream ins(path);
+    // Path must be valid.
+    assert(ins.good());
+    google::protobuf::io::IstreamInputStream config_stream(&ins);
+
+    // If either the file doesn't exist this will return false.
+    assert(google::protobuf::TextFormat::Parse(&config_stream, 
+                                                &hologram_configs_));
+}
+
 } // namespace wireless_android_play_analytics
