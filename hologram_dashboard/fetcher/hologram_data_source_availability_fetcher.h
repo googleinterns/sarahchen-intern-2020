@@ -28,12 +28,12 @@
 #include "fetcher/proto/hologram_config.pb.h"
 #include "hologram_data_fetcher.h"
 
-// DEFINE_string(chipper_batch_job_cell, "", 
-//     "The job running cell of Chipper Batch.");
-// DEFINE_string(chipper_gdpr_batch_job_cell, "", 
-//     "The job running cell of Chipper GDPR pipeline.");
-// DEFINE_string(config_file_path, "", 
-//     "Specifies where the config file can be located.");
+DEFINE_string(chipper_batch_job_cell, "", 
+    "The job running cell of Chipper Batch.");
+DEFINE_string(chipper_gdpr_batch_job_cell, "", 
+    "The job running cell of Chipper GDPR pipeline.");
+DEFINE_string(config_file_path, "", 
+    "Specifies where the config file can be located.");
 
 namespace wireless_android_play_analytics {
 
