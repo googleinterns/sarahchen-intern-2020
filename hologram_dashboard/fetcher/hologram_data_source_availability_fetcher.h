@@ -42,12 +42,12 @@ public:
     void Process() override;
 
 private:
+    void AcquireConfig(const std::string& path);
+    
     std::unordered_map<std::string, std::string> system_to_cell_map_;
     HologramConfigSet hologram_configs_;
     std::unordered_map<std::string, HologramDataAvailability> 
         data_sources_availability_map_;
-
-    void AcquireConfig(const std::string& path);
 };
 
 } // namespace wireless_android_play_analytics
