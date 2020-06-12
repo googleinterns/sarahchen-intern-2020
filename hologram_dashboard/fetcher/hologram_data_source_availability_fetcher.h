@@ -20,6 +20,9 @@
 #include <unordered_map>
 #include <gflags/gflags.h>
 #include <assert.h>
+#include <fstream>
+#include <google/protobuf/text_format.h>
+#include <google/protobuf/io/zero_copy_stream_impl.h>
 #include "fetcher/proto/hologram_availability.pb.h"
 #include "fetcher/proto/hologram_config.pb.h"
 #include "hologram_data_fetcher.h"
@@ -39,6 +42,10 @@ public:
     void Process() override;
 
 private:
+    // Poulates hologram_config_ and ends the program if the path provided leads
+    // to wrong file or malformed file.
+    void AcquireConfig(const std::string& config_file_path);
+    
     std::unordered_map<std::string, std::string> system_to_cell_map_;
     HologramConfigSet hologram_configs_;
     std::unordered_map<std::string, HologramDataAvailability> 
