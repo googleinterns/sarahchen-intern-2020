@@ -42,7 +42,9 @@ public:
     void Process() override;
 
 private:
-    void AcquireConfig(const std::string& path);
+    // Poulates hologram_config_ and ends the program if the path provided leads
+    // to wrong file or malformed file.
+    void AcquireConfig(const std::string& config_file_path);
     
     std::unordered_map<std::string, std::string> system_to_cell_map_;
     HologramConfigSet hologram_configs_;
