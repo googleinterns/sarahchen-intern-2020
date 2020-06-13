@@ -43,7 +43,8 @@ public:
     void Process() override;
 
 private:
-    FRIEND_TEST(FetcherTest, AcquireConfigTest);
+    FRIEND_TEST(FetcherTest, InvalidAcquireConfig);
+    FRIEND_TEST(FetcherTest, ValidAcquireConfig);
     // Poulates hologram_config_ and ends the program if the path provided leads
     // to wrong file or malformed file.
     void AcquireConfig(const std::string& config_file_path);

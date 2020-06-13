@@ -19,13 +19,17 @@
 
 namespace wireless_android_play_analytics{
 
-TEST(FetcherTest, AcquireConfigTest) {
-    // Test malformed/invalid path.
+TEST(FetcherTest, InvalidAcquireConfig) {
     HologramDataSourceAvailabilityFetcher hologram_fetcher;
-    ASSERT_DEATH(hologram_fetcher.AcquireConfig("/abc"), "");
+    // Passing a path that does not lead to a file
+    ASSERT_DEATH(hologram_fetcher.AcquireConfig(""), "");
+    // A path that has a file, but the content of the file is invalid
     ASSERT_DEATH(hologram_fetcher.AcquireConfig(
         "fetcher/testdata/hologram_config_malformed.config"), "");
+}
 
+TEST(FetcherTest, ValidAcquireConfig) {
+    HologramDataSourceAvailabilityFetcher hologram_fetcher;
     // Test correct path.
     hologram_fetcher.AcquireConfig("fetcher/testdata/hologram_config_test.config");
     HologramConfigSet expected_hologram_config;

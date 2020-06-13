@@ -6,7 +6,7 @@ cc_library(
 )
 
 cc_library(
-    name = "hologram_data_source_availability_fetcher",
+    name = "data_availability_fetcher",
     srcs = ["hologram_data_source_availability_fetcher.cc"],
     hdrs = ["hologram_data_source_availability_fetcher.h"],
     deps = ["//fetcher/proto:hologram_availability_cc_proto", 
@@ -17,10 +17,10 @@ cc_library(
 )
 
 cc_test(
-    name = "hologram_data_source_availability_fetcher_test",
+    name = "data_availability_fetcher_test",
     srcs = ["hologram_data_source_availability_fetcher_test.cc"],
     deps = [
-        "hologram_data_source_availability_fetcher",
+        "data_availability_fetcher",
     ],
     data = ["testdata/hologram_config_test.config", 
             "testdata/hologram_config_malformed.config"]
