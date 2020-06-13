@@ -20,10 +20,10 @@ cc_test(
     name = "hologram_data_source_availability_fetcher_test",
     srcs = ["hologram_data_source_availability_fetcher_test.cc"],
     deps = [
-
         "hologram_data_source_availability_fetcher",
     ],
-    data = ["hologram_config.config", "hologram_config_malformed.config"]
+    data = ["testdata/hologram_config_test.config", 
+            "testdata/hologram_config_malformed.config"]
 )
 
 cc_binary(
