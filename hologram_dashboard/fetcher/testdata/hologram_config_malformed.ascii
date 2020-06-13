@@ -8,11 +8,13 @@ data_source_config {
     kvick_corpus: HOLOGRAM_DEFAULT
 }
 
+# invalid kvick_corpus
 data_source_config {
     source_type: APPS_TITLE_TIER
-    kvick_c: HOLOGRAM_FAKE_PIPE
+    kvick_corpus: HOLOGRAM_FAKE_PIPE
 }
 
+# invalid variable name
 data_source_config {
-    source_type: DEVICE_INTEGRITY_SOURCE
+    source_te: DEVICE_INTEGRITY_SOURCE
 }

@@ -15,6 +15,7 @@
 */
 
 #include "hologram_data_source_availability_fetcher.h"
+
 #include <google/protobuf/util/message_differencer.h>
 
 namespace wireless_android_play_analytics{
@@ -25,13 +26,13 @@ TEST(FetcherTest, InvalidAcquireConfig) {
     ASSERT_DEATH(hologram_fetcher.AcquireConfig(""), "");
     // A path that has a file, but the content of the file is invalid
     ASSERT_DEATH(hologram_fetcher.AcquireConfig(
-        "fetcher/testdata/hologram_config_malformed.config"), "");
+        "fetcher/testdata/hologram_config_malformed.ascii"), "");
 }
 
 TEST(FetcherTest, ValidAcquireConfig) {
     HologramDataSourceAvailabilityFetcher hologram_fetcher;
     // Test correct path.
-    hologram_fetcher.AcquireConfig("fetcher/testdata/hologram_config_test.config");
+    hologram_fetcher.AcquireConfig("fetcher/testdata/hologram_config_test.ascii");
     HologramConfigSet expected_hologram_config;
     // Create a proto with expected values
     HologramConfig* config = expected_hologram_config.add_data_source_config();
@@ -41,7 +42,8 @@ TEST(FetcherTest, ValidAcquireConfig) {
     config->set_source_type(DataSource::USER_ATTRIBUTE);
     config->set_kvick_corpus(Corpus::HOLOGRAM_USER_ATTRIBUTE);
     
-    ASSERT_TRUE(google::protobuf::util::MessageDifferencer::Equals(expected_hologram_config, hologram_fetcher.hologram_configs_));
+    ASSERT_TRUE(google::protobuf::util::MessageDifferencer::Equals
+        (expected_hologram_config, hologram_fetcher.hologram_configs_));
 }
 
 } // namespace wireless_android_play_analytics
