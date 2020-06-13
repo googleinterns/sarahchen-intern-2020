@@ -18,44 +18,45 @@
 #include <sstream>
 using namespace Pistache;
 using namespace std;
+namespace wireless_android_play_analytics {
 
 RequestHandler::RequestHandler()
-    :server(Address(Ipv4::any(), Port(8000))) {
-        init();
+    :server_(Address(Ipv4::any(), Port(8000))) {
+        Init();
 }
 
 RequestHandler::RequestHandler(Address Addr)
-    :server(Addr) {
-        init();
+    :server_(Addr) {
+        Init();
 }
 
-void RequestHandler::init() {
+void RequestHandler::Init() {
     using namespace Rest;
-    server.init();
+    server_.init();
     
-    // Binds the router with correct request methods
-    Routes::Get(router, "/:system", 
-        Routes::bind(&RequestHandler::getDashboard, this));
-    Routes::Get(router, "/:system/:source/:date", 
-        Routes::bind(&RequestHandler::sendCommand, this));
-    Routes::Get(router, "/", 
-        Routes::bind(&RequestHandler::getLastRefreshed, this));
+    // Binds the router with correct request methods.
+    Routes::Get(router_, "/:system", 
+        Routes::bind(&RequestHandler::GetDashboard, this));
+    Routes::Get(router_, "/:system/:source/:date", 
+        Routes::bind(&RequestHandler::SendCommand, this));
+    Routes::Get(router_, "/", 
+        Routes::bind(&RequestHandler::GetLastRefreshed, this));
 
-    server.setHandler(router.handler());
+    server_.setHandler(router_.handler());
 }
 
-void RequestHandler::start() {
-    server.serve();
+void RequestHandler::Start() {
+    server_.serve();
 }
 
-void RequestHandler::getLastRefreshed(const Rest::Request& request, 
+void RequestHandler::GetLastRefreshed(const Rest::Request& request, 
     Http::ResponseWriter response) {
-    // Information within the request is unnecessary
+    // Information within the request is unnecessary.
     UNUSED(request);
     response.send(Http::Code::Ok, "Wed May 19 15:46:11 2020");
 }
 
-void RequestHandler::getDashboard(const Rest::Request& request, 
+void RequestHandler::GetDashboard(const Rest::Request& request, 
     Http::ResponseWriter response) {
     vector<string> dataSources {"SPAM", "PLAY_COUNTRY", 
         "APP_COUNTRY_PUBLISH_TIME", "QUERY_CATEGORY_SOURCE", 
@@ -94,7 +95,7 @@ void RequestHandler::getDashboard(const Rest::Request& request,
     stream.ends();
 }
 
-void RequestHandler::sendCommand(const Rest::Request& request, 
+void RequestHandler::SendCommand(const Rest::Request& request, 
     Http::ResponseWriter response) {
         string date = request.param(":date").as<string>();
         string system = request.param(":system").as<string>();
@@ -103,3 +104,5 @@ void RequestHandler::sendCommand(const Rest::Request& request,
             + " on " + system + " for " + date;
         response.send(Http::Code::Ok, command);
 }
+
+} // namespace wireless_android_play_analytics
