@@ -19,6 +19,7 @@
 #include <pistache/endpoint.h>
 
 using namespace Pistache;
+
 namespace wireless_android_play_analytics {
 
 class RequestHandler {
