@@ -19,33 +19,29 @@
 #include <vector>
 #include <sstream>
 
-using namespace Pistache;
-
-using namespace std;
-
 namespace wireless_android_play_analytics {
 
 RequestHandler::RequestHandler()
-    :server_(Address(Ipv4::any(), Port(8000))) {
+    :server_(Pistache::Address(Pistache::Ipv4::any(), Pistache::Port(8000))) {
         Init();
 }
 
-RequestHandler::RequestHandler(Address Addr)
+RequestHandler::RequestHandler(Pistache::Address Addr)
     :server_(Addr) {
         Init();
 }
 
 void RequestHandler::Init() {
-    using namespace Rest;
     server_.init();
     
     // Binds the router with correct request methods.
-    Routes::Get(router_, "/:system", 
-        Routes::bind(&RequestHandler::GetDashboard, this));
-    Routes::Get(router_, "/:system/:source/:date", 
-        Routes::bind(&RequestHandler::SendCommand, this));
-    Routes::Get(router_, "/", 
-        Routes::bind(&RequestHandler::GetLastRefreshed, this));
+    Pistache::Rest::Routes::Get(router_, "/:system", 
+        Pistache::Rest::Routes::bind (&RequestHandler::GetDashboard, this));
+    Pistache::Rest::Routes::Get(router_, "/:system/:source/:date", 
+        Pistache::Rest::Routes::bind
+            (&RequestHandler::PopulateBackfillCommand, this));
+    Pistache::Rest::Routes::Get(router_, "/", 
+        Pistache::Rest::Routes::bind (&RequestHandler::GetLastRefreshed, this));
 
     server_.setHandler(router_.handler());
 }
@@ -54,24 +50,24 @@ void RequestHandler::Start() {
     server_.serve();
 }
 
-void RequestHandler::GetLastRefreshed(const Rest::Request& request, 
-    Http::ResponseWriter response) {
+void RequestHandler::GetLastRefreshed(const Pistache::Rest::Request& request, 
+    Pistache::Http::ResponseWriter response) {
     // Information within the request is unnecessary.
     UNUSED(request);
-    response.send(Http::Code::Ok, "Wed May 19 15:46:11 2020");
+    response.send(Pistache::Http::Code::Ok, "Wed May 19 15:46:11 2020");
 }
 
-void RequestHandler::GetDashboard(const Rest::Request& request, 
-    Http::ResponseWriter response) {
+void RequestHandler::GetDashboard(const Pistache::Rest::Request& request, 
+    Pistache::Http::ResponseWriter response) {
     // TODO(alexanderlin): Use real data once I get access to them.
-    vector<string> dataSources {"SPAM", "PLAY_COUNTRY", 
+    std::vector<std::string> dataSources {"SPAM", "PLAY_COUNTRY", 
         "APP_COUNTRY_PUBLISH_TIME", "QUERY_CATEGORY_SOURCE", 
             "UNIFIED_USER_DATA_SOURCE"};
-    vector<string> dates {"5/19/2020", "5/18/2020", "5/17/2020", "5/16/2020", 
+    std::vector<std::string> dates {"5/19/2020", "5/18/2020", "5/17/2020", "5/16/2020", 
         "5/15/2020", "5/14/2020", "5/13/2020"};
-    string system_in = request.param(":system").as<string>();
-    string status = "111010111110001011100100111000100110001010000010100111010";
-    auto stream = response.stream(Http::Code::Ok);
+    std::string system_in = request.param(":system").as<std::string>();
+    std::string status = "111010111110001011100100111000100110001010000010100111010";
+    auto stream = response.stream(Pistache::Http::Code::Ok);
     const char* system = system_in.c_str();
     // track the online or offline bits
     int i = 0;
@@ -81,10 +77,10 @@ void RequestHandler::GetDashboard(const Rest::Request& request,
     stream << "<table id=\"" << system << "%TEXT\">\n";
     stream << "\t<br/>\n\t<p>" << system << "</p>\n";
 
-    for(const string &data : dataSources) {
+    for(const std::string &data : dataSources) {
         stream << "\t<tr>\n";
         stream << "\t\t<td>" << data.c_str() << "&nbsp&nbsp</td>\n";
-        for(const string& date : dates) {
+        for(const std::string& date : dates) {
             stream << "\t\t<td class=";
             if (status[i++] == '1') {
                 stream << "\"online\"";
@@ -101,14 +97,15 @@ void RequestHandler::GetDashboard(const Rest::Request& request,
     stream.ends();
 }
 
-void RequestHandler::SendCommand(const Rest::Request& request, 
-    Http::ResponseWriter response) {
-        string date = request.param(":date").as<string>();
-        string system = request.param(":system").as<string>();
-        string source = request.param(":source").as<string>();
-        string command = "sample command to run backfill for " + source 
+void RequestHandler::PopulateBackfillCommand
+    (const Pistache::Rest::Request& request, 
+        Pistache::Http::ResponseWriter response) {
+        std::string date = request.param(":date").as<std::string>();
+        std::string system = request.param(":system").as<std::string>();
+        std::string source = request.param(":source").as<std::string>();
+        std::string command = "sample command to run backfill for " + source 
             + " on " + system + " for " + date;
-        response.send(Http::Code::Ok, command);
+        response.send(Pistache::Http::Code::Ok, command);
 }
 
 } // namespace wireless_android_play_analytics
