@@ -15,6 +15,8 @@
 */
 
 const time_id = "REFRESHED";
+// Using hard coded values here because real data are not provided yet.
+// TODO(alexanderlin): Replace these with real data once fetcher is done.
 const dataSources = ["SPAM", "PLAY_COUNTRY", "APP_COUNTRY_PUBLISH_TIME", 
     "QUERY_CATEGORY_SOURCE", "UNIFIED_USER_DATA_SOURCE"];
 const systemSources = ["CHIPPER", "CHIPPER_GDPR"];
