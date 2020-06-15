@@ -22,7 +22,7 @@ cc_test(
     deps = [
         "data_availability_fetcher",
     ],
-    data = ["testdata/hologram_config_test.ascii", 
+    data = ["testdata/hologram_config_valid.ascii", 
             "testdata/hologram_config_malformed.ascii"]
 )
 

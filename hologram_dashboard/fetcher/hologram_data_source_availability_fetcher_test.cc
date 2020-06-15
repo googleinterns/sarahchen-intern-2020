@@ -32,7 +32,7 @@ TEST(FetcherTest, InvalidAcquireConfig) {
 TEST(FetcherTest, ValidAcquireConfig) {
     HologramDataSourceAvailabilityFetcher hologram_fetcher;
     // Test correct path.
-    hologram_fetcher.AcquireConfig("fetcher/testdata/hologram_config_test.ascii");
+    hologram_fetcher.AcquireConfig("fetcher/testdata/hologram_config_valid.ascii");
     HologramConfigSet expected_hologram_config;
     // Create a proto with expected values
     HologramConfig* config = expected_hologram_config.add_data_source_config();
@@ -42,7 +42,7 @@ TEST(FetcherTest, ValidAcquireConfig) {
     config->set_source_type(DataSource::USER_ATTRIBUTE);
     config->set_kvick_corpus(Corpus::HOLOGRAM_USER_ATTRIBUTE);
     
-    ASSERT_TRUE(google::protobuf::util::MessageDifferencer::Equals
+    EXPECT_TRUE(google::protobuf::util::MessageDifferencer::Equals
         (expected_hologram_config, hologram_fetcher.hologram_configs_));
 }
 
