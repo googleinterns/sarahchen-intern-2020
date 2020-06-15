@@ -71,6 +71,13 @@ http_archive(
     urls = ["https://github.com/gflags/gflags/archive/master.zip"],
 )
 
+#GTest
+http_archive(
+    name = "com_google_gtest",
+    strip_prefix = "googletest-master",
+    urls = ["https://github.com/google/googletest/archive/master.zip"],
+)
+
 # Protobuf
 http_archive(
     name = "com_google_protobuf",

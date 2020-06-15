@@ -1,0 +1,9 @@
+data_source_config {
+    source_type: APP_TYPE_SOURCE
+    kvick_corpus: HOLOGRAM_DEFAULT
+}
+
+data_source_config {
+    source_type: USER_ATTRIBUTE
+    kvick_corpus: HOLOGRAM_USER_ATTRIBUTE
+}
