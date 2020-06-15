@@ -6,14 +6,21 @@ cc_library(
 )
 
 cc_library(
+    name = "flags",
+    srcs = ["flags.cc"],
+    hdrs = ["flags.h"],
+    deps = ["@com_github_gflags_gflags//:gflags"]
+)
+
+cc_library(
     name = "data_availability_fetcher",
     srcs = ["hologram_data_source_availability_fetcher.cc"],
     hdrs = ["hologram_data_source_availability_fetcher.h"],
     deps = ["//fetcher/proto:hologram_availability_cc_proto", 
             "//fetcher/proto:hologram_config_cc_proto", 
-            "@com_github_gflags_gflags//:gflags",
             "@com_google_gtest//:gtest",
-            "hologram_data_fetcher_lib"],
+            "hologram_data_fetcher_lib",
+            "flags"],
 )
 
 cc_test(

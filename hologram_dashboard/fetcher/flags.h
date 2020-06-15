@@ -14,9 +14,9 @@
 *   limitations under the License.
 */
 
-#include "hologram_data_source_availability_fetcher.h"
+#pragma once
+#include <gflags/gflags.h>
 
-int main(int argc, char* argv[]){
-    // TODO(alexanderlin): add implementation.
-    return 0;
-}
+DECLARE_string(chipper_batch_job_cell);
+DECLARE_string(chipper_gdpr_batch_job_cell);
+DECLARE_string(config_file_path);

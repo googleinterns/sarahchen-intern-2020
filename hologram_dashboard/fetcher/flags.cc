@@ -14,9 +14,11 @@
 *   limitations under the License.
 */
 
-#include "hologram_data_source_availability_fetcher.h"
+#include "flags.h"
 
-int main(int argc, char* argv[]){
-    // TODO(alexanderlin): add implementation.
-    return 0;
-}
+DEFINE_string(chipper_batch_job_cell, "", 
+    "The job running cell of Chipper Batch.");
+DEFINE_string(chipper_gdpr_batch_job_cell, "", 
+    "The job running cell of Chipper GDPR pipeline.");
+DEFINE_string(config_file_path, "", 
+    "Specifies where the config file can be located.");

@@ -46,6 +46,49 @@ TEST(FetcherTest, ValidAcquireConfig) {
         (expected_hologram_config, hologram_fetcher.hologram_configs_));
 }
 
+TEST(FetcherTest, MissingFlags) {
+    HologramDataSourceAvailabilityFetcher hologram_fetcher;
+    // Missing one flag.
+    int argc = 3;
+    // Allocate space for each of the arguments.
+    char arg1[35];
+    char arg2[35];
+    char arg3[35];
+    char* argv[3] = {arg1, arg2, arg3};
+    sprintf(arg1, "fetcher_main");
+    sprintf(arg2, "-chipper_batch_job_cell=cv");
+    sprintf(arg3, "-config_file_path=path");
+    ASSERT_DEATH(hologram_fetcher.ParseFlags(argc, argv), "");
+    // Missing different flag.
+    sprintf(arg3, "-chipper_gdpr_batch_job_cell=ef");
+    ASSERT_DEATH(hologram_fetcher.ParseFlags(argc, argv), "");
+}
+
+TEST(FetcherTest, ValidFlags) {
+    HologramDataSourceAvailabilityFetcher hologram_fetcher;
+    int argc = 4;
+    char arg1[35];
+    char arg2[35];
+    char arg3[35];
+    char arg4[35];
+    char* argv[4] = {arg1, arg2, arg3, arg4};
+    sprintf(arg1, "fetcher_main");
+    sprintf(arg2, "-chipper_batch_job_cell=cv");
+    sprintf(arg3, "-config_file_path=path");
+    sprintf(arg4, "-chipper_gdpr_batch_job_cell=ef");
+    EXPECT_EQ("path", hologram_fetcher.ParseFlags(argc, argv));
+    for (auto it = hologram_fetcher.system_to_cell_map_.begin();
+        it != hologram_fetcher.system_to_cell_map_.end(); it++) {
+        EXPECT_TRUE(it->first == "CHIPPER" || it->first == "CHIPPER_GDPR");
+        if (it->first == "CHIPPER") {
+            EXPECT_EQ(it->second, "cv");
+        }
+        else {
+            EXPECT_EQ(it->second, "ef");
+        }
+    }
+}
+
 } // namespace wireless_android_play_analytics
 
 int main(int argc, char *argv[]) {
