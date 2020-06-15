@@ -30,6 +30,6 @@ cc_binary(
     name = "fetcher_main",
     srcs = ["fetcher_main.cc"],
     deps = [
-        "hologram_data_source_availability_fetcher"
+        "data_availability_fetcher"
     ],
 )
