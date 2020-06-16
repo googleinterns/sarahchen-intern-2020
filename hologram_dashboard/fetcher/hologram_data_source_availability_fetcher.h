@@ -24,6 +24,7 @@
 #include <fstream>
 #include <google/protobuf/text_format.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
+#include <chrono>
 #include "fetcher/proto/hologram_availability.pb.h"
 #include "fetcher/proto/hologram_config.pb.h"
 #include "hologram_data_fetcher.h"
@@ -48,7 +49,10 @@ private:
     // Poulates hologram_config_ and ends the program if the path provided leads
     // to wrong file or malformed file.
     void AcquireConfig(const std::string& config_file_path);
-    
+
+    // Update the proto for a data source given all the necessary information.
+    void UpdateProto(std::string system, std::time_t time, 
+        DataSource data_source, Status status);
     std::unordered_map<std::string, std::string> system_to_cell_map_;
     HologramConfigSet hologram_configs_;
     std::unordered_map<std::string, HologramDataAvailability> 
