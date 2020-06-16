@@ -34,4 +34,59 @@ void HologramDataSourceAvailabilityFetcher::
                                                 &hologram_configs_));
 }
 
+void HologramDataSourceAvailabilityFetcher::
+GetStatus(std::time_t time) {
+    struct tm* time_struct;
+    // Need to hardcode current directory since bazel is built at a different
+    // directory.
+    const std::string current_dir = "/usr/local/google/home/alexanderlin"
+        + "/sarahchen-intern-2020/hologram_dashboard/fetcher/testdata/Database";
+    time_struct = localtime(&time);
+    // tm_month is 0 indexed.
+    std::string month_folder = std::to_string(time_struct->tm_mon + 1);
+    // If the month is 1 digit, prepend it with a 0.
+    if (month.size() == 1) {
+        month = "0" + month;
+    }
+    month += "/";
+    std::string day_folder = std::to_string(time_struct->tm_mday);
+    // If the day is 1 digit, prepend it with a 0.
+    if (day.size() == 1) {
+        day = "0" + day;
+    }
+    day += "/";
+    // tm_month represents years after 1900, so need to append 1900 to it to
+    // reflect calendar year.
+    std::string year_folder = std::to_string(time_struct->tm_year + 1900);
+    year += "/"
+    
+    for(auto it = system_to_cell_map_.begin(); it != system_to_cell_map_.end();
+        ++it){
+        for(int i = 0; i < hologram_configs_.data_source_config_size(); ++i) {
+        HologramConfig config = hologram_configs_.data_source_config(i);
+        // Get the latest update time for each of the corpusfor each of the
+        // systems.
+        std::pair<std::string, Corpus> system_corpus_pair = 
+            std::make_pair(it->first, config.kvick_corpus());
+        if (corpus_to_last_update_map_.find(system_corpus_pair) == 
+            corpus_to_last_update_map_.end()) {
+            std::filesystem::path update_coordinator_path = current_dir 
+                + it->second + "update_coordinator_done/" + year_folder 
+                + month_folder + day_folder;
+            std::filesystem::path update_lookup_server_path = current_dir 
+                + it->second + "update_lookup_server_done/" + year_folder 
+                + month_folder + day_folder;
+            // If one of the folders doesn't even exist then this job is not
+            // ran yet and definitely did not include the data source.
+            if (!std::filesystem::exists(path) || 
+                !std::filesystem::exists(path)) {
+                    UpdateProto(it->first, time, config.source_type(), 
+                        Status::DATA_NOT_INGESTED_ON_TIME);
+                }
+        }
+
+    }
+    }
+}
+
 } // namespace wireless_android_play_analytics

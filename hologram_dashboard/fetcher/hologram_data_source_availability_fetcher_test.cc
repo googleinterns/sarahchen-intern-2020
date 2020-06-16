@@ -46,6 +46,19 @@ TEST(FetcherTest, ValidAcquireConfig) {
         (expected_hologram_config, hologram_fetcher.hologram_configs_));
 }
 
+TEST(FetcherTest, GetStatus) {
+    HologramDataSourceAvailabilityFetcher hologram_fetcher;
+    struct tm time;
+    time.tm_mday = 4;
+    time.tm_mon = 5; 
+    time.tm_year = 120;
+    time.tm_hour = 0;
+    time.tm_min = 0;
+    time.tm_sec = 0;
+    time_t time_in = mktime(&time);
+    hologram_fetcher.GetStatus(time_in);
+}
+
 } // namespace wireless_android_play_analytics
 
 int main(int argc, char *argv[]) {

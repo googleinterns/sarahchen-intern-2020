@@ -22,6 +22,9 @@
 #include <gtest/gtest.h>
 #include <assert.h>
 #include <fstream>
+#include <time.h>
+#include <chrono>
+#include <filesystem>
 #include <google/protobuf/text_format.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 #include "fetcher/proto/hologram_availability.pb.h"
@@ -48,11 +51,17 @@ private:
     // Poulates hologram_config_ and ends the program if the path provided leads
     // to wrong file or malformed file.
     void AcquireConfig(const std::string& config_file_path);
+
+    FRIEND_TEST(FetcherTest, GetStatus);
+    // Populates the data_sources_availability_map_ for the specified day
+    void GetStatus(std::time_t time);
     
     std::unordered_map<std::string, std::string> system_to_cell_map_;
     HologramConfigSet hologram_configs_;
-    std::unordered_map<std::string, HologramDataAvailability> 
-        data_sources_availability_map_;
+    std::unordered_map<std::pair<std::string, DataSource>, 
+        HologramDataAvailability> data_sources_system_availability_map_;
+    std::unordered_map<std::pair<std::string, Corpus>, 
+        std::string> corpus_system_to_last_update_map_;
 };
 
 } // namespace wireless_android_play_analytics
