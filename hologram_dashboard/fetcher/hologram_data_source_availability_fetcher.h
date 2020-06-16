@@ -50,13 +50,22 @@ private:
     // to wrong file or malformed file.
     void AcquireConfig(const std::string& config_file_path);
 
-    // Update the proto for a data source given all the necessary information.
+    FRIEND_TEST(FetcherTest, UpdateHistoryNewProto);
+    FRIEND_TEST(FetcherTest, UpdateHistorySameDay);
+    FRIEND_TEST(FetcherTest, UpdateHistoryIncrementHistory);
+    FRIEND_TEST(FetcherTest, UpdateHistoryOverflowHistory);
+    // Updates the history of a specified proto
+    void UpdateHistory (HologramDataAvailability& hda, std::time_t time, 
+        StatusType status);
+
+    FRIEND_TEST(FetcherTest, UpdateProto);
+    // Updates the proto for a data source given all the necessary information.
     void UpdateProto(std::string system, std::time_t time, 
-        DataSource data_source, Status status);
+        DataSource data_source, StatusType status);
     std::unordered_map<std::string, std::string> system_to_cell_map_;
     HologramConfigSet hologram_configs_;
-    std::unordered_map<std::string, HologramDataAvailability> 
-        data_sources_availability_map_;
+    std::unordered_map<std::string, std::unordered_map<DataSource,
+        HologramDataAvailability>> data_sources_availability_map_;
 };
 
 } // namespace wireless_android_play_analytics
