@@ -15,6 +15,7 @@
 */
 
 #include "hologram_data_source_availability_fetcher.h"
+#include "gmock/gmock.h"
 
 #include <google/protobuf/util/message_differencer.h>
 
@@ -64,16 +65,7 @@ TEST(FetcherTest, ValidFlags) {
     absl::SetFlag(&FLAGS_hologram_source_config_file_path, "path");
     absl::SetFlag(&FLAGS_chipper_gdpr_batch_job_cell, "ef");
     EXPECT_EQ("path", hologram_fetcher.ParseFlags());
-    for (auto it = hologram_fetcher.system_to_cell_map_.begin();
-        it != hologram_fetcher.system_to_cell_map_.end(); it++) {
-        EXPECT_TRUE(it->first == "CHIPPER" || it->first == "CHIPPER_GDPR");
-        if (it->first == "CHIPPER") {
-            EXPECT_EQ(it->second, "cv");
-        }
-        else {
-            EXPECT_EQ(it->second, "ef");
-        }
-    }
+    EXPECT_THAT(hologram_fetcher.system_to_cell_map_, UnorderedElementsAre(Pair("CHIPPER", "cv"), Pair("CHIPPER_GDPR", "ef")));
 }
 
 } // namespace wireless_android_play_analytics
