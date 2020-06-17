@@ -55,8 +55,8 @@ private:
     FRIEND_TEST(FetcherTest, UpdateHistoryIncrementHistory);
     FRIEND_TEST(FetcherTest, UpdateHistoryOverflowHistory);
     // Updates the history of a specified proto
-    void UpdateHistory (HologramDataAvailability& hda, std::time_t time, 
-        StatusType status);
+    void UpdateHistory (HologramDataAvailability* availability_proto, 
+        std::time_t time, StatusType status);
 
     FRIEND_TEST(FetcherTest, UpdateProto);
     // Updates the proto for a data source given all the necessary information.
@@ -65,7 +65,7 @@ private:
     std::unordered_map<std::string, std::string> system_to_cell_map_;
     HologramConfigSet hologram_configs_;
     std::unordered_map<std::string, std::unordered_map<DataSource,
-        HologramDataAvailability>> data_sources_availability_map_;
+        HologramDataAvailability>> system_to_data_source_availability_;
 };
 
 } // namespace wireless_android_play_analytics

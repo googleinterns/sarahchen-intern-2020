@@ -54,7 +54,7 @@ TEST(FetcherTest, UpdateHistoryNewProto) {
     DataSourceDetail detail;
     detail.set_date((int) time);
     detail.set_status(status);
-    hologram_fetcher.UpdateHistory(hda, time, status);
+    hologram_fetcher.UpdateHistory(&hda, time, status);
     EXPECT_EQ(hda.history_size(), 1);
     EXPECT_TRUE(google::protobuf::util::MessageDifferencer::Equals(
         hda.history(0), detail));
@@ -71,7 +71,7 @@ TEST(FetcherTest, UpdateHistorySameDay) {
     DataSourceDetail* history = hda.add_history();
     history->set_date((int) time);
     history->set_status(status);
-    hologram_fetcher.UpdateHistory(hda, time, status);
+    hologram_fetcher.UpdateHistory(&hda, time, status);
     ASSERT_EQ(hda.history_size(), 1);
     EXPECT_TRUE(google::protobuf::util::MessageDifferencer::Equals(
         hda.history(0), detail));
@@ -95,7 +95,7 @@ TEST(FetcherTest, UpdateHistoryIncrementHistory) {
     std::time_t day_late_time = mktime(&time);
     detail.set_date((int) day_late_time);
     detail.set_status(status);
-    hologram_fetcher.UpdateHistory(hda, day_late_time, status);
+    hologram_fetcher.UpdateHistory(&hda, day_late_time, status);
     ASSERT_EQ(hda.history_size(), 2);
     EXPECT_TRUE(google::protobuf::util::MessageDifferencer::Equals(
         hda.history(1), detail));
@@ -103,7 +103,7 @@ TEST(FetcherTest, UpdateHistoryIncrementHistory) {
     time.tm_mon++;
     std::time_t mon_late_time = mktime(&time);
     detail.set_date((int) mon_late_time);
-    hologram_fetcher.UpdateHistory(hda, mon_late_time, status);
+    hologram_fetcher.UpdateHistory(&hda, mon_late_time, status);
     ASSERT_EQ(hda.history_size(), 3);
     EXPECT_TRUE(google::protobuf::util::MessageDifferencer::Equals(
         hda.history(2), detail));
@@ -111,7 +111,7 @@ TEST(FetcherTest, UpdateHistoryIncrementHistory) {
     time.tm_year++;
     std::time_t year_late_time = mktime(&time);
     detail.set_date((int) year_late_time);
-    hologram_fetcher.UpdateHistory(hda, year_late_time, status);
+    hologram_fetcher.UpdateHistory(&hda, year_late_time, status);
     ASSERT_EQ(hda.history_size(), 4);
     EXPECT_TRUE(google::protobuf::util::MessageDifferencer::Equals(
         hda.history(3), detail));
@@ -136,7 +136,7 @@ TEST(FetcherTest, UpdateHistoryOverflowHistory) {
     time.tm_mday++;
     detail.set_date((int) mktime(&time));
     detail.set_status(status);
-    hologram_fetcher.UpdateHistory(hda, mktime(&time), status);
+    hologram_fetcher.UpdateHistory(&hda, mktime(&time), status);
     ASSERT_EQ(hda.history_size(), 7);
     EXPECT_TRUE(google::protobuf::util::MessageDifferencer::Equals(
         hda.history(6), detail));
@@ -158,11 +158,11 @@ TEST(FetcherTest, UpdateProto) {
     DataSource data_source = DataSource::APPS_DAILY_DATA_SOURCE;
     StatusType status = StatusType::SUCCESS;
     hologram_fetcher.UpdateProto(system, base_time, data_source, status);
-    ASSERT_NE(hologram_fetcher.data_sources_availability_map_.find(system),
-        hologram_fetcher.data_sources_availability_map_.end());
+    ASSERT_NE(hologram_fetcher.system_to_data_source_availability_.find(system),
+        hologram_fetcher.system_to_data_source_availability_.end());
     std::unordered_map<DataSource,HologramDataAvailability>& 
         data_to_availability_map = 
-        hologram_fetcher.data_sources_availability_map_[system];
+        hologram_fetcher.system_to_data_source_availability_[system];
     ASSERT_NE(data_to_availability_map.find(data_source), 
         data_to_availability_map.end());
     HologramDataAvailability hda;
@@ -170,10 +170,10 @@ TEST(FetcherTest, UpdateProto) {
     DataSourceDetail* latest_status = hda.mutable_latest_status();
     latest_status->set_date((int) base_time);
     latest_status->set_status(status);
-    hologram_fetcher.UpdateHistory(hda, base_time, status);
+    hologram_fetcher.UpdateHistory(&hda, base_time, status);
     EXPECT_TRUE(google::protobuf::util::MessageDifferencer::Equals(
-        hda, 
-        hologram_fetcher.data_sources_availability_map_[system][data_source]));
+        hda, hologram_fetcher.system_to_data_source_availability_
+        [system][data_source]));
 }
 
 } // namespace wireless_android_play_analytics

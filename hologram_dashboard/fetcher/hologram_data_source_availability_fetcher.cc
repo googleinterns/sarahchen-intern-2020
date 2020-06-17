@@ -37,23 +37,25 @@ void HologramDataSourceAvailabilityFetcher::
 void HologramDataSourceAvailabilityFetcher::UpdateProto(std::string system, 
     std::time_t time, DataSource data_source, StatusType status) {
     std::unordered_map<DataSource,HologramDataAvailability>& 
-        data_to_availability_map = data_sources_availability_map_[system];
-    HologramDataAvailability& hda = data_to_availability_map[data_source];
-    DataSourceDetail* latest_status = hda.mutable_latest_status();
-    if (!hda.has_data_source()) {
-        hda.set_data_source(data_source);
+        data_to_availability_map = system_to_data_source_availability_[system];
+    HologramDataAvailability& availability_proto = 
+        data_to_availability_map[data_source];
+    DataSourceDetail* latest_status = availability_proto.mutable_latest_status();
+    if (!availability_proto.has_data_source()) {
+        availability_proto.set_data_source(data_source);
     }
     latest_status->set_date((int) time);
     latest_status->set_status(status);
-    UpdateHistory(hda, time, status);
+    UpdateHistory(&availability_proto, time, status);
 }
 
 void HologramDataSourceAvailabilityFetcher::UpdateHistory(
-    HologramDataAvailability& hda, std::time_t time, StatusType status) {
-    if (hda.history_size() != 0) {
+    HologramDataAvailability* availability_proto, std::time_t time, StatusType status) {
+    if (availability_proto->history_size() != 0) {
         // Acquire the latest history
-        auto latest_history = hda.history(hda.history_size() - 1);
-        time_t history_time = latest_history.date();
+        DataSourceDetail* latest_history = availability_proto->mutable_history(
+            availability_proto->history_size() - 1);
+        time_t history_time = latest_history->date();
         struct tm time_tm;
         struct tm history_time_tm;
         // Have to use localtime_r since localtime will overwrite each other
@@ -66,19 +68,19 @@ void HologramDataSourceAvailabilityFetcher::UpdateHistory(
             time_tm.tm_mon == history_time_tm.tm_mon &&
             time_tm.tm_mday == history_time_tm.tm_mday) {
             // If it's the same day just update the status.
-            latest_history.set_date((int) time);
-            latest_history.set_status(status);
+            latest_history->set_date((int) time);
+            latest_history->set_status(status);
             return;
         }
     }
     // Add a history if either its empty or it is later than latest history.
-    DataSourceDetail* detail = hda.add_history();
+    DataSourceDetail* detail = availability_proto->add_history();
     detail->set_date((int) time);
     detail->set_status(status);
 
-    if (hda.history_size() > 7) {
+    if (availability_proto->history_size() > 7) {
         // Remove the oldest history
-        auto history_list = hda.mutable_history();
+        auto history_list = availability_proto->mutable_history();
         history_list->DeleteSubrange(0, 1);
     }
 }
