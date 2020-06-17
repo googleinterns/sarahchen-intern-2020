@@ -1,0 +1,20 @@
+data_source_config {
+    source_type: APP_TYPE_SOURCE
+    kvick_corpus: HOLOGRAM_DEFAULT
+}
+
+data_source_config {
+    source_type: APPS_DAILY_DATA_SOURCE
+    kvick_corpus: HOLOGRAM_DEFAULT
+}
+
+# invalid kvick_corpus
+data_source_config {
+    source_type: APPS_TITLE_TIER
+    kvick_corpus: HOLOGRAM_FAKE_PIPE
+}
+
+# invalid variable name
+data_source_config {
+    source_te: DEVICE_INTEGRITY_SOURCE
+}

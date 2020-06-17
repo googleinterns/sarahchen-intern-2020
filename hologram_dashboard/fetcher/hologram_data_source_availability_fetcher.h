@@ -19,6 +19,7 @@
 #include <string>
 #include <unordered_map>
 #include <gflags/gflags.h>
+#include <gtest/gtest.h>
 #include <assert.h>
 #include <fstream>
 #include <google/protobuf/text_format.h>
@@ -42,6 +43,8 @@ public:
     void Process() override;
 
 private:
+    FRIEND_TEST(FetcherTest, InvalidAcquireConfig);
+    FRIEND_TEST(FetcherTest, ValidAcquireConfig);
     // Poulates hologram_config_ and ends the program if the path provided leads
     // to wrong file or malformed file.
     void AcquireConfig(const std::string& config_file_path);
