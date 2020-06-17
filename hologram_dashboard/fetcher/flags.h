@@ -16,7 +16,7 @@
 
 #pragma once
 #include <string>
-#include <absl/flags/flag.h>
+#include "absl/flags/flag.h"
 
 ABSL_DECLARE_FLAG(std::string, chipper_batch_job_cell);
 ABSL_DECLARE_FLAG(std::string, chipper_gdpr_batch_job_cell);

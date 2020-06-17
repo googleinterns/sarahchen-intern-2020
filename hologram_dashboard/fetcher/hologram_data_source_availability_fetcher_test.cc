@@ -50,19 +50,18 @@ TEST(FetcherTest, MissingFlags) {
     HologramDataSourceAvailabilityFetcher hologram_fetcher;
     // Missing one flag.
     absl::SetFlag(&FLAGS_chipper_batch_job_cell, "ja");
-    absl::SetFlag(&FLAGS_config_file_path, "path");
+    absl::SetFlag(&FLAGS_hologram_source_config_file_path, "path");
     ASSERT_DEATH(hologram_fetcher.ParseFlags(), "");
     // Missing different flag.
     absl::SetFlag(&FLAGS_chipper_gdpr_batch_job_cell, "cv");
-    absl::SetFlag(&FLAGS_config_file_path, "");
+    absl::SetFlag(&FLAGS_hologram_source_config_file_path, "");
     ASSERT_DEATH(hologram_fetcher.ParseFlags(), "");
 }
 
 TEST(FetcherTest, ValidFlags) {
     HologramDataSourceAvailabilityFetcher hologram_fetcher;
-    int argc = 4;
     absl::SetFlag(&FLAGS_chipper_batch_job_cell, "cv");
-    absl::SetFlag(&FLAGS_config_file_path, "path");
+    absl::SetFlag(&FLAGS_hologram_source_config_file_path, "path");
     absl::SetFlag(&FLAGS_chipper_gdpr_batch_job_cell, "ef");
     EXPECT_EQ("path", hologram_fetcher.ParseFlags());
     for (auto it = hologram_fetcher.system_to_cell_map_.begin();
