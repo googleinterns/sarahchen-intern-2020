@@ -16,9 +16,9 @@
 
 #include "flags.h"
 
-DEFINE_string(chipper_batch_job_cell, "", 
+ABSL_FLAG(std::string, chipper_batch_job_cell, "", 
     "The job running cell of Chipper Batch.");
-DEFINE_string(chipper_gdpr_batch_job_cell, "", 
+ABSL_FLAG(std::string, chipper_gdpr_batch_job_cell, "", 
     "The job running cell of Chipper GDPR pipeline.");
-DEFINE_string(config_file_path, "", 
+ABSL_FLAG(std::string, hologram_source_config_file_path, "", 
     "Specifies where the config file can be located.");

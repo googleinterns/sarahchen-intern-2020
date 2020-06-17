@@ -18,5 +18,7 @@
 
 int main(int argc, char* argv[]){
     // TODO(alexanderlin): add implementation.
+    // Parse flag
+    absl::ParseCommandLine(argc, argv);
     return 0;
 }

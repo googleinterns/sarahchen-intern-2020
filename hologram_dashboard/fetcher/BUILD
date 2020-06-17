@@ -9,7 +9,7 @@ cc_library(
     name = "flags",
     srcs = ["flags.cc"],
     hdrs = ["flags.h"],
-    deps = ["@com_github_gflags_gflags//:gflags"]
+    deps = ["@com_google_absl//absl"]
 )
 
 cc_library(

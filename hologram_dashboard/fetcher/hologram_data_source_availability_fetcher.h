@@ -16,7 +16,6 @@
 
 #pragma once
 #include <iostream>
-#include <string>
 #include <unordered_map>
 #include <gtest/gtest.h>
 #include <assert.h>
@@ -46,7 +45,7 @@ private:
     FRIEND_TEST(FetcherTest, ValidFlags);
     // Populates system_to_cell_map_ given the arguments and returns the path
     // to the config file.
-    std::string ParseFlags(int argc, char* argv[]);
+    std::string ParseFlags();
     
     std::unordered_map<std::string, std::string> system_to_cell_map_;
     HologramConfigSet hologram_configs_;

@@ -15,8 +15,9 @@
 */
 
 #pragma once
-#include <gflags/gflags.h>
+#include <string>
+#include <absl/flags/flag.h>
 
-DECLARE_string(chipper_batch_job_cell);
-DECLARE_string(chipper_gdpr_batch_job_cell);
-DECLARE_string(config_file_path);
+ABSL_DECLARE_FLAG(std::string, chipper_batch_job_cell);
+ABSL_DECLARE_FLAG(std::string, chipper_gdpr_batch_job_cell);
+ABSL_DECLARE_FLAG(std::string, hologram_source_config_file_path);

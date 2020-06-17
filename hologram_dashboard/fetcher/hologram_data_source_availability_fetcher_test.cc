@@ -49,34 +49,22 @@ TEST(FetcherTest, ValidAcquireConfig) {
 TEST(FetcherTest, MissingFlags) {
     HologramDataSourceAvailabilityFetcher hologram_fetcher;
     // Missing one flag.
-    int argc = 3;
-    // Allocate space for each of the arguments.
-    char arg1[35];
-    char arg2[35];
-    char arg3[35];
-    char* argv[3] = {arg1, arg2, arg3};
-    sprintf(arg1, "fetcher_main");
-    sprintf(arg2, "-chipper_batch_job_cell=cv");
-    sprintf(arg3, "-config_file_path=path");
-    ASSERT_DEATH(hologram_fetcher.ParseFlags(argc, argv), "");
+    absl::SetFlag(&FLAGS_chipper_batch_job_cell, "ja");
+    absl::SetFlag(&FLAGS_config_file_path, "path");
+    ASSERT_DEATH(hologram_fetcher.ParseFlags(), "");
     // Missing different flag.
-    sprintf(arg3, "-chipper_gdpr_batch_job_cell=ef");
-    ASSERT_DEATH(hologram_fetcher.ParseFlags(argc, argv), "");
+    absl::SetFlag(&FLAGS_chipper_gdpr_batch_job_cell, "cv");
+    absl::SetFlag(&FLAGS_config_file_path, "");
+    ASSERT_DEATH(hologram_fetcher.ParseFlags(), "");
 }
 
 TEST(FetcherTest, ValidFlags) {
     HologramDataSourceAvailabilityFetcher hologram_fetcher;
     int argc = 4;
-    char arg1[35];
-    char arg2[35];
-    char arg3[35];
-    char arg4[35];
-    char* argv[4] = {arg1, arg2, arg3, arg4};
-    sprintf(arg1, "fetcher_main");
-    sprintf(arg2, "-chipper_batch_job_cell=cv");
-    sprintf(arg3, "-config_file_path=path");
-    sprintf(arg4, "-chipper_gdpr_batch_job_cell=ef");
-    EXPECT_EQ("path", hologram_fetcher.ParseFlags(argc, argv));
+    absl::SetFlag(&FLAGS_chipper_batch_job_cell, "cv");
+    absl::SetFlag(&FLAGS_config_file_path, "path");
+    absl::SetFlag(&FLAGS_chipper_gdpr_batch_job_cell, "ef");
+    EXPECT_EQ("path", hologram_fetcher.ParseFlags());
     for (auto it = hologram_fetcher.system_to_cell_map_.begin();
         it != hologram_fetcher.system_to_cell_map_.end(); it++) {
         EXPECT_TRUE(it->first == "CHIPPER" || it->first == "CHIPPER_GDPR");
