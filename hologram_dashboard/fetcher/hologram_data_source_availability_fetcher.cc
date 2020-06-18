@@ -20,6 +20,11 @@ namespace wireless_android_play_analytics{
 
 void HologramDataSourceAvailabilityFetcher::Process() {
     // TODO(alexanderlin): add implementation.
+    assert(FLAGS_config_file_path is not empty)
+    // AcquireConfig(FLAGS_config_file_path)
+    // FetchFromDatabase()
+    // GetStatus(todays date)
+    // SendToDataBase()
 }
 
 void HologramDataSourceAvailabilityFetcher::
@@ -32,6 +37,29 @@ void HologramDataSourceAvailabilityFetcher::
     // If either the file doesn't exist this will return false.
     assert(google::protobuf::TextFormat::Parse(&config_stream, 
                                                 &hologram_configs_));
+}
+
+void HologramDataSourceAvailabilityFetcher::FetchFromDatabase() {
+    // TODO(alexanderlin): Implement.
+}
+
+void HologramDataSourceAvailabilityFetcher::GetStatus(absl::CivilMinute date) {
+    // TODO(alexanderlin): Implement.
+    // for(const std::pair<std::string, std::string>& it : system_to_cell_map_) {
+    //     for(int i = 0; i < hologram_configs_.data_source_config_size(); ++i) {
+    //     UpdateProto(it.first, date, hologram_configs_.data_source_config(i), status);
+    // }
+}
+
+void HologramDataSourceAvailabilityFetcher::UpdateProto(std::string system, 
+    absl::CivilMinute date, DataSource data_source, StatusType status){
+    // TODO(alexanderlin) Implement.
+}
+
+void HologramDataSourceAvailabilityFetcher::UpdateHistory(
+    HologramDataAvailability* availability_proto, absl::CivilMinute time, 
+    StatusType status) {
+    // TODO(alexanderlin) Implement.    
 }
 
 } // namespace wireless_android_play_analytics

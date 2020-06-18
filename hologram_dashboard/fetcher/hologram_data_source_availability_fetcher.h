@@ -49,6 +49,23 @@ private:
     // to wrong file or malformed file.
     void AcquireConfig(const std::string& config_file_path);
     
+    // Fetches old protos from database if they exist so the program does not
+    // need to recheck previous availabilities if it's done already.
+    void FetchFromDatabase();
+
+    // Gets the status of all data sources for all systems.
+    GetStatus(absl::CivilMinute date);
+
+    // Updates the proto given the type of data source, system it is in, the
+    // date, and the status acquired by GetStatus.
+    void UpdateProto(std::string system, absl::CivilMinute date, 
+        DataSource data_source, StatusType status);
+
+    // Acts as the helper function for UpdateProto specifically regarding
+    // modification of a proto's history
+    void UpdateHistory(HologramDataAvailability* availability_proto, 
+        absl::CivilMinute time, StatusType status);
+        
     std::unordered_map<std::string, std::string> system_to_cell_map_;
     HologramConfigSet hologram_configs_;
     std::unordered_map<std::string, HologramDataAvailability> 
