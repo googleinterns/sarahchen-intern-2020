@@ -34,17 +34,4 @@ void HologramDataSourceAvailabilityFetcher::
                                                 &hologram_configs_));
 }
 
-std::string HologramDataSourceAvailabilityFetcher::ParseFlags() {
-    // Ensure that all the flags are given.
-    assert(!absl::GetFlag(FLAGS_chipper_batch_job_cell).empty());
-    assert(!absl::GetFlag(FLAGS_chipper_gdpr_batch_job_cell).empty());
-    assert(!absl::GetFlag(FLAGS_hologram_source_config_file_path).empty());
-
-    system_to_cell_map_["CHIPPER"] = 
-        absl::GetFlag(FLAGS_chipper_batch_job_cell);
-    system_to_cell_map_["CHIPPER_GDPR"] = 
-        absl::GetFlag(FLAGS_chipper_gdpr_batch_job_cell);
-    return absl::GetFlag(FLAGS_hologram_source_config_file_path);
-}
-
 } // namespace wireless_android_play_analytics

@@ -40,12 +40,6 @@ private:
     // Poulates hologram_config_ and ends the program if the path provided leads
     // to wrong file or malformed file.
     void AcquireConfig(const std::string& config_file_path);
-
-    FRIEND_TEST(FetcherTest, MissingFlags);
-    FRIEND_TEST(FetcherTest, ValidFlags);
-    // Populates system_to_cell_map_ given the arguments and returns the path
-    // to the config file.
-    std::string ParseFlags();
     
     std::unordered_map<std::string, std::string> system_to_cell_map_;
     HologramConfigSet hologram_configs_;

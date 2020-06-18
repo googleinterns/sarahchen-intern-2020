@@ -47,25 +47,6 @@ TEST(FetcherTest, ValidAcquireConfig) {
         (expected_hologram_config, hologram_fetcher.hologram_configs_));
 }
 
-TEST(FetcherTest, MissingFlags) {
-    HologramDataSourceAvailabilityFetcher hologram_fetcher;
-    // Missing one flag.
-    absl::SetFlag(&FLAGS_chipper_batch_job_cell, "ja");
-    absl::SetFlag(&FLAGS_hologram_source_config_file_path, "path");
-    ASSERT_DEATH(hologram_fetcher.ParseFlags(), "");
-}
-
-TEST(FetcherTest, ValidFlags) {
-    HologramDataSourceAvailabilityFetcher hologram_fetcher;
-    absl::SetFlag(&FLAGS_chipper_batch_job_cell, "cv");
-    absl::SetFlag(&FLAGS_hologram_source_config_file_path, "path");
-    absl::SetFlag(&FLAGS_chipper_gdpr_batch_job_cell, "ef");
-    EXPECT_EQ("path", hologram_fetcher.ParseFlags());
-    EXPECT_THAT(hologram_fetcher.system_to_cell_map_, 
-        testing::UnorderedElementsAre(testing::Pair("CHIPPER", "cv"), 
-            testing::Pair("CHIPPER_GDPR", "ef")));
-}
-
 } // namespace wireless_android_play_analytics
 
 int main(int argc, char *argv[]) {
