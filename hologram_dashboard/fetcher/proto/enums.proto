@@ -65,4 +65,12 @@ enum DataSource {
     HOLOGRAM_USER_ATTRIBUTE = 5;
     HOLOGRAM_USER_EXPERIMENT_ID_AND_TEST_CODE = 6;
 }
+
+// Specify the system.
+// Next tag: 3
+enum System {
+    UNKNOWN_SYSTEM = 0;
+    CHIPPER = 1;
+    CHIPPER_GDPR = 2;
+}
     

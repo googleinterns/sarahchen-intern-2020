@@ -24,9 +24,9 @@ HologramDataSourceAvailabilityFetcher::HologramDataSourceAvailabilityFetcher() {
     assert(!absl::GetFlag(FLAGS_chipper_gdpr_batch_job_cell).empty());
     assert(!absl::GetFlag(FLAGS_hologram_source_config_file_path).empty());
 
-    system_to_cell_map_["CHIPPER"] = 
+    system_to_cell_map_[System::CHIPPER] = 
         absl::GetFlag(FLAGS_chipper_batch_job_cell);
-    system_to_cell_map_["CHIPPER_GDPR"] = 
+    system_to_cell_map_[System::CHIPPER_GDPR] = 
         absl::GetFlag(FLAGS_chipper_gdpr_batch_job_cell);
 }
 
