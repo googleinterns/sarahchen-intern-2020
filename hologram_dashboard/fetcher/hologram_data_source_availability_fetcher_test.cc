@@ -65,7 +65,9 @@ TEST(FetcherTest, ValidFlags) {
     absl::SetFlag(&FLAGS_hologram_source_config_file_path, "path");
     absl::SetFlag(&FLAGS_chipper_gdpr_batch_job_cell, "ef");
     EXPECT_EQ("path", hologram_fetcher.ParseFlags());
-    EXPECT_THAT(hologram_fetcher.system_to_cell_map_, UnorderedElementsAre(Pair("CHIPPER", "cv"), Pair("CHIPPER_GDPR", "ef")));
+    EXPECT_THAT(hologram_fetcher.system_to_cell_map_, 
+        testing::UnorderedElementsAre(testing::Pair("CHIPPER", "cv"), 
+            testing::Pair("CHIPPER_GDPR", "ef")));
 }
 
 } // namespace wireless_android_play_analytics
