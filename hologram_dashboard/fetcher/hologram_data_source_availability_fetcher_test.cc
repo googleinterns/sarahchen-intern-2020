@@ -53,10 +53,6 @@ TEST(FetcherTest, MissingFlags) {
     absl::SetFlag(&FLAGS_chipper_batch_job_cell, "ja");
     absl::SetFlag(&FLAGS_hologram_source_config_file_path, "path");
     ASSERT_DEATH(hologram_fetcher.ParseFlags(), "");
-    // Missing different flag.
-    absl::SetFlag(&FLAGS_chipper_gdpr_batch_job_cell, "cv");
-    absl::SetFlag(&FLAGS_hologram_source_config_file_path, "");
-    ASSERT_DEATH(hologram_fetcher.ParseFlags(), "");
 }
 
 TEST(FetcherTest, ValidFlags) {

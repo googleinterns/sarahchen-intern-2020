@@ -36,9 +36,9 @@ void HologramDataSourceAvailabilityFetcher::
 
 std::string HologramDataSourceAvailabilityFetcher::ParseFlags() {
     // Ensure that all the flags are given.
-    assert(absl::GetFlag(FLAGS_chipper_batch_job_cell) != "");
-    assert(absl::GetFlag(FLAGS_chipper_gdpr_batch_job_cell) != "");
-    assert(absl::GetFlag(FLAGS_hologram_source_config_file_path) != "");
+    assert(!absl::GetFlag(FLAGS_chipper_batch_job_cell).empty());
+    assert(!absl::GetFlag(FLAGS_chipper_gdpr_batch_job_cell).empty());
+    assert(!absl::GetFlag(FLAGS_hologram_source_config_file_path).empty());
 
     system_to_cell_map_["CHIPPER"] = 
         absl::GetFlag(FLAGS_chipper_batch_job_cell);
