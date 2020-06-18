@@ -17,7 +17,29 @@
 #include "request_handler/request_handler.h"
 
 int main(int argc, char* argv[]) {
-    // Initiates and runs the server.
-    wireless_android_play_analytics::RequestHandler server;
-    server.Start();
+    // Initiates the server.
+    Pistache::Http::Endpoint server(Pistache::Address(Pistache::Ipv4::any(), 
+        Pistache::Port(8000)));
+    Pistache::Rest::Router router;
+    wireless_android_play_analytics::RequestHandler handler;
+    server.init();
+
+    // Set up the router.
+    Pistache::Rest::Routes::Get(router, "/:system", 
+        Pistache::Rest::Routes::bind 
+        (&wireless_android_play_analytics::RequestHandler::GetDashboard, 
+        &handler));
+    Pistache::Rest::Routes::Get(router, "/:system/:source/:date", 
+        Pistache::Rest::Routes::bind
+        (&wireless_android_play_analytics::RequestHandler::PopulateBackfillCommand, 
+        &handler));
+    Pistache::Rest::Routes::Get(router, "/", 
+        Pistache::Rest::Routes::bind 
+        (&wireless_android_play_analytics::RequestHandler::GetLastRefreshed, 
+        &handler));
+
+    server.setHandler(router.handler());
+
+    // Run the server.
+    server.serve();
 }
