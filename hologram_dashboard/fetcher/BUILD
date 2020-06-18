@@ -19,6 +19,8 @@ cc_library(
     deps = ["//fetcher/proto:hologram_availability_cc_proto", 
             "//fetcher/proto:hologram_config_cc_proto", 
             "@com_google_gtest//:gtest",
+            "@com_google_absl//absl/container:flat_hash_map",
+            "@com_google_absl//absl/container:btree",
             "hologram_data_fetcher_lib",
             "flags"],
 )

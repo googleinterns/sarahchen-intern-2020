@@ -16,7 +16,6 @@
 
 #pragma once
 #include <iostream>
-#include <unordered_map>
 #include <gtest/gtest.h>
 #include <assert.h>
 #include <fstream>
@@ -26,31 +25,31 @@
 #include "fetcher/proto/hologram_config.pb.h"
 #include "hologram_data_fetcher.h"
 #include "flags.h"
+#include "absl/container/flat_hash_map.h"
+#include "absl/container/btree_map.h"
 
 namespace wireless_android_play_analytics {
 
 class HologramDataSourceAvailabilityFetcher: public HologramDataFetcher {
 
 public:
+    // Populates the system_to_cell_map_ with flag input
+    HologramDataSourceAvailabilityFetcher();
     void Process() override;
 
 private:
+    FRIEND_TEST(FetcherTest, ConstructorMissingFlags);
+    FRIEND_TEST(FetcherTest, ConstructorValidFlags);
     FRIEND_TEST(FetcherTest, InvalidAcquireConfig);
     FRIEND_TEST(FetcherTest, ValidAcquireConfig);
     // Poulates hologram_config_ and ends the program if the path provided leads
     // to wrong file or malformed file.
     void AcquireConfig(const std::string& config_file_path);
-
-    FRIEND_TEST(FetcherTest, MissingFlags);
-    FRIEND_TEST(FetcherTest, ValidFlags);
-    // Populates system_to_cell_map_ given the arguments and returns the path
-    // to the config file.
-    std::string ParseFlags();
     
-    std::unordered_map<std::string, std::string> system_to_cell_map_;
+    absl::flat_hash_map<std::string, std::string> system_to_cell_map_;
     HologramConfigSet hologram_configs_;
-    std::unordered_map<std::string, HologramDataAvailability> 
-        data_sources_availability_map_;
+    absl::flat_hash_map<std::string, absl::btree_map<DataSource,
+        HologramDataAvailability>> system_to_data_source_availability_;
 };
 
 } // namespace wireless_android_play_analytics

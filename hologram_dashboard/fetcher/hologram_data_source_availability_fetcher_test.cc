@@ -15,10 +15,28 @@
 */
 
 #include "hologram_data_source_availability_fetcher.h"
+#include "gmock/gmock.h"
 
 #include <google/protobuf/util/message_differencer.h>
 
 namespace wireless_android_play_analytics{
+
+TEST(FetcherTest, ConstructorMissingFlags) {
+    // Missing one flag.
+    absl::SetFlag(&FLAGS_chipper_batch_job_cell, "cv");
+    absl::SetFlag(&FLAGS_hologram_source_config_file_path, "path");
+    ASSERT_DEATH(HologramDataSourceAvailabilityFetcher(), "");
+}
+
+TEST(FetcherTest, ConstructorValidFlags) {
+    absl::SetFlag(&FLAGS_chipper_batch_job_cell, "cv");
+    absl::SetFlag(&FLAGS_hologram_source_config_file_path, "path");
+    absl::SetFlag(&FLAGS_chipper_gdpr_batch_job_cell, "ef");
+    HologramDataSourceAvailabilityFetcher hologram_fetcher;
+    EXPECT_THAT(hologram_fetcher.system_to_cell_map_, 
+        testing::UnorderedElementsAre(testing::Pair("CHIPPER", "cv"), 
+            testing::Pair("CHIPPER_GDPR", "ef")));
+}
 
 TEST(FetcherTest, InvalidAcquireConfig) {
     HologramDataSourceAvailabilityFetcher hologram_fetcher;
@@ -44,36 +62,6 @@ TEST(FetcherTest, ValidAcquireConfig) {
     
     EXPECT_TRUE(google::protobuf::util::MessageDifferencer::Equals
         (expected_hologram_config, hologram_fetcher.hologram_configs_));
-}
-
-TEST(FetcherTest, MissingFlags) {
-    HologramDataSourceAvailabilityFetcher hologram_fetcher;
-    // Missing one flag.
-    absl::SetFlag(&FLAGS_chipper_batch_job_cell, "ja");
-    absl::SetFlag(&FLAGS_hologram_source_config_file_path, "path");
-    ASSERT_DEATH(hologram_fetcher.ParseFlags(), "");
-    // Missing different flag.
-    absl::SetFlag(&FLAGS_chipper_gdpr_batch_job_cell, "cv");
-    absl::SetFlag(&FLAGS_hologram_source_config_file_path, "");
-    ASSERT_DEATH(hologram_fetcher.ParseFlags(), "");
-}
-
-TEST(FetcherTest, ValidFlags) {
-    HologramDataSourceAvailabilityFetcher hologram_fetcher;
-    absl::SetFlag(&FLAGS_chipper_batch_job_cell, "cv");
-    absl::SetFlag(&FLAGS_hologram_source_config_file_path, "path");
-    absl::SetFlag(&FLAGS_chipper_gdpr_batch_job_cell, "ef");
-    EXPECT_EQ("path", hologram_fetcher.ParseFlags());
-    for (auto it = hologram_fetcher.system_to_cell_map_.begin();
-        it != hologram_fetcher.system_to_cell_map_.end(); it++) {
-        EXPECT_TRUE(it->first == "CHIPPER" || it->first == "CHIPPER_GDPR");
-        if (it->first == "CHIPPER") {
-            EXPECT_EQ(it->second, "cv");
-        }
-        else {
-            EXPECT_EQ(it->second, "ef");
-        }
-    }
 }
 
 } // namespace wireless_android_play_analytics
