@@ -16,9 +16,6 @@
 
 #pragma once
 #include <iostream>
-#include <string>
-#include <unordered_map>
-#include <gflags/gflags.h>
 #include <gtest/gtest.h>
 #include <assert.h>
 #include <fstream>
@@ -30,22 +27,22 @@
 #include "fetcher/proto/hologram_availability.pb.h"
 #include "fetcher/proto/hologram_config.pb.h"
 #include "hologram_data_fetcher.h"
-
-DEFINE_string(chipper_batch_job_cell, "", 
-    "The job running cell of Chipper Batch.");
-DEFINE_string(chipper_gdpr_batch_job_cell, "", 
-    "The job running cell of Chipper GDPR pipeline.");
-DEFINE_string(config_file_path, "", 
-    "Specifies where the config file can be located.");
+#include "flags.h"
+#include "absl/container/flat_hash_map.h"
+#include "absl/container/btree_map.h"
 
 namespace wireless_android_play_analytics {
 
 class HologramDataSourceAvailabilityFetcher: public HologramDataFetcher {
 
 public:
+    // Populates the system_to_cell_map_ with flag input
+    HologramDataSourceAvailabilityFetcher();
     void Process() override;
 
 private:
+    FRIEND_TEST(FetcherTest, ConstructorMissingFlags);
+    FRIEND_TEST(FetcherTest, ConstructorValidFlags);
     FRIEND_TEST(FetcherTest, InvalidAcquireConfig);
     FRIEND_TEST(FetcherTest, ValidAcquireConfig);
     // Poulates hologram_config_ and ends the program if the path provided leads
@@ -56,12 +53,12 @@ private:
     // Populates the data_sources_availability_map_ for the specified day
     void GetStatus(std::time_t time);
     
-    std::unordered_map<std::string, std::string> system_to_cell_map_;
+    absl::flat_hash_map<System, std::string> system_to_cell_;
     HologramConfigSet hologram_configs_;
-    std::unordered_map<std::pair<std::string, DataSource>, 
-        HologramDataAvailability> data_sources_system_availability_map_;
-    std::unordered_map<std::pair<std::string, Corpus>, 
-        std::string> corpus_system_to_last_update_map_;
+    absl::flat_hash_map<System, absl::flat_hash_map<DataSource,
+        HologramDataAvailability>> system_to_data_source_availability_;
+    absl::flat_hash_map<System, absl::flat_hash_map<Corpus, std::string>>
+        system_to_corpus_to_last_update_;
 };
 
 } // namespace wireless_android_play_analytics
