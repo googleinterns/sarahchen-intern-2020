@@ -23,15 +23,6 @@ namespace wireless_android_play_analytics {
 class RequestHandler {
 
     public:
-        // Constructs a request handler using default port of 8000.
-        RequestHandler();
-
-        // Constructs a request handler using user defined address.
-        RequestHandler(Pistache::Address addr);
-
-        // Starts servicing requests from the server.
-        void Start();
-    private:
         // Constructs the html code for the dashboard of the specific system.
         void GetDashboard(const Pistache::Rest::Request& request, 
             Pistache::Http::ResponseWriter response);
@@ -44,13 +35,6 @@ class RequestHandler {
         // Acquires the latest refresh time and send it to the user.
         void GetLastRefreshed(const Pistache::Rest::Request& request, 
             Pistache::Http::ResponseWriter response);
-
-        Pistache::Rest::Router router_;
-        Pistache::Http::Endpoint server_;
-
-        // Binds the request methods to the router and initializes the server
-        // to be ready for serving.
-        void Init();
 };
 
 } // namespace wireless_android_play_analytics

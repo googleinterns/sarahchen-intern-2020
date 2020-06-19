@@ -15,10 +15,29 @@
 */
 
 #include "hologram_data_source_availability_fetcher.h"
+#include "gmock/gmock.h"
 
 #include <google/protobuf/util/message_differencer.h>
 
 namespace wireless_android_play_analytics{
+
+TEST(FetcherTest, ConstructorMissingFlags) {
+    // Missing one flag.
+    absl::SetFlag(&FLAGS_chipper_batch_job_cell, "cv");
+    absl::SetFlag(&FLAGS_hologram_source_config_file_path, "path");
+    ASSERT_DEATH(HologramDataSourceAvailabilityFetcher(), "");
+}
+
+TEST(FetcherTest, ConstructorValidFlags) {
+    absl::SetFlag(&FLAGS_chipper_batch_job_cell, "cv");
+    absl::SetFlag(&FLAGS_hologram_source_config_file_path, 
+        "fetcher/testdata/hologram_config_valid.ascii");
+    absl::SetFlag(&FLAGS_chipper_gdpr_batch_job_cell, "ef");
+    HologramDataSourceAvailabilityFetcher hologram_fetcher;
+    EXPECT_THAT(hologram_fetcher.system_to_cell_, 
+        testing::UnorderedElementsAre(testing::Pair(System::CHIPPER, "cv"), 
+            testing::Pair(System::CHIPPER_GDPR, "ef")));
+}
 
 TEST(FetcherTest, InvalidAcquireConfig) {
     HologramDataSourceAvailabilityFetcher hologram_fetcher;

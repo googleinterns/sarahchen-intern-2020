@@ -18,10 +18,17 @@
 
 namespace wireless_android_play_analytics{
 
-HologramDataSourceAvailabilityFetcher::HologramDataSourceAvailabilityFetcher(){
-    // Assert(FLAGS_config_file_path is not empty)
-    // Populate data_source_availability_
-    // AcquireConfig(FLAGS_config_file_path)
+HologramDataSourceAvailabilityFetcher::HologramDataSourceAvailabilityFetcher() {
+    // Ensure that all the flags are given.
+    assert(!absl::GetFlag(FLAGS_chipper_batch_job_cell).empty());
+    assert(!absl::GetFlag(FLAGS_chipper_gdpr_batch_job_cell).empty());
+    assert(!absl::GetFlag(FLAGS_hologram_source_config_file_path).empty());
+
+    system_to_cell_[System::CHIPPER] = 
+        absl::GetFlag(FLAGS_chipper_batch_job_cell);
+    system_to_cell_[System::CHIPPER_GDPR] = 
+        absl::GetFlag(FLAGS_chipper_gdpr_batch_job_cell);
+    AcquireConfig(absl::GetFlag(FLAGS_hologram_source_config_file_path));
 }
 
 void HologramDataSourceAvailabilityFetcher::Process() {
@@ -47,8 +54,8 @@ void HologramDataSourceAvailabilityFetcher::FetchFromDatabase() {
     // TODO(alexanderlin): Implement.
 }
 
-void HologramDataSourceAvailabilityFetcher::GetHologramDataAvailability
-    (absl::CivilMinute date) {
+void HologramDataSourceAvailabilityFetcher::GetHologramDataAvailability(
+    absl::Time date) {
     // TODO(alexanderlin): Implement.
     // for(const std::pair<std::string, std::string>& it : system_to_cell_map_) {
     //     for(int i = 0; i < hologram_configs_.data_source_config_size(); ++i) {
@@ -57,13 +64,13 @@ void HologramDataSourceAvailabilityFetcher::GetHologramDataAvailability
 }
 
 void HologramDataSourceAvailabilityFetcher::UpdateProto(std::string system, 
-    absl::CivilMinute date, DataSource data_source, StatusType status){
+    absl::Time date, DataSource data_source, StatusType status){
     // TODO(alexanderlin): Implement.
     // Call UpdateHistory for updating proto's history
 }
 
 void HologramDataSourceAvailabilityFetcher::UpdateHistory(
-    HologramDataAvailability* availability_proto, absl::CivilMinute time, 
+    HologramDataAvailability* availability_proto, absl::Time time, 
     StatusType status) {
     // TODO(alexanderlin): Implement.    
 }

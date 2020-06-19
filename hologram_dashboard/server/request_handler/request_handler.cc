@@ -21,35 +21,6 @@
 
 namespace wireless_android_play_analytics {
 
-RequestHandler::RequestHandler()
-    :server_(Pistache::Address(Pistache::Ipv4::any(), Pistache::Port(8000))) {
-        Init();
-}
-
-RequestHandler::RequestHandler(Pistache::Address Addr)
-    :server_(Addr) {
-        Init();
-}
-
-void RequestHandler::Init() {
-    server_.init();
-    
-    // Binds the router with correct request methods.
-    Pistache::Rest::Routes::Get(router_, "/:system", 
-        Pistache::Rest::Routes::bind (&RequestHandler::GetDashboard, this));
-    Pistache::Rest::Routes::Get(router_, "/:system/:source/:date", 
-        Pistache::Rest::Routes::bind
-            (&RequestHandler::PopulateBackfillCommand, this));
-    Pistache::Rest::Routes::Get(router_, "/", 
-        Pistache::Rest::Routes::bind (&RequestHandler::GetLastRefreshed, this));
-
-    server_.setHandler(router_.handler());
-}
-
-void RequestHandler::Start() {
-    server_.serve();
-}
-
 void RequestHandler::GetLastRefreshed(const Pistache::Rest::Request& request, 
     Pistache::Http::ResponseWriter response) {
     // Information within the request is unnecessary.

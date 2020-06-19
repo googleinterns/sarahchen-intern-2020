@@ -14,11 +14,13 @@
 *   limitations under the License.
 */
 
-#include "hologram_data_source_availability_fetcher.h"
+#include "flags.h"
 
-int main(int argc, char* argv[]){
-    // TODO(alexanderlin): add implementation.
-    // Parse flag
-    absl::ParseCommandLine(argc, argv);
-    return 0;
-}
+ABSL_FLAG(std::string, chipper_batch_job_cell, "", 
+    "The job running cell of Chipper Batch.");
+ABSL_FLAG(std::string, chipper_gdpr_batch_job_cell, "", 
+    "The job running cell of Chipper GDPR pipeline.");
+ABSL_FLAG(std::string, hologram_source_config_file_path, "", 
+    "Specifies where the config file can be located.");
+ABSL_FLAG(absl::Time, hologram_job_time, absl::Now(), 
+    "The time for which you are interested in checking the DONE file");
