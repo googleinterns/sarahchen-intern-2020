@@ -68,8 +68,6 @@ GetStatus(absl::Time time) {
         day_folder = "0" + day;
     }
     day_folder += "/";
-    // tm_month represents years after 1900, so need to append 1900 to it to
-    // reflect calendar year.
     std::string year_folder = std::to_string(civil_time.year());
     year_folder += "/"
     
