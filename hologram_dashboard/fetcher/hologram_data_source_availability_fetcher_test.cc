@@ -67,10 +67,10 @@ TEST(FetcherTest, ValidAcquireConfig) {
 TEST(FetcherTest, UpdateHistoryNewProto) {
     HologramDataSourceAvailabilityFetcher hologram_fetcher;
     HologramDataAvailability hda;
-    std::time_t time = std::time(NULL);
+    absl::Time time = absl::Now();
     StatusType status = StatusType::SUCCESS;
     DataSourceDetail detail;
-    detail.set_date((int) time);
+    detail.set_date(absl::ToUnixSeconds(time));
     detail.set_status(status);
     hologram_fetcher.UpdateHistory(&hda, time, status);
     EXPECT_EQ(hda.history_size(), 1);
@@ -81,13 +81,13 @@ TEST(FetcherTest, UpdateHistoryNewProto) {
 TEST(FetcherTest, UpdateHistorySameDay) {
     HologramDataSourceAvailabilityFetcher hologram_fetcher;
     HologramDataAvailability hda;
-    std::time_t time = std::time(NULL);
+    absl::Time time = absl::Now();
     StatusType status = StatusType::SUCCESS;
     DataSourceDetail detail;
-    detail.set_date((int) time);
+    detail.set_date(absl::ToUnixSeconds(time));
     detail.set_status(status);
     DataSourceDetail* history = hda.add_history();
-    history->set_date((int) time);
+    history->set_date(absl::ToUnixSeconds(time));
     history->set_status(status);
     hologram_fetcher.UpdateHistory(&hda, time, status);
     ASSERT_EQ(hda.history_size(), 1);
@@ -100,36 +100,37 @@ TEST(FetcherTest, UpdateHistoryIncrementHistory) {
     HologramDataAvailability hda;
     StatusType status = StatusType::SUCCESS;
     DataSourceDetail detail;
-    struct tm time = {0};
-    time.tm_year = 120;
-    time.tm_mon = 5;
-    time.tm_mday = 4;
-    std::time_t base_time = mktime(&time);
+    absl::CivilDay civil_time(2020, 5, 4);
+    absl::TimeZone google_time;
+    ASSERT_TRUE(absl::LoadTimeZone("America/Los_Angeles", &google_time));
+    absl::Time time = absl::FromCivil(civil_time, google_time);
     DataSourceDetail* history = hda.add_history();
-    history->set_date((int) base_time);
+    history->set_date(absl::ToUnixSeconds(time));
     history->set_status(status);
     // One day later
-    time.tm_mday++;
-    std::time_t day_late_time = mktime(&time);
-    detail.set_date((int) day_late_time);
+    absl::CivilDay civil_time_day_late(2020, 5, 5);;
+    time = absl::FromCivil(civil_time_day_late, google_time);
+    detail.set_date(absl::ToUnixSeconds(time));
     detail.set_status(status);
-    hologram_fetcher.UpdateHistory(&hda, day_late_time, status);
+    hologram_fetcher.UpdateHistory(&hda, time, status);
     ASSERT_EQ(hda.history_size(), 2);
     EXPECT_TRUE(google::protobuf::util::MessageDifferencer::Equals(
         hda.history(1), detail));
     // One month later
-    time.tm_mon++;
-    std::time_t mon_late_time = mktime(&time);
-    detail.set_date((int) mon_late_time);
-    hologram_fetcher.UpdateHistory(&hda, mon_late_time, status);
+    absl::CivilDay civil_time_month_late(2020, 6, 5);;
+    time = absl::FromCivil(civil_time_month_late, google_time);
+    detail.set_date(absl::ToUnixSeconds(time));
+    detail.set_status(status);
+    hologram_fetcher.UpdateHistory(&hda, time, status);
     ASSERT_EQ(hda.history_size(), 3);
     EXPECT_TRUE(google::protobuf::util::MessageDifferencer::Equals(
         hda.history(2), detail));
     // One year later
-    time.tm_year++;
-    std::time_t year_late_time = mktime(&time);
-    detail.set_date((int) year_late_time);
-    hologram_fetcher.UpdateHistory(&hda, year_late_time, status);
+    absl::CivilDay civil_time_year_late(2021, 6, 5);;
+    time = absl::FromCivil(civil_time_year_late, google_time);
+    detail.set_date(absl::ToUnixSeconds(time));
+    detail.set_status(status);
+    hologram_fetcher.UpdateHistory(&hda, time, status);
     ASSERT_EQ(hda.history_size(), 4);
     EXPECT_TRUE(google::protobuf::util::MessageDifferencer::Equals(
         hda.history(3), detail));
@@ -140,45 +141,44 @@ TEST(FetcherTest, UpdateHistoryOverflowHistory) {
     HologramDataAvailability hda;
     StatusType status = StatusType::SUCCESS;
     DataSourceDetail detail;
-    struct tm time = {0};
-    time.tm_year = 120;
-    time.tm_mon = 5;
-    time.tm_mday = 4;
-    std::time_t base_time = mktime(&time);
+    absl::CivilDay civil_time(2020, 5, 4);
+    absl::TimeZone google_time;
+    ASSERT_TRUE(absl::LoadTimeZone("America/Los_Angeles", &google_time));
+    absl::Time time = absl::FromCivil(civil_time, google_time);
     for(int i = 0; i < 7; ++i) {
         // Use increments of i as unique identifiers of each history entry.
         DataSourceDetail* tmp = hda.add_history();
-        tmp->set_date((int) base_time + i);
+        tmp->set_date(absl::ToUnixSeconds(time) + i);
         tmp->set_status(status);
     }
-    time.tm_mday++;
-    detail.set_date((int) mktime(&time));
+    absl::CivilDay civil_time_day_late(2020, 5, 5);;
+    absl::Time time_late = absl::FromCivil(civil_time_day_late, google_time);
+    detail.set_date(absl::ToUnixSeconds(time_late));
     detail.set_status(status);
-    hologram_fetcher.UpdateHistory(&hda, mktime(&time), status);
+    hologram_fetcher.UpdateHistory(&hda, time_late, status);
     ASSERT_EQ(hda.history_size(), 7);
     EXPECT_TRUE(google::protobuf::util::MessageDifferencer::Equals(
         hda.history(6), detail));
     // The oldest history should be deleted so the new oldest history should be
     // previously second oldest history.
-    detail.set_date((int) base_time + 1);
+    detail.set_date(absl::ToUnixSeconds(time) + 1);
     EXPECT_TRUE(google::protobuf::util::MessageDifferencer::Equals(
         hda.history(0), detail));
 }
 
 TEST(FetcherTest, UpdateProto) {
     HologramDataSourceAvailabilityFetcher hologram_fetcher;
-    std::string system = "CHIPPER";
-    struct tm time = {0};
-    time.tm_year = 120;
-    time.tm_mon = 5;
-    time.tm_mday = 4;
-    std::time_t base_time = mktime(&time);
+    System system = System::CHIPPER;
+    absl::CivilDay civil_time(2020, 5, 4);
+    absl::TimeZone google_time;
+    ASSERT_TRUE(absl::LoadTimeZone("America/Los_Angeles", &google_time));
+    absl::Time time = absl::FromCivil(civil_time, google_time);
     DataSource data_source = DataSource::APPS_DAILY_DATA_SOURCE;
     StatusType status = StatusType::SUCCESS;
-    hologram_fetcher.UpdateProto(system, base_time, data_source, status);
+    hologram_fetcher.UpdateProto(system, time, data_source, status);
     ASSERT_NE(hologram_fetcher.system_to_data_source_availability_.find(system),
         hologram_fetcher.system_to_data_source_availability_.end());
-    std::unordered_map<DataSource,HologramDataAvailability>& 
+    absl::flat_hash_map<DataSource,HologramDataAvailability>& 
         data_to_availability_map = 
         hologram_fetcher.system_to_data_source_availability_[system];
     ASSERT_NE(data_to_availability_map.find(data_source), 
@@ -186,9 +186,9 @@ TEST(FetcherTest, UpdateProto) {
     HologramDataAvailability hda;
     hda.set_data_source(data_source);
     DataSourceDetail* latest_status = hda.mutable_latest_status();
-    latest_status->set_date((int) base_time);
+    latest_status->set_date(absl::ToUnixSeconds(time));
     latest_status->set_status(status);
-    hologram_fetcher.UpdateHistory(&hda, base_time, status);
+    hologram_fetcher.UpdateHistory(&hda, time, status);
     EXPECT_TRUE(google::protobuf::util::MessageDifferencer::Equals(
         hda, hologram_fetcher.system_to_data_source_availability_
         [system][data_source]));

@@ -53,11 +53,11 @@ private:
     FRIEND_TEST(FetcherTest, UpdateHistoryOverflowHistory);
     // Updates the history of a specified proto
     void UpdateHistory (HologramDataAvailability* availability_proto, 
-        std::time_t time, StatusType status);
+        absl::Time time, StatusType status);
 
     FRIEND_TEST(FetcherTest, UpdateProto);
     // Updates the proto for a data source given all the necessary information.
-    void UpdateProto(std::string system, std::time_t time, 
+    void UpdateProto(System system, absl::Time time, 
         DataSource data_source, StatusType status);
     
     absl::flat_hash_map<System, std::string> system_to_cell_;
