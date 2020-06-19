@@ -63,8 +63,9 @@ void HologramDataSourceAvailabilityFetcher::GetHologramDataAvailability(
     // }
 }
 
-void HologramDataSourceAvailabilityFetcher::UpdateProto(std::string system, 
-    absl::Time date, DataSource data_source, StatusType status){
+void HologramDataSourceAvailabilityFetcher::UpdateDataAvailability(
+    std::string system, absl::Time date, DataSource data_source, 
+    StatusType status){
     // TODO(alexanderlin): Implement.
     // Call UpdateHistory for updating proto's history
 }
