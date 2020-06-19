@@ -14,10 +14,11 @@
 *   limitations under the License.
 */
 
-#include "request_handler/request_handler.h"
+#include "flags.h"
 
-int main(int argc, char* argv[]) {
-    // Initiates and runs the server.
-    wireless_android_play_analytics::RequestHandler server;
-    server.Start();
-}
+ABSL_FLAG(std::string, chipper_batch_job_cell, "", 
+    "The job running cell of Chipper Batch.");
+ABSL_FLAG(std::string, chipper_gdpr_batch_job_cell, "", 
+    "The job running cell of Chipper GDPR pipeline.");
+ABSL_FLAG(std::string, hologram_source_config_file_path, "", 
+    "Specifies where the config file can be located.");
