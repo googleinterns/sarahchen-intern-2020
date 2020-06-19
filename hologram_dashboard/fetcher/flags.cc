@@ -22,3 +22,5 @@ ABSL_FLAG(std::string, chipper_gdpr_batch_job_cell, "",
     "The job running cell of Chipper GDPR pipeline.");
 ABSL_FLAG(std::string, hologram_source_config_file_path, "", 
     "Specifies where the config file can be located.");
+ABSL_FLAG(absl::Time, hologram_data_availability_check_time, absl::Now(), 
+    "The time for which you are interested in hologram data availability. By default, it uses current time.");
