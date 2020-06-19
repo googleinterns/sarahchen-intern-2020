@@ -46,8 +46,7 @@ private:
     // to wrong file or malformed file.
     void AcquireConfig(const std::string& config_file_path);
     
-    // Fetches old protos from database if they exist so the program does not
-    // need to recheck previous availabilities if it's done already.
+    // Fetches availability info from database.
     void FetchFromDatabase();
 
     // Gets the status of all data sources for all systems at the specified time.
