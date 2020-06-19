@@ -51,7 +51,8 @@ private:
     FRIEND_TEST(FetcherTest, UpdateHistorySameDay);
     FRIEND_TEST(FetcherTest, UpdateHistoryIncrementHistory);
     FRIEND_TEST(FetcherTest, UpdateHistoryOverflowHistory);
-    // Updates the history of a specified proto
+    // Acts as the helper function for UpdateProto specifically regarding
+    // modification of a proto's history
     void UpdateHistory(HologramDataAvailability* availability_proto, 
         absl::Time time, StatusType status);
 
@@ -65,11 +66,6 @@ private:
 
     // Gets the status of all data sources for all systems at the specified time.
     void GetHologramDataAvailability(absl::Time time);
-
-    // Acts as the helper function for UpdateProto specifically regarding
-    // modification of a proto's history
-    void UpdateHistory(HologramDataAvailability* availability_proto, 
-        absl::Time time, StatusType status);
 
     absl::flat_hash_map<System, std::string> system_to_cell_;
     HologramConfigSet hologram_configs_;
