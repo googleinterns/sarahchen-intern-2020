@@ -28,10 +28,14 @@ HologramDataSourceAvailabilityFetcher::HologramDataSourceAvailabilityFetcher() {
         absl::GetFlag(FLAGS_chipper_batch_job_cell);
     system_to_cell_[System::CHIPPER_GDPR] = 
         absl::GetFlag(FLAGS_chipper_gdpr_batch_job_cell);
+    AcquireConfig(absl::GetFlag(FLAGS_hologram_source_config_file_path));
 }
 
 void HologramDataSourceAvailabilityFetcher::Process() {
     // TODO(alexanderlin): add implementation.
+    // FetchFromDatabase()
+    // GetStatus(todays date)
+    // SendToDataBase()
 }
 
 void HologramDataSourceAvailabilityFetcher::
@@ -46,8 +50,12 @@ void HologramDataSourceAvailabilityFetcher::
                                                 &hologram_configs_));
 }
 
-void HologramDataSourceAvailabilityFetcher::
-GetStatus(absl::Time time) {
+void HologramDataSourceAvailabilityFetcher::FetchFromDatabase() {
+    // TODO(alexanderlin): Implement.
+}
+
+void HologramDataSourceAvailabilityFetcher::GetHologramDataAvailability(
+    absl::Time date) {
     absl::TimeZone google_time;
     assert(absl::LoadTimeZone("America/Los_Angeles", &google_time));
     absl::CivilSecond civil_time = absl::ToCivilSecond(time, google_time);
@@ -96,6 +104,19 @@ GetStatus(absl::Time time) {
             }
         }
     }
+}
+
+void HologramDataSourceAvailabilityFetcher::UpdateDataAvailability(
+    System system, absl::Time date, DataSource data_source, 
+    StatusType status){
+    // TODO(alexanderlin): Implement.
+    // Call UpdateHistory for updating proto's history
+}
+
+void HologramDataSourceAvailabilityFetcher::UpdateHistory(
+    HologramDataAvailability* availability_proto, absl::Time time, 
+    StatusType status) {
+    // TODO(alexanderlin): Implement.    
 }
 
 } // namespace wireless_android_play_analytics

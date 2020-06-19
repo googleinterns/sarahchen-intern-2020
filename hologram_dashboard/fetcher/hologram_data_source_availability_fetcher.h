@@ -50,9 +50,23 @@ private:
     void AcquireConfig(const std::string& config_file_path);
 
     FRIEND_TEST(FetcherTest, GetStatus);
-    // Populates the data_sources_availability_map_ for the specified day
-    void GetStatus(std::time_t time);
     
+    // Fetches availability info from database.
+    void FetchFromDatabase();
+
+    // Gets the status of all data sources for all systems at the specified time.
+    void GetHologramDataAvailability(absl::Time time);
+
+    // Updates the proto given the type of data source, system it is in, the
+    // date, and the status acquired by GetStatus.
+    void UpdateDataAvailability(std::string system, absl::Time time, 
+        DataSource data_source, StatusType status);
+
+    // Acts as the helper function for UpdateProto specifically regarding
+    // modification of a proto's history
+    void UpdateHistory(HologramDataAvailability* availability_proto, 
+        absl::Time time, StatusType status);
+
     absl::flat_hash_map<System, std::string> system_to_cell_;
     HologramConfigSet hologram_configs_;
     absl::flat_hash_map<System, absl::flat_hash_map<DataSource,
