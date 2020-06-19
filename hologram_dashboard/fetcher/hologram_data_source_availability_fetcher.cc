@@ -65,29 +65,30 @@ void HologramDataSourceAvailabilityFetcher::GetHologramDataAvailability(
 
 void HologramDataSourceAvailabilityFetcher::UpdateDataAvailability(System system, 
     absl::Time time, DataSource data_source, StatusType status) {
-    absl::flat_hash_map<DataSource,HologramDataAvailability>& 
+    absl::flat_hash_map<DataSource, HologramDataAvailability>& 
         data_to_availability_map = system_to_data_source_availability_[system];
-    HologramDataAvailability& availability_proto = 
+    HologramDataAvailability& hologram_data_availability = 
         data_to_availability_map[data_source];
-    DataSourceDetail* latest_status = availability_proto.mutable_latest_status();
-    if (!availability_proto.has_data_source()) {
-        availability_proto.set_data_source(data_source);
+    DataSourceDetail* latest_status = 
+        hologram_data_availability.mutable_latest_status();
+    if (!hologram_data_availability.has_data_source()) {
+        hologram_data_availability.set_data_source(data_source);
     }
     latest_status->set_date(absl::ToUnixSeconds(time));
     latest_status->set_status(status);
-    UpdateHistory(&availability_proto, time, status);
+    UpdateHistory(&hologram_data_availability, time, status);
 }
 
 void HologramDataSourceAvailabilityFetcher::UpdateHistory(
-    HologramDataAvailability* availability_proto, absl::Time time, 
+    HologramDataAvailability* hologram_data_availability, absl::Time time, 
     StatusType status) {
     absl::TimeZone google_time;
     // Load time zone could fail according to absl doc.
     assert(absl::LoadTimeZone("America/Los_Angeles", &google_time));
-    if (availability_proto->history_size() != 0) {
+    if (hologram_data_availability->history_size() != 0) {
         // Acquire the latest history
-        DataSourceDetail* latest_history = availability_proto->mutable_history(
-            availability_proto->history_size() - 1);
+        DataSourceDetail* latest_history = hologram_data_availability->
+            mutable_history(hologram_data_availability->history_size() - 1);
         absl::Time history_time = absl::FromUnixSeconds(latest_history->date());
         absl::CivilSecond history_civil_time = absl::ToCivilSecond(history_time, 
             google_time);
@@ -105,13 +106,13 @@ void HologramDataSourceAvailabilityFetcher::UpdateHistory(
         }
     }
     // Add a history if either its empty or it is later than latest history.
-    DataSourceDetail* detail = availability_proto->add_history();
+    DataSourceDetail* detail = hologram_data_availability->add_history();
     detail->set_date(absl::ToUnixSeconds(time));
     detail->set_status(status);
 
-    if (availability_proto->history_size() > 7) {
+    if (hologram_data_availability->history_size() > 7) {
         // Remove the oldest history
-        auto history_list = availability_proto->mutable_history();
+        auto history_list = hologram_data_availability->mutable_history();
         history_list->DeleteSubrange(0, 1);
     }
 }
