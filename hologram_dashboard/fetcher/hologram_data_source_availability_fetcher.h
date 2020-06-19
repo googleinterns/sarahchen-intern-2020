@@ -40,6 +40,7 @@ namespace wireless_android_play_analytics {
 class HologramDataSourceAvailabilityFetcher: public HologramDataFetcher {
 
 public:
+    HologramDataSourceAvailabilityFetcher();
     void Process() override;
 
 private:
@@ -54,7 +55,7 @@ private:
     void FetchFromDatabase();
 
     // Gets the status of all data sources for all systems.
-    GetStatus(absl::CivilMinute date);
+    void GetHologramDataAvailability(absl::CivilMinute date);
 
     // Updates the proto given the type of data source, system it is in, the
     // date, and the status acquired by GetStatus.

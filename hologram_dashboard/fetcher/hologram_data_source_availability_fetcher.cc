@@ -18,10 +18,14 @@
 
 namespace wireless_android_play_analytics{
 
+HologramDataSourceAvailabilityFetcher::HologramDataSourceAvailabilityFetcher(){
+    // Assert(FLAGS_config_file_path is not empty)
+    // Populate data_source_availability_
+    // AcquireConfig(FLAGS_config_file_path)
+}
+
 void HologramDataSourceAvailabilityFetcher::Process() {
     // TODO(alexanderlin): add implementation.
-    assert(FLAGS_config_file_path is not empty)
-    // AcquireConfig(FLAGS_config_file_path)
     // FetchFromDatabase()
     // GetStatus(todays date)
     // SendToDataBase()
@@ -43,7 +47,8 @@ void HologramDataSourceAvailabilityFetcher::FetchFromDatabase() {
     // TODO(alexanderlin): Implement.
 }
 
-void HologramDataSourceAvailabilityFetcher::GetStatus(absl::CivilMinute date) {
+void HologramDataSourceAvailabilityFetcher::GetHologramDataAvailability
+    (absl::CivilMinute date) {
     // TODO(alexanderlin): Implement.
     // for(const std::pair<std::string, std::string>& it : system_to_cell_map_) {
     //     for(int i = 0; i < hologram_configs_.data_source_config_size(); ++i) {
@@ -53,13 +58,14 @@ void HologramDataSourceAvailabilityFetcher::GetStatus(absl::CivilMinute date) {
 
 void HologramDataSourceAvailabilityFetcher::UpdateProto(std::string system, 
     absl::CivilMinute date, DataSource data_source, StatusType status){
-    // TODO(alexanderlin) Implement.
+    // TODO(alexanderlin): Implement.
+    // Call UpdateHistory for updating proto's history
 }
 
 void HologramDataSourceAvailabilityFetcher::UpdateHistory(
     HologramDataAvailability* availability_proto, absl::CivilMinute time, 
     StatusType status) {
-    // TODO(alexanderlin) Implement.    
+    // TODO(alexanderlin): Implement.    
 }
 
 } // namespace wireless_android_play_analytics
