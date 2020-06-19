@@ -33,7 +33,7 @@ TEST(FetcherTest, ConstructorValidFlags) {
     absl::SetFlag(&FLAGS_hologram_source_config_file_path, "path");
     absl::SetFlag(&FLAGS_chipper_gdpr_batch_job_cell, "ef");
     HologramDataSourceAvailabilityFetcher hologram_fetcher;
-    EXPECT_THAT(hologram_fetcher.system_to_cell_map_, 
+    EXPECT_THAT(hologram_fetcher.system_to_cell_, 
         testing::UnorderedElementsAre(testing::Pair(System::CHIPPER, "cv"), 
             testing::Pair(System::CHIPPER_GDPR, "ef")));
 }

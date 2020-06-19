@@ -46,7 +46,7 @@ private:
     // to wrong file or malformed file.
     void AcquireConfig(const std::string& config_file_path);
     
-    absl::flat_hash_map<System, std::string> system_to_cell_map_;
+    absl::flat_hash_map<System, std::string> system_to_cell_;
     HologramConfigSet hologram_configs_;
     absl::flat_hash_map<System, absl::flat_hash_map<DataSource,
         HologramDataAvailability>> system_to_data_source_availability_;
