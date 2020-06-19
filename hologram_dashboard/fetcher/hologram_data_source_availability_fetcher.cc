@@ -18,6 +18,18 @@
 
 namespace wireless_android_play_analytics{
 
+HologramDataSourceAvailabilityFetcher::HologramDataSourceAvailabilityFetcher() {
+    // Ensure that all the flags are given.
+    assert(!absl::GetFlag(FLAGS_chipper_batch_job_cell).empty());
+    assert(!absl::GetFlag(FLAGS_chipper_gdpr_batch_job_cell).empty());
+    assert(!absl::GetFlag(FLAGS_hologram_source_config_file_path).empty());
+
+    system_to_cell_[System::CHIPPER] = 
+        absl::GetFlag(FLAGS_chipper_batch_job_cell);
+    system_to_cell_[System::CHIPPER_GDPR] = 
+        absl::GetFlag(FLAGS_chipper_gdpr_batch_job_cell);
+}
+
 void HologramDataSourceAvailabilityFetcher::Process() {
     // TODO(alexanderlin): add implementation.
 }
