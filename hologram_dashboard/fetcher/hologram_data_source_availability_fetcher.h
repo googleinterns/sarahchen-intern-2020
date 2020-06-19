@@ -60,6 +60,17 @@ private:
     void UpdateDataAvailability(System system, absl::Time time, 
         DataSource data_source, StatusType status);
     
+    // Fetches availability info from database.
+    void FetchFromDatabase();
+
+    // Gets the status of all data sources for all systems at the specified time.
+    void GetHologramDataAvailability(absl::Time time);
+
+    // Acts as the helper function for UpdateProto specifically regarding
+    // modification of a proto's history
+    void UpdateHistory(HologramDataAvailability* availability_proto, 
+        absl::Time time, StatusType status);
+
     absl::flat_hash_map<System, std::string> system_to_cell_;
     HologramConfigSet hologram_configs_;
     absl::flat_hash_map<System, absl::flat_hash_map<DataSource,

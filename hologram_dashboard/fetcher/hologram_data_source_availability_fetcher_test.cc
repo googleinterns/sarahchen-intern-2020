@@ -32,7 +32,8 @@ TEST(FetcherTest, ConstructorMissingFlags) {
 
 TEST(FetcherTest, ConstructorValidFlags) {
     absl::SetFlag(&FLAGS_chipper_batch_job_cell, "cv");
-    absl::SetFlag(&FLAGS_hologram_source_config_file_path, "path");
+    absl::SetFlag(&FLAGS_hologram_source_config_file_path, 
+        "fetcher/testdata/hologram_config_valid.ascii");
     absl::SetFlag(&FLAGS_chipper_gdpr_batch_job_cell, "ef");
     HologramDataSourceAvailabilityFetcher hologram_fetcher;
     EXPECT_THAT(hologram_fetcher.system_to_cell_, 
