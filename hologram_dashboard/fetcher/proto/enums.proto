@@ -66,7 +66,7 @@ enum DataSource {
     HOLOGRAM_USER_EXPERIMENT_ID_AND_TEST_CODE = 6;
 }
 
-// Specify the system.
+// Existing systems that uses Holgram data.
 // Next tag: 3
 enum System {
     UNKNOWN_SYSTEM = 0;
