@@ -46,7 +46,7 @@ void HologramDataSourceAvailabilityFetcher::
                                                 &hologram_configs_));
 }
 
-void HologramDataSourceAvailabilityFetcher::UpdateProto(System system, 
+void HologramDataSourceAvailabilityFetcher::UpdateDataAvailability(System system, 
     absl::Time time, DataSource data_source, StatusType status) {
     absl::flat_hash_map<DataSource,HologramDataAvailability>& 
         data_to_availability_map = system_to_data_source_availability_[system];
