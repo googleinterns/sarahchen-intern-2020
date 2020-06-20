@@ -49,17 +49,24 @@ private:
     // to wrong file or malformed file.
     void AcquireConfig(const std::string& config_file_path);
 
-    FRIEND_TEST(FetcherTest, GetStatus);
-    
     // Fetches availability info from database.
     void FetchFromDatabase();
 
     // Gets the status of all data sources for all systems at the specified time.
     void GetHologramDataAvailability(absl::Time time);
 
+    FRIEND_TEST(FetcherTest, UpdateCorpusFinishTimeOneTime);
+    FRIEND_TEST(FetcherTest, UpdateCorpusFinishTimeNoFile);
+    FRIEND_TEST(FetcherTest, UpdateCorpusFinishTimeMultipleFiles);
+    // Updates the finish time for a specified system and corpus, returns 
+    // whether said corpus has ran at all for the day.
+    std::string UpdateCorpusFinishTime(
+        std::filesystem::path update_lookup_server_path, 
+        std::filesystem::path update_coordinator_path);
+
     // Updates the proto given the type of data source, system it is in, the
     // date, and the status acquired by GetStatus.
-    void UpdateDataAvailability(std::string system, absl::Time time, 
+    void UpdateDataAvailability(System system, absl::Time time, 
         DataSource data_source, StatusType status);
 
     // Acts as the helper function for UpdateProto specifically regarding

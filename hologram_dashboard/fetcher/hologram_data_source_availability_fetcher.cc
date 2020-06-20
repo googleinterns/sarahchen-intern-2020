@@ -55,55 +55,89 @@ void HologramDataSourceAvailabilityFetcher::FetchFromDatabase() {
 }
 
 void HologramDataSourceAvailabilityFetcher::GetHologramDataAvailability(
-    absl::Time date) {
-    absl::TimeZone google_time;
-    assert(absl::LoadTimeZone("America/Los_Angeles", &google_time));
-    absl::CivilSecond civil_time = absl::ToCivilSecond(time, google_time);
-    // Need to hardcode current directory since bazel is built at a different
-    // directory and can't include an entire folder for bazel.
-    const std::string current_dir = "/usr/local/google/home/alexanderlin"
-        + "/sarahchen-intern-2020/hologram_dashboard/fetcher/testdata/Database";
+    absl::Time time) {
+    // absl::TimeZone google_time;
+    // assert(absl::LoadTimeZone("America/Los_Angeles", &google_time));
+    // absl::CivilSecond civil_time = absl::ToCivilSecond(time, google_time);
+    // // Hardcode database location since there's no access to real Hologram
+    // // server.
+    // std::string database_loc = "testdata/Database";
 
-    std::string month_folder = std::to_string(civil_time.month());
-    // If the month is 1 digit, prepend it with a 0.
-    if (month_folder.size() == 1) {
-        month_folder = "0" + month;
-    }
-    month += "/";
-    std::string day_folder = std::to_string(civil_time.day());
-    // If the day is 1 digit, prepend it with a 0.
-    if (day_folder.size() == 1) {
-        day_folder = "0" + day;
-    }
-    day_folder += "/";
-    std::string year_folder = std::to_string(civil_time.year());
-    year_folder += "/"
+    // std::string month_folder = std::to_string(civil_time.month());
+    // // If the month is 1 digit, prepend it with a 0.
+    // if (month_folder.size() == 1) {
+    //     month_folder = "0" + month_folder;
+    // }
+    // month_folder += "/";
+    // std::string day_folder = std::to_string(civil_time.day());
+    // // If the day is 1 digit, prepend it with a 0.
+    // if (day_folder.size() == 1) {
+    //     day_folder = "0" + day_folder;
+    // }
+    // day_folder += "/";
+    // std::string year_folder = std::to_string(civil_time.year());
+    // year_folder += "/";
     
-    for(const std::pair<System, std::string>& it : system_to_cell_) {
-        for(int i = 0; i < hologram_configs_.data_source_config_size(); ++i) {
-            HologramConfig config = hologram_configs_.data_source_config(i);
-            // Get the latest update time for each of the corpusfor each of the
-            // systems.
-            const absl::flat_hash_map<Corpus, std::string>& corpus_to_update =
-                system_to_corpus_to_last_update[it.first];
-            if (corpus_to_update.find(config.kvick_corpus()) ==
-                corpus_to_update.end()) {
-                std::filesystem::path update_coordinator_path = current_dir 
-                    + it->second + "update_coordinator_done/" + year_folder 
-                    + month_folder + day_folder;
-                std::filesystem::path update_lookup_server_path = current_dir 
-                    + it->second + "update_lookup_server_done/" + year_folder 
-                    + month_folder + day_folder;
-                // If one of the folders doesn't even exist then this job is not
-                // ran yet and definitely did not include the data source.
-                if (!std::filesystem::exists(path) || 
-                    !std::filesystem::exists(path)) {
-                    UpdateProto(it->first, time, config.source_type(), 
-                    Status::DATA_NOT_INGESTED_ON_TIME);
-                }
-            }
-        }
+    // for(const std::pair<System, std::string>& it : system_to_cell_) {
+    //     for(int i = 0; i < hologram_configs_.data_source_config_size(); ++i) {
+    //         HologramConfig config = hologram_configs_.data_source_config(i);
+    //         const absl::flat_hash_map<Corpus, std::string>& corpus_to_update =
+    //             system_to_corpus_to_last_update_[system];
+    //         std::filesystem::path update_coordinator_path = database_loc 
+    //             + it.second + "update_coordinator_done/" + year_folder 
+    //             + month_folder + day_folder;
+    //         std::filesystem::path update_lookup_server_path = database_loc 
+    //             + it.second + "update_lookup_server_done/" + year_folder 
+    //             + month_folder + day_folder;
+    //         // If corpus has not succeeded for the day yet no data is injested.
+    //         std::string latest_job = UpdateCorpusFinishTime(
+    //             update_lookup_server_path, update_coordinator_path);
+    //         if(latest_job.empty()) {
+    //             UpdateDataAvailability(it->first, time, config.source_type(), 
+    //                 Status::DATA_NOT_INGESTED_ON_TIME);
+    //         }
+    //         else {
+    //             corpus_to_update[config.kvick_corpus()] = latest_job;
+    //         }
+    //     }
+    // }
+}
+
+std::string HologramDataSourceAvailabilityFetcher::UpdateCorpusFinishTime(
+    const std::filesystem::path update_lookup_server_path, 
+    const std::filesystem::path update_coordinator_path) {       
+    // If one of the folders doesn't even exist or is empty, then the corpus
+    // has not finished running today yet.
+    if (!std::filesystem::exists(update_coordinator_path) || 
+        !std::filesystem::exists(update_lookup_server_path) ||
+        std::filesystem::is_empty(update_coordinator_path) ||
+        std::filesystem::is_empty(update_lookup_server_path)) {
+        return std::string();
     }
+    // Acquire the intersection of coordinator and lookupserver files.
+    std::vector<std::string> update_coordinator_files;
+    for (const std::filesystem::directory_entry& entry : 
+        std::filesystem::directory_iterator(update_coordinator_path)) {
+        update_coordinator_files.push_back(entry.path().filename());
+    }
+    std::sort(update_coordinator_files.begin(), 
+        update_coordinator_files.end());
+    std::vector<std::string> update_lookup_server_files;
+    for (const std::filesystem::directory_entry& entry : 
+        std::filesystem::directory_iterator(update_lookup_server_path)) {
+        update_lookup_server_files.push_back(entry.path().filename());
+    }
+    std::sort(update_lookup_server_files.begin(), 
+        update_lookup_server_files.end());
+    std::vector<std::string> corpus_done_time;
+    std::set_intersection(update_lookup_server_files.begin(), 
+        update_lookup_server_files.end(), update_coordinator_files.begin(), 
+        update_coordinator_files.end(), back_inserter(corpus_done_time));
+    // If there is no intersection, this corpus has not successfuly ran yet.
+    if (corpus_done_time.empty()) {
+        return std::string();
+    }
+    return corpus_done_time[corpus_done_time.size() - 1];
 }
 
 void HologramDataSourceAvailabilityFetcher::UpdateDataAvailability(

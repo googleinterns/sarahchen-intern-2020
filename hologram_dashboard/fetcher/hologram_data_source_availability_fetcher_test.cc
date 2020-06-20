@@ -65,17 +65,40 @@ TEST(FetcherTest, ValidAcquireConfig) {
         (expected_hologram_config, hologram_fetcher.hologram_configs_));
 }
 
-TEST(FetcherTest, GetStatus) {
+TEST(FetcherTest, UpdateCorpusFinishTimeOneTime) {
     HologramDataSourceAvailabilityFetcher hologram_fetcher;
-    struct tm time;
-    time.tm_mday = 4;
-    time.tm_mon = 5; 
-    time.tm_year = 120;
-    time.tm_hour = 0;
-    time.tm_min = 0;
-    time.tm_sec = 0;
-    time_t time_in = mktime(&time);
-    hologram_fetcher.GetStatus(time_in);
+    std::filesystem::path update_coordinator_path = std::filesystem::current_path();
+    std::filesystem::path update_lookup_server_path = std::filesystem::current_path();
+    update_coordinator_path += "/fetcher/testdata/Database/ja-d/";
+    update_coordinator_path += "update_coordinator_done/2020/06/04/";
+    update_lookup_server_path += "/fetcher/testdata/Database/ja-d/"; 
+    update_lookup_server_path += "update_lookup_server_done/2020/06/04/";
+    EXPECT_EQ("1591419575", hologram_fetcher.UpdateCorpusFinishTime(
+        update_lookup_server_path, update_coordinator_path));
+}
+
+TEST(FetcherTest, UpdateCorpusFinishTimeMultipleFiles) {
+    HologramDataSourceAvailabilityFetcher hologram_fetcher;
+    std::filesystem::path update_coordinator_path = std::filesystem::current_path();
+    std::filesystem::path update_lookup_server_path = std::filesystem::current_path();
+    update_coordinator_path += "/fetcher/testdata/Database/ja-d/";
+    update_coordinator_path += "update_coordinator_done/2020/06/03/";
+    update_lookup_server_path += "/fetcher/testdata/Database/ja-d/"; 
+    update_lookup_server_path += "update_lookup_server_done/2020/06/03/";
+    EXPECT_EQ("1591419572", hologram_fetcher.UpdateCorpusFinishTime(
+        update_lookup_server_path, update_coordinator_path));
+}
+
+TEST(FetcherTest, UpdateCorpusFinishTimeNoFile) {
+    HologramDataSourceAvailabilityFetcher hologram_fetcher;
+    std::filesystem::path update_coordinator_path = std::filesystem::current_path();
+    std::filesystem::path update_lookup_server_path = std::filesystem::current_path();
+    update_coordinator_path += "/fetcher/testdata/Database/ja-d/";
+    update_coordinator_path += "update_coordinator_done/2020/06/02/";
+    update_lookup_server_path += "/fetcher/testdata/Database/ja-d/"; 
+    update_lookup_server_path += "update_lookup_server_done/2020/06/02/";
+    EXPECT_EQ("", hologram_fetcher.UpdateCorpusFinishTime(
+        update_lookup_server_path, update_coordinator_path));
 }
 
 } // namespace wireless_android_play_analytics

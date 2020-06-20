@@ -32,7 +32,8 @@ cc_test(
         "data_availability_fetcher",
     ],
     data = ["testdata/hologram_config_valid.ascii", 
-            "testdata/hologram_config_malformed.ascii"]
+            "testdata/hologram_config_malformed.ascii"] + 
+            glob(["testdata/Database/*/*/*/*/*/*/DONE"]),
 )
 
 cc_binary(
