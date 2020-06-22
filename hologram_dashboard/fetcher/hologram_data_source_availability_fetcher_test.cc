@@ -23,20 +23,20 @@ namespace wireless_android_play_analytics{
 
 TEST(FetcherTest, ConstructorMissingFlags) {
     // Missing one flag.
-    absl::SetFlag(&FLAGS_chipper_batch_job_cell, "cv");
+    absl::SetFlag(&FLAGS_chipper_batch_job_cell, "ja-d");
     absl::SetFlag(&FLAGS_hologram_source_config_file_path, "path");
     ASSERT_DEATH(HologramDataSourceAvailabilityFetcher(), "");
 }
 
 TEST(FetcherTest, ConstructorValidFlags) {
-    absl::SetFlag(&FLAGS_chipper_batch_job_cell, "cv");
+    absl::SetFlag(&FLAGS_chipper_batch_job_cell, "ja-d");
     absl::SetFlag(&FLAGS_hologram_source_config_file_path, 
         "fetcher/testdata/hologram_config_valid.ascii");
-    absl::SetFlag(&FLAGS_chipper_gdpr_batch_job_cell, "ef");
+    absl::SetFlag(&FLAGS_chipper_gdpr_batch_job_cell, "oc-d");
     HologramDataSourceAvailabilityFetcher hologram_fetcher;
     EXPECT_THAT(hologram_fetcher.system_to_cell_, 
-        testing::UnorderedElementsAre(testing::Pair(System::CHIPPER, "cv"), 
-            testing::Pair(System::CHIPPER_GDPR, "ef")));
+        testing::UnorderedElementsAre(testing::Pair(System::CHIPPER, "ja-d"), 
+            testing::Pair(System::CHIPPER_GDPR, "oc-d")));
 }
 
 TEST(FetcherTest, InvalidAcquireConfig) {
@@ -67,8 +67,10 @@ TEST(FetcherTest, ValidAcquireConfig) {
 
 TEST(FetcherTest, UpdateCorpusFinishTimeOneTime) {
     HologramDataSourceAvailabilityFetcher hologram_fetcher;
-    std::filesystem::path update_coordinator_path = std::filesystem::current_path();
-    std::filesystem::path update_lookup_server_path = std::filesystem::current_path();
+    std::filesystem::path update_coordinator_path = 
+        std::filesystem::current_path();
+    std::filesystem::path update_lookup_server_path = 
+        std::filesystem::current_path();
     update_coordinator_path += "/fetcher/testdata/Database/ja-d/";
     update_coordinator_path += "update_coordinator_done/2020/06/04/";
     update_lookup_server_path += "/fetcher/testdata/Database/ja-d/"; 
@@ -79,8 +81,10 @@ TEST(FetcherTest, UpdateCorpusFinishTimeOneTime) {
 
 TEST(FetcherTest, UpdateCorpusFinishTimeMultipleFiles) {
     HologramDataSourceAvailabilityFetcher hologram_fetcher;
-    std::filesystem::path update_coordinator_path = std::filesystem::current_path();
-    std::filesystem::path update_lookup_server_path = std::filesystem::current_path();
+    std::filesystem::path update_coordinator_path = 
+        std::filesystem::current_path();
+    std::filesystem::path update_lookup_server_path = 
+        std::filesystem::current_path();
     update_coordinator_path += "/fetcher/testdata/Database/ja-d/";
     update_coordinator_path += "update_coordinator_done/2020/06/03/";
     update_lookup_server_path += "/fetcher/testdata/Database/ja-d/"; 
@@ -91,14 +95,25 @@ TEST(FetcherTest, UpdateCorpusFinishTimeMultipleFiles) {
 
 TEST(FetcherTest, UpdateCorpusFinishTimeNoFile) {
     HologramDataSourceAvailabilityFetcher hologram_fetcher;
-    std::filesystem::path update_coordinator_path = std::filesystem::current_path();
-    std::filesystem::path update_lookup_server_path = std::filesystem::current_path();
+    std::filesystem::path update_coordinator_path = 
+        std::filesystem::current_path();
+    std::filesystem::path update_lookup_server_path = 
+        std::filesystem::current_path();
     update_coordinator_path += "/fetcher/testdata/Database/ja-d/";
     update_coordinator_path += "update_coordinator_done/2020/06/02/";
     update_lookup_server_path += "/fetcher/testdata/Database/ja-d/"; 
     update_lookup_server_path += "update_lookup_server_done/2020/06/02/";
     EXPECT_EQ("", hologram_fetcher.UpdateCorpusFinishTime(
         update_lookup_server_path, update_coordinator_path));
+}
+
+TEST(FetcherTest, GetHologramDataAvailability) {
+    HologramDataSourceAvailabilityFetcher hologram_fetcher;
+    absl::CivilDay civil_time(2020, 06, 04);
+    absl::TimeZone google_time;
+    ASSERT_TRUE(absl::LoadTimeZone("America/Los_Angeles", &google_time));
+    absl::Time time = absl::FromCivil(civil_time, google_time);
+    hologram_fetcher.GetHologramDataAvailability(time);
 }
 
 } // namespace wireless_android_play_analytics

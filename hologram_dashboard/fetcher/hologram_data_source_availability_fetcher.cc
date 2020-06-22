@@ -61,8 +61,8 @@ void HologramDataSourceAvailabilityFetcher::GetHologramDataAvailability(
     absl::CivilSecond civil_time = absl::ToCivilSecond(time, google_time);
     // Hardcode database location since there's no access to real Hologram
     // server.
-    std::filesystem::path database_loc = "/fetcher/testdata/Database/";
-
+    std::filesystem::path database_loc = std::filesystem::current_path();
+    database_loc += "/fetcher/testdata/Database/";
     std::string month_folder = std::to_string(civil_time.month());
     // If the month is 1 digit, prepend it with a 0.
     if (month_folder.size() == 1) {
@@ -81,28 +81,45 @@ void HologramDataSourceAvailabilityFetcher::GetHologramDataAvailability(
     for(const std::pair<System, std::string>& it : system_to_cell_) {
         for(int i = 0; i < hologram_configs_.data_source_config_size(); ++i) {
             HologramConfig config = hologram_configs_.data_source_config(i);
-            const absl::flat_hash_map<Corpus, std::string>& corpus_to_update =
-                system_to_corpus_to_last_update_[system];
             std::filesystem::path update_coordinator_path = database_loc; 
-            update_coordinator_path += it.second + "update_coordinator_done/";
+            update_coordinator_path += it.second + "/" ;
+            update_coordinator_path += "update_coordinator_done/";
             update_coordinator_path += year_folder + month_folder + day_folder;
             std::filesystem::path update_lookup_server_path = database_loc;
-            update_lookup_server_path +=  it.second;
+            update_lookup_server_path +=  it.second + "/";
             update_lookup_server_path += "update_lookup_server_done/";
             update_lookup_server_path += year_folder + month_folder + day_folder;
             // If corpus has not succeeded for the day yet no data is injested.
             std::string latest_job = UpdateCorpusFinishTime(
                 update_lookup_server_path, update_coordinator_path);
             if(latest_job.empty()) {
-                UpdateDataAvailability(it->first, time, config.source_type(), 
-                    Status::DATA_NOT_INGESTED_ON_TIME);
+                UpdateDataAvailability(it.first, time, config.source_type(), 
+                    StatusType::DATA_NOT_INGESTED_ON_TIME);
             }
             else {
-                system_to_last_update_[system] = latest_job;
+                system_to_last_update_[it.first] = latest_job;
                 std::filesystem::path data_source_path = database_loc;
-                std::string data_source = DataSource_Name(config.source_type());
-                data_source_path += it.second + data_source + "/";
+                std::string corpus_source = Corpus_Name(config.kvick_corpus());
+                data_source_path += it.second + "/" + corpus_source + "/";
                 data_source_path += year_folder + month_folder + day_folder;
+                if (std::filesystem::exists(data_source_path) &&
+                    !std::filesystem::is_empty(data_source_path)) {
+                    // Acquire time timestamp for earliest DONE file.
+                    std::vector<std::string> corpus_files;
+                    for (const std::filesystem::directory_entry& entry : 
+                        std::filesystem::directory_iterator(data_source_path)) {
+                        corpus_files.push_back(entry.path().filename());
+                    }
+                    std::sort(corpus_files.begin(), corpus_files.end());
+                    // Need to adjust for difference in precision.
+                    if (corpus_files[0].substr(0, latest_job.size()) <= latest_job) {
+                        UpdateDataAvailability(it.first, time, config.source_type(), 
+                            StatusType::SUCCESS);
+                        continue;
+                    }
+                }
+                UpdateDataAvailability(it.first, time, config.source_type(), 
+                    StatusType::DATA_NOT_INGESTED_ON_TIME);
             }
         }
     }

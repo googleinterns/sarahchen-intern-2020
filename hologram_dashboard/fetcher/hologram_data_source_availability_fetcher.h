@@ -22,6 +22,7 @@
 #include <time.h>
 #include <chrono>
 #include <filesystem>
+#include <algorithm>
 #include <google/protobuf/text_format.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 #include "fetcher/proto/hologram_availability.pb.h"
@@ -52,6 +53,7 @@ private:
     // Fetches availability info from database.
     void FetchFromDatabase();
 
+    FRIEND_TEST(FetcherTest, GetHologramDataAvailability);
     // Gets the status of all data sources for all systems at the specified time.
     void GetHologramDataAvailability(absl::Time time);
 
