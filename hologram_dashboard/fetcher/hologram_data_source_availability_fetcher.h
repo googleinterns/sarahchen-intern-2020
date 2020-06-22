@@ -78,8 +78,7 @@ private:
     HologramConfigSet hologram_configs_;
     absl::flat_hash_map<System, absl::flat_hash_map<DataSource,
         HologramDataAvailability>> system_to_data_source_availability_;
-    absl::flat_hash_map<System, absl::flat_hash_map<Corpus, std::string>>
-        system_to_corpus_to_last_update_;
+    absl::flat_hash_map<System, std::string> system_to_last_update_;
 };
 
 } // namespace wireless_android_play_analytics
