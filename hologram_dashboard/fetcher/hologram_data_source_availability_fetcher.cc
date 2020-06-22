@@ -71,10 +71,14 @@ void HologramDataSourceAvailabilityFetcher::UpdateDataAvailability(System system
         data_to_availability_map[data_source];
     DataSourceDetail* latest_status = 
         hologram_data_availability.mutable_latest_status();
+    absl::TimeZone google_time;
+    // Load time zone could fail according to absl doc.
+    assert(absl::LoadTimeZone("America/Los_Angeles", &google_time));
     if (!hologram_data_availability.has_data_source()) {
         hologram_data_availability.set_data_source(data_source);
     }
     latest_status->set_date(absl::ToUnixSeconds(time));
+    latest_status->set_date_as_string(absl::FormatTime(time, google_time));
     latest_status->set_status(status);
     UpdateHistory(&hologram_data_availability, time, status);
 }
@@ -101,6 +105,7 @@ void HologramDataSourceAvailabilityFetcher::UpdateHistory(
             time_civil.day() == history_civil_time.day()) {
             // If it's the same day just update the status.
             latest_history->set_date(absl::ToUnixSeconds(time));
+            latest_history->set_date_as_string(absl::FormatTime(time, google_time));
             latest_history->set_status(status);
             return;
         }
@@ -108,6 +113,7 @@ void HologramDataSourceAvailabilityFetcher::UpdateHistory(
     // Add a history if either its empty or it is later than latest history.
     DataSourceDetail* detail = hologram_data_availability->add_history();
     detail->set_date(absl::ToUnixSeconds(time));
+    detail->set_date_as_string(absl::FormatTime(time, google_time));
     detail->set_status(status);
 
     if (hologram_data_availability->history_size() > 7) {

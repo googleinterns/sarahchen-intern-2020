@@ -23,7 +23,8 @@ import "fetcher/proto/enums.proto";
 // Next tag: 3
 message DataSourceDetail {
     optional int64 date = 1;
-    optional StatusType status = 2;
+    optional string date_as_string = 2;
+    optional StatusType status = 3;
 }
 
 // Next tag: 4
