@@ -62,9 +62,12 @@ private:
     FRIEND_TEST(FetcherTest, UpdateCorpusFinishTimeMultipleFiles);
     // Updates the finish time for a specified system and corpus, returns 
     // whether said corpus has ran at all for the day.
-    std::string UpdateCorpusFinishTime(
+    int64_t GetKvickServerUpdateTimestampMicros(
         std::filesystem::path update_lookup_server_path, 
         std::filesystem::path update_coordinator_path);
+    
+    // Checks either if the supposed folder with done files have any
+    bool CheckDoneFileExists(std::filesystem::path path);
 
     // Updates the proto given the type of data source, system it is in, the
     // date, and the status acquired by GetStatus.
@@ -81,6 +84,7 @@ private:
     absl::flat_hash_map<System, absl::flat_hash_map<DataSource,
         HologramDataAvailability>> system_to_data_source_availability_;
     absl::flat_hash_map<System, std::string> system_to_last_update_;
+    absl::TimeZone google_time;
 };
 
 } // namespace wireless_android_play_analytics

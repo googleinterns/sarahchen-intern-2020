@@ -29,6 +29,7 @@ HologramDataSourceAvailabilityFetcher::HologramDataSourceAvailabilityFetcher() {
     system_to_cell_[System::CHIPPER_GDPR] = 
         absl::GetFlag(FLAGS_chipper_gdpr_batch_job_cell);
     AcquireConfig(absl::GetFlag(FLAGS_hologram_source_config_file_path));
+    assert(absl::LoadTimeZone("America/Los_Angeles", &google_time));
 }
 
 void HologramDataSourceAvailabilityFetcher::Process() {
@@ -55,69 +56,71 @@ void HologramDataSourceAvailabilityFetcher::FetchFromDatabase() {
 }
 
 void HologramDataSourceAvailabilityFetcher::GetHologramDataAvailability(
-    absl::Time time) {
-    absl::TimeZone google_time;
-    assert(absl::LoadTimeZone("America/Los_Angeles", &google_time));
+    absl::Time time) {    
     // Hardcode database location since there's no access to real Hologram
     // server.
     std::filesystem::path database_loc = std::filesystem::current_path();
     database_loc += "/fetcher/testdata/Database/";
     std::string date = absl::FormatTime("%Y/%m/%d/", time, google_time);
     
-    for(const std::pair<System, std::string>& it : system_to_cell_) {
+    for(const auto& [system, borg_cell] : system_to_cell_) {
         for(int i = 0; i < hologram_configs_.data_source_config_size(); ++i) {
             HologramConfig config = hologram_configs_.data_source_config(i);
+            int64_t latest_job = -1;
             std::filesystem::path update_coordinator_path = database_loc; 
-            update_coordinator_path += it.second + "/" ;
+            update_coordinator_path += borg_cell + "/" ;
             update_coordinator_path += "update_coordinator_done/" + date;
             std::filesystem::path update_lookup_server_path = database_loc;
-            update_lookup_server_path +=  it.second + "/";
+            update_lookup_server_path +=  borg_cell + "/";
             update_lookup_server_path += "update_lookup_server_done/" + date;
             // If corpus has not succeeded for the day yet no data is injested.
-            std::string latest_job = UpdateCorpusFinishTime(
-                update_lookup_server_path, update_coordinator_path);
-            if(latest_job.empty()) {
-                UpdateDataAvailability(it.first, time, config.source_type(), 
+            
+            // Prevent checking last update multiple times within a run.
+            if (system_to_last_update_.find(system) == 
+                system_to_last_update_.end()) {
+                latest_job = GetKvickServerUpdateTimestampMicros(
+                    update_lookup_server_path, update_coordinator_path);   
+            }
+            
+            if(latest_job == -1) {
+                UpdateDataAvailability(system, time, config.source_type(), 
                     StatusType::DATA_NOT_INGESTED_ON_TIME);
             }
             else {
-                system_to_last_update_[it.first] = latest_job;
+                system_to_last_update_[system] = latest_job;
                 std::filesystem::path data_source_path = database_loc;
                 std::string corpus_source = Corpus_Name(config.kvick_corpus());
-                data_source_path += it.second + "/" + corpus_source + "/" + date;
-                if (std::filesystem::exists(data_source_path) &&
-                    !std::filesystem::is_empty(data_source_path)) {
+                data_source_path += borg_cell + "/" + corpus_source + "/" + date;
+                if (CheckDoneFileExists(data_source_path)) {
                     // Acquire time timestamp for earliest DONE file.
-                    std::vector<std::string> corpus_files;
+                    std::vector<std::string> corpus_done_files;
                     for (const std::filesystem::directory_entry& entry : 
                         std::filesystem::directory_iterator(data_source_path)) {
-                        corpus_files.push_back(entry.path().filename());
+                        corpus_done_files.push_back(entry.path().filename());
                     }
-                    std::sort(corpus_files.begin(), corpus_files.end());
+                    std::sort(corpus_done_files.begin(), corpus_done_files.end());
                     // Need to adjust for difference in precision.
-                    if (corpus_files[0] <= latest_job) {
-                        UpdateDataAvailability(it.first, time, config.source_type(), 
+                    if (corpus_done_files[0] <= std::to_string(latest_job)) {
+                        UpdateDataAvailability(system, time, config.source_type(), 
                             StatusType::SUCCESS);
                         continue;
                     }
                 }
-                UpdateDataAvailability(it.first, time, config.source_type(), 
+                UpdateDataAvailability(system, time, config.source_type(), 
                     StatusType::DATA_NOT_INGESTED_ON_TIME);
             }
         }
     }
 }
 
-std::string HologramDataSourceAvailabilityFetcher::UpdateCorpusFinishTime(
+int64_t HologramDataSourceAvailabilityFetcher::GetKvickServerUpdateTimestampMicros(
     const std::filesystem::path update_lookup_server_path, 
     const std::filesystem::path update_coordinator_path) {       
     // If one of the folders doesn't even exist or is empty, then the corpus
     // has not finished running today yet.
-    if (!std::filesystem::exists(update_coordinator_path) || 
-        !std::filesystem::exists(update_lookup_server_path) ||
-        std::filesystem::is_empty(update_coordinator_path) ||
-        std::filesystem::is_empty(update_lookup_server_path)) {
-        return std::string();
+    if (!CheckDoneFileExists(update_coordinator_path) || 
+        !CheckDoneFileExists(update_lookup_server_path)) {
+        return -1;
     }
     // Acquire the intersection of coordinator and lookupserver files.
     std::vector<std::string> update_coordinator_files;
@@ -140,10 +143,16 @@ std::string HologramDataSourceAvailabilityFetcher::UpdateCorpusFinishTime(
         update_coordinator_files.end(), back_inserter(corpus_done_time));
     // If there is no intersection, this corpus has not successfuly ran yet.
     if (corpus_done_time.empty()) {
-        return std::string();
+        return -1;
     }
-    return corpus_done_time[corpus_done_time.size() - 1];
+    return std::stoll(corpus_done_time[corpus_done_time.size() - 1]);
 }
+
+bool HologramDataSourceAvailabilityFetcher::CheckDoneFileExists(
+    std::filesystem::path path){
+    return std::filesystem::exists(path) && !std::filesystem::is_empty(path);
+}
+
 
 void HologramDataSourceAvailabilityFetcher::UpdateDataAvailability(
     System system, absl::Time date, DataSource data_source, 

@@ -75,7 +75,8 @@ TEST(FetcherTest, UpdateCorpusFinishTimeOneTime) {
     update_coordinator_path += "update_coordinator_done/2020/06/04/";
     update_lookup_server_path += "/fetcher/testdata/Database/ja-d/"; 
     update_lookup_server_path += "update_lookup_server_done/2020/06/04/";
-    EXPECT_EQ("1591419575000000", hologram_fetcher.UpdateCorpusFinishTime(
+    EXPECT_EQ(1591419575000000, 
+        hologram_fetcher.GetKvickServerUpdateTimestampMicros(
         update_lookup_server_path, update_coordinator_path));
 }
 
@@ -89,7 +90,8 @@ TEST(FetcherTest, UpdateCorpusFinishTimeMultipleFiles) {
     update_coordinator_path += "update_coordinator_done/2020/06/03/";
     update_lookup_server_path += "/fetcher/testdata/Database/ja-d/"; 
     update_lookup_server_path += "update_lookup_server_done/2020/06/03/";
-    EXPECT_EQ("1591419572000000", hologram_fetcher.UpdateCorpusFinishTime(
+    EXPECT_EQ(1591419572000000, 
+        hologram_fetcher.GetKvickServerUpdateTimestampMicros(
         update_lookup_server_path, update_coordinator_path));
 }
 
@@ -103,7 +105,7 @@ TEST(FetcherTest, UpdateCorpusFinishTimeNoFile) {
     update_coordinator_path += "update_coordinator_done/2020/06/02/";
     update_lookup_server_path += "/fetcher/testdata/Database/ja-d/"; 
     update_lookup_server_path += "update_lookup_server_done/2020/06/02/";
-    EXPECT_EQ("", hologram_fetcher.UpdateCorpusFinishTime(
+    EXPECT_EQ(-1, hologram_fetcher.GetKvickServerUpdateTimestampMicros(
         update_lookup_server_path, update_coordinator_path));
 }
 
