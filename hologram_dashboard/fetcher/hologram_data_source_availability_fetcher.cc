@@ -20,16 +20,60 @@ namespace wireless_android_play_analytics{
 
 HologramDataSourceAvailabilityFetcher::HologramDataSourceAvailabilityFetcher() {
     // Ensure that all the flags are given.
-    assert(!absl::GetFlag(FLAGS_chipper_batch_job_cell).empty());
-    assert(!absl::GetFlag(FLAGS_chipper_gdpr_batch_job_cell).empty());
     assert(!absl::GetFlag(FLAGS_hologram_source_config_file_path).empty());
+    assert(!absl::GetFlag(FLAGS_chipper_required_sources).empty());
+    assert(!absl::GetFlag(FLAGS_chipper_gdpr_required_sources).empty());
+    assert(!absl::GetFlag(FLAGS_chipper_job_start_root).empty());
+    assert(!absl::GetFlag(FLAGS_chipper_gdpr_job_start_root).empty());
+    assert(!absl::GetFlag(FLAGS_android_spam_done_file_root).empty());
+    assert(!absl::GetFlag(FLAGS_default_done_file_root).empty());
+    assert(!absl::GetFlag(FLAGS_prime_meridian_done_file_root).empty());
+    assert(!absl::GetFlag(FLAGS_spam_done_file_root).empty());
+    assert(!absl::GetFlag(FLAGS_user_attribute_done_file_root).empty());
+    assert(!absl::GetFlag(FLAGS_user_experiment_done_file_root).empty());
 
-    system_to_cell_[System::CHIPPER] = 
-        absl::GetFlag(FLAGS_chipper_batch_job_cell);
-    system_to_cell_[System::CHIPPER_GDPR] = 
-        absl::GetFlag(FLAGS_chipper_gdpr_batch_job_cell);
+    
     AcquireConfig(absl::GetFlag(FLAGS_hologram_source_config_file_path));
+    SetUpFetcher();
     assert(absl::LoadTimeZone("America/Los_Angeles", &google_time));
+}
+
+void HologramDataSourceAvailabilityFetcher::SetUpFetcher() {
+    corpus_to_done_file_root[Corpus::HOLOGRAM_ANDROID_SPAM_ABUSE] =
+        absl::GetFlag(FLAGS_android_spam_done_file_root);
+    corpus_to_done_file_root[Corpus::HOLOGRAM_DEFAULT] =
+        absl::GetFlag(FLAGS_default_done_file_root);
+    corpus_to_done_file_root[Corpus::HOLOGRAM_PRIME_MERIDIAN] =
+        absl::GetFlag(FLAGS_prime_meridian_done_file_root);
+    corpus_to_done_file_root[Corpus::HOLOGRAM_SPAM] =
+        absl::GetFlag(FLAGS_spam_done_file_root);
+    corpus_to_done_file_root[Corpus::HOLOGRAM_USER_ATTRIBUTE] =
+        absl::GetFlag(FLAGS_user_attribute_done_file_root);
+    corpus_to_done_file_root[Corpus::HOLOGRAM_USER_EXPERIMENT_ID_AND_TEST_CODE] =
+        absl::GetFlag(FLAGS_user_experiment_done_file_root);
+
+    hologram_client_info_.push_back(GetClientInfo(System::CHIPPER, 
+        absl::GetFlag(FLAGS_chipper_required_sources), 
+        absl::GetFlag(FLAGS_chipper_job_start_root)));
+    hologram_client_info_.push_back(GetClientInfo(System::CHIPPER_GDPR,
+        absl::GetFlag(FLAGS_chipper_gdpr_required_sources),
+        absl::GetFlag(FLAGS_chipper_gdpr_job_start_root)));
+}
+
+HologramDataSourceAvailabilityFetcher::HologramClient 
+    HologramDataSourceAvailabilityFetcher::GetClientInfo(
+    System system, const std::vector<std::string>& required_sources, 
+    absl::string_view job_start_file_root) {
+    HologramClient client;
+    client.system_ = system;
+    client.job_start_file_root_ = job_start_file_root;
+    for (const std::string& source : required_sources) {
+        // If input name is invalid program ends.
+        DataSource source_enum;
+        assert(DataSource_Parse(source, &source_enum));
+        client.required_source_types_.push_back(source_enum);
+    }
+    return client;
 }
 
 void HologramDataSourceAvailabilityFetcher::Process() {

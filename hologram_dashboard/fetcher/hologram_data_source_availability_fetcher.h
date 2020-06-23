@@ -25,12 +25,14 @@
 #include <algorithm>
 #include <google/protobuf/text_format.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
+
 #include "fetcher/proto/hologram_availability.pb.h"
 #include "fetcher/proto/hologram_config.pb.h"
 #include "hologram_data_fetcher.h"
 #include "flags.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/btree_map.h"
+#include "absl/strings/string_view.h"
 
 namespace wireless_android_play_analytics {
 
@@ -52,6 +54,9 @@ private:
 
     // Fetches availability info from database.
     void FetchFromDatabase();
+
+    // Populates the private variables.
+    void SetUpFetcher();
 
     FRIEND_TEST(FetcherTest, GetHologramDataAvailability);
     // Gets the status of all data sources for all systems at the specified time.
@@ -89,7 +94,12 @@ private:
         std::vector<DataSource> required_source_types_;
     };
 
-    absl::vector<HologramClient> hologram_client_info_;
+    // Acquires the client's info for specified system.
+    HologramClient GetClientInfo(System system, 
+        const std::vector<std::string>& required_sources, 
+        absl::string_view job_start_file_root);
+
+    std::vector<HologramClient> hologram_client_info_;
     HologramConfigSet hologram_configs_;
     absl::flat_hash_map<Corpus, std::string> corpus_to_done_file_root;
     absl::TimeZone google_time;

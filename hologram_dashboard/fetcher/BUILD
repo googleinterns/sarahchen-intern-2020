@@ -21,6 +21,7 @@ cc_library(
             "@com_google_gtest//:gtest",
             "@com_google_absl//absl/container:flat_hash_map",
             "@com_google_absl//absl/container:btree",
+            "@com_google_abs//absl/strings"
             "hologram_data_fetcher_lib",
             "flags"],
 )
