@@ -76,9 +76,9 @@ TEST(FetcherTest, UpdateHistoryNewProto) {
     ASSERT_TRUE(absl::LoadTimeZone("America/Los_Angeles", &google_time));
     StatusType status = StatusType::SUCCESS;
     DataSourceDetail detail;
-    detail.set_date(absl::ToUnixSeconds(time));
+    detail.set_timestamp_millis(absl::ToUnixSeconds(time));
     detail.set_status(status);
-    detail.set_date_as_string(absl::FormatTime(time, google_time));
+    detail.set_date(absl::FormatTime(time, google_time));
     hologram_fetcher.UpdateHistory(&data_availability, time, status);
     EXPECT_EQ(data_availability.history_size(), 1);
     EXPECT_TRUE(MessageDifferencer::Equals(data_availability.history(0), 
@@ -93,12 +93,12 @@ TEST(FetcherTest, UpdateHistorySameDay) {
     ASSERT_TRUE(absl::LoadTimeZone("America/Los_Angeles", &google_time));
     StatusType status = StatusType::SUCCESS;
     DataSourceDetail detail;
-    detail.set_date(absl::ToUnixSeconds(time));
-    detail.set_date_as_string(absl::FormatTime(time, google_time));
+    detail.set_timestamp_millis(absl::ToUnixSeconds(time));
+    detail.set_date(absl::FormatTime(time, google_time));
     detail.set_status(status);
     DataSourceDetail* history = data_availability.add_history();
-    history->set_date(absl::ToUnixSeconds(time));
-    history->set_date_as_string(absl::FormatTime(time, google_time));
+    history->set_timestamp_millis(absl::ToUnixSeconds(time));
+    history->set_date(absl::FormatTime(time, google_time));
     history->set_status(status);
     hologram_fetcher.UpdateHistory(&data_availability, time, status);
     ASSERT_EQ(data_availability.history_size(), 1);
@@ -116,14 +116,14 @@ TEST(FetcherTest, UpdateHistoryIncrementHistory) {
     ASSERT_TRUE(absl::LoadTimeZone("America/Los_Angeles", &google_time));
     absl::Time time = absl::FromCivil(civil_time, google_time);
     DataSourceDetail* history = data_availability.add_history();
-    history->set_date(absl::ToUnixSeconds(time));
-    history->set_date_as_string(absl::FormatTime(time, google_time));
+    history->set_timestamp_millis(absl::ToUnixSeconds(time));
+    history->set_date(absl::FormatTime(time, google_time));
     history->set_status(status);
     // One day later
     absl::CivilDay civil_time_day_late(2020, 5, 5);;
     time = absl::FromCivil(civil_time_day_late, google_time);
-    detail.set_date(absl::ToUnixSeconds(time));
-    detail.set_date_as_string(absl::FormatTime(time, google_time));
+    detail.set_timestamp_millis(absl::ToUnixSeconds(time));
+    detail.set_date(absl::FormatTime(time, google_time));
     detail.set_status(status);
     hologram_fetcher.UpdateHistory(&data_availability, time, status);
     ASSERT_EQ(data_availability.history_size(), 2);
@@ -132,8 +132,8 @@ TEST(FetcherTest, UpdateHistoryIncrementHistory) {
     // One month later
     absl::CivilDay civil_time_month_late(2020, 6, 5);;
     time = absl::FromCivil(civil_time_month_late, google_time);
-    detail.set_date(absl::ToUnixSeconds(time));
-    detail.set_date_as_string(absl::FormatTime(time, google_time));
+    detail.set_timestamp_millis(absl::ToUnixSeconds(time));
+    detail.set_date(absl::FormatTime(time, google_time));
     detail.set_status(status);
     hologram_fetcher.UpdateHistory(&data_availability, time, status);
     ASSERT_EQ(data_availability.history_size(), 3);
@@ -142,8 +142,8 @@ TEST(FetcherTest, UpdateHistoryIncrementHistory) {
     // One year later
     absl::CivilDay civil_time_year_late(2021, 6, 5);;
     time = absl::FromCivil(civil_time_year_late, google_time);
-    detail.set_date(absl::ToUnixSeconds(time));
-    detail.set_date_as_string(absl::FormatTime(time, google_time));
+    detail.set_timestamp_millis(absl::ToUnixSeconds(time));
+    detail.set_date(absl::FormatTime(time, google_time));
     detail.set_status(status);
     hologram_fetcher.UpdateHistory(&data_availability, time, status);
     ASSERT_EQ(data_availability.history_size(), 4);
@@ -163,13 +163,13 @@ TEST(FetcherTest, UpdateHistoryOverflowHistory) {
     for(int i = 0; i < 7; ++i) {
         // Use increments of i as unique identifiers of each history entry.
         DataSourceDetail* tmp = data_availability.add_history();
-        tmp->set_date(absl::ToUnixSeconds(time) + i);
+        tmp->set_timestamp_millis(absl::ToUnixSeconds(time) + i);
         tmp->set_status(status);
     }
     absl::CivilDay civil_time_day_late(2020, 5, 5);;
     absl::Time time_late = absl::FromCivil(civil_time_day_late, google_time);
-    detail.set_date(absl::ToUnixSeconds(time_late));
-    detail.set_date_as_string(absl::FormatTime(time_late, google_time));
+    detail.set_timestamp_millis(absl::ToUnixSeconds(time_late));
+    detail.set_date(absl::FormatTime(time_late, google_time));
     detail.set_status(status);
     hologram_fetcher.UpdateHistory(&data_availability, time_late, status);
     ASSERT_EQ(data_availability.history_size(), 7);
@@ -177,8 +177,8 @@ TEST(FetcherTest, UpdateHistoryOverflowHistory) {
         detail));
     // The oldest history should be deleted so the new oldest history should be
     // previously second oldest history.
-    detail.set_date(absl::ToUnixSeconds(time) + 1);
-    detail.clear_date_as_string();
+    detail.set_timestamp_millis(absl::ToUnixSeconds(time) + 1);
+    detail.clear_date();
     EXPECT_TRUE(MessageDifferencer::Equals(data_availability.history(0), 
         detail));
 }
@@ -203,8 +203,8 @@ TEST(FetcherTest, UpdateDataAvailability) {
     HologramDataAvailability data_availability;
     data_availability.set_data_source(data_source);
     DataSourceDetail* latest_status = data_availability.mutable_latest_status();
-    latest_status->set_date(absl::ToUnixSeconds(time));
-    latest_status->set_date_as_string(absl::FormatTime(time, google_time));
+    latest_status->set_timestamp_millis(absl::ToUnixSeconds(time));
+    latest_status->set_date(absl::FormatTime(time, google_time));
     latest_status->set_status(status);
     hologram_fetcher.UpdateHistory(&data_availability, time, status);
     EXPECT_TRUE(MessageDifferencer::Equals(data_availability, 

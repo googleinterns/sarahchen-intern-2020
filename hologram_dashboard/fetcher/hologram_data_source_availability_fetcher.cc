@@ -77,8 +77,8 @@ void HologramDataSourceAvailabilityFetcher::UpdateDataAvailability(System system
     if (!hologram_data_availability.has_data_source()) {
         hologram_data_availability.set_data_source(data_source);
     }
-    latest_status->set_date(absl::ToUnixSeconds(time));
-    latest_status->set_date_as_string(absl::FormatTime(time, google_time));
+    latest_status->set_timestamp_millis(absl::ToUnixSeconds(time));
+    latest_status->set_date(absl::FormatTime(time, google_time));
     latest_status->set_status(status);
     UpdateHistory(&hologram_data_availability, time, status);
 }
@@ -93,7 +93,8 @@ void HologramDataSourceAvailabilityFetcher::UpdateHistory(
         // Acquire the latest history
         DataSourceDetail* latest_history = hologram_data_availability->
             mutable_history(hologram_data_availability->history_size() - 1);
-        absl::Time history_time = absl::FromUnixSeconds(latest_history->date());
+        absl::Time history_time = absl::FromUnixSeconds(
+            latest_history->timestamp_millis());
         absl::CivilSecond history_civil_time = absl::ToCivilSecond(history_time, 
             google_time);
         absl::CivilSecond time_civil = absl::ToCivilSecond(time, google_time);
@@ -104,16 +105,16 @@ void HologramDataSourceAvailabilityFetcher::UpdateHistory(
             time_civil.month() == history_civil_time.month() &&
             time_civil.day() == history_civil_time.day()) {
             // If it's the same day just update the status.
-            latest_history->set_date(absl::ToUnixSeconds(time));
-            latest_history->set_date_as_string(absl::FormatTime(time, google_time));
+            latest_history->set_timestamp_millis(absl::ToUnixSeconds(time));
+            latest_history->set_date(absl::FormatTime(time, google_time));
             latest_history->set_status(status);
             return;
         }
     }
     // Add a history if either its empty or it is later than latest history.
     DataSourceDetail* detail = hologram_data_availability->add_history();
-    detail->set_date(absl::ToUnixSeconds(time));
-    detail->set_date_as_string(absl::FormatTime(time, google_time));
+    detail->set_timestamp_millis(absl::ToUnixSeconds(time));
+    detail->set_date(absl::FormatTime(time, google_time));
     detail->set_status(status);
 
     if (hologram_data_availability->history_size() > 7) {
