@@ -1,0 +1,101 @@
+workspace(name = "proto_text_parser")
+
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+http_archive(
+    name = "io_bazel_rules_docker",
+    sha256 = "3efbd23e195727a67f87b2a04fb4388cc7a11a0c0c2cf33eec225fb8ffbb27ea",
+    strip_prefix = "rules_docker-0.14.2",
+    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.14.2/rules_docker-v0.14.2.tar.gz"],
+)
+
+load(
+    "@io_bazel_rules_docker//repositories:repositories.bzl",
+    container_repositories = "repositories",
+)
+
+container_repositories()
+
+load(
+    "@io_bazel_rules_docker//cc:image.bzl",
+    cc_image_repos = "repositories",
+)
+
+cc_image_repos()
+
+load("@io_bazel_rules_docker//repositories:deps.bzl", container_deps = "deps")
+
+container_deps()
+
+load(
+    "@io_bazel_rules_docker//container:container.bzl",
+    "container_pull",
+)
+
+container_pull(
+    name = "cc_base_image",
+    digest = "sha256:32c93ea6e867f4deee92912656c77f78f50e6e3d031dbfd85270dd30d75ed1ff",  # 14 October 2019 at 08:21:02 UTC-7
+    registry = "gcr.io",
+    repository = "distroless/cc-debian10",
+)
+
+container_pull(
+    name = "gcc_base_image",
+    digest = "sha256:bec6098cff5601e7b482febae74cc9508f2ba415ea2604af095ecc1a2b65c66b",  # 7.4
+    registry = "index.docker.io",
+    repository = "library/gcc",
+)
+
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "new_git_repository")
+
+#Abseil
+http_archive(
+    name = "com_google_absl",
+    sha256 = "a8d436051b31d5da9870119507ba5179dff71446c9456950d64c9c07b897a306",
+    urls = ["https://github.com/abseil/abseil-cpp/archive/8faf20461f6ad0f99d23270067fb28234f224ad9.zip"],
+    strip_prefix = "abseil-cpp-8faf20461f6ad0f99d23270067fb28234f224ad9",
+)
+
+#GTest
+http_archive(
+    name = "com_google_gtest",
+    strip_prefix = "googletest-master",
+    urls = ["https://github.com/google/googletest/archive/master.zip"],
+)
+
+# Protobuf
+http_archive(
+    name = "com_google_protobuf",
+    strip_prefix = "protobuf-master",
+    urls = ["https://github.com/protocolbuffers/protobuf/archive/master.zip"],
+)
+
+http_archive(
+    name = "rules_cc",
+    sha256 = "35f2fb4ea0b3e61ad64a369de284e4fbbdcdba71836a5555abb5e194cf119509",
+    strip_prefix = "rules_cc-624b5d59dfb45672d4239422fa1e3de1822ee110",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_cc/archive/624b5d59dfb45672d4239422fa1e3de1822ee110.tar.gz",
+        "https://github.com/bazelbuild/rules_cc/archive/624b5d59dfb45672d4239422fa1e3de1822ee110.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "rules_proto",
+    sha256 = "2490dca4f249b8a9a3ab07bd1ba6eca085aaf8e45a734af92aad0c42d9dc7aaf",
+    strip_prefix = "rules_proto-218ffa7dfa5408492dc86c01ee637614f8695c45",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_proto/archive/218ffa7dfa5408492dc86c01ee637614f8695c45.tar.gz",
+        "https://github.com/bazelbuild/rules_proto/archive/218ffa7dfa5408492dc86c01ee637614f8695c45.tar.gz",
+    ],
+)
+
+load("@rules_cc//cc:repositories.bzl", "rules_cc_dependencies")
+rules_cc_dependencies()
+
+load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
+protobuf_deps()
+
+load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
+rules_proto_dependencies()
+rules_proto_toolchains()
