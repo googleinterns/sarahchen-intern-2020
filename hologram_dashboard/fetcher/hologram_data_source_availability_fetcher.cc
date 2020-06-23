@@ -76,4 +76,9 @@ void HologramDataSourceAvailabilityFetcher::UpdateHistory(
     // TODO(alexanderlin): Implement.    
 }
 
+static std::unique_ptr<ProtoValue> ProtoValue::Create(std::string& text_proto, 
+    google::protobuf::Descriptor* descriptor) {
+    return nullptr;
+}
+
 } // namespace wireless_android_play_analytics

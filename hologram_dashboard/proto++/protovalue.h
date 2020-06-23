@@ -32,10 +32,9 @@ public:
     // The only place where name can be set publicly since once set it should
     // not be changed.
     ProtoValue(const std::string& name_in);
-
-    // Creates an instance of ProtoValue by parsing the text_proto.
-    std::unique_ptr<ProtoValue> Create(std::string& text_proto, 
-        google::protobuf::Descriptor* descriptor);
+    
+    static std::unique_ptr<ProtoValue> Create(std::string& text_proto, 
+    google::protobuf::Descriptor* descriptor);
 
     // Gets the name of current variable.
     const std::string& GetName();
@@ -68,12 +67,12 @@ private:
             google::protobuf::TextFormat::Parser Parser_;
             std::vector<std::string> lines;
             // Creates a PrimitiveValue.
-            std::unique_ptr<ProtoValue> ParseVal(
+            static std::unique_ptr<ProtoValue> ParseVal(
                 google::protobuf::FieldDescriptor* field_descriptor, 
                 google::protobuf::Reflection* reflection, int row_start, 
                 int row_end, int index = -1);
             // Creates a MessageValue.
-            std::unique_ptr<ProtoValue> ParseNested (
+            static std::unique_ptr<ProtoValue> ParseNested (
                 google::protobuf::Descriptor* descriptor, 
                 google::protobuf::Reflection* reflection, 
                 google::protobuf::TextFormat::ParseInfoTree* nested_tree, 
