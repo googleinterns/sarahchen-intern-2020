@@ -4,11 +4,24 @@ load("@rules_proto//proto:defs.bzl", "proto_library")
 
 cc_library(
     name = "proto_value",
-    srcs = ["protovalue.cc"],
-    hdrs = ["protovalue.h"],
+    srcs = ["proto_value.cc"],
+    hdrs = ["proto_value.h"],
     deps = ["@com_google_gtest//:gtest",
             "@com_google_absl//absl/types:variant",
+            "@com_google_absl//absl/strings",
             "@com_google_protobuf//:protobuf"],
+)
+
+cc_library(
+    name = "message_value",
+    hdrs = ["message_value.h"],
+    deps = ["proto_value"]
+)
+
+cc_library(
+    name = "primitive_value",
+    hdrs = ["primitive_value.h"],
+    deps = ["proto_value"]
 )
 
 cc_test(

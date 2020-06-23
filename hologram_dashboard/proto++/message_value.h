@@ -14,18 +14,29 @@
 *   limitations under the License.
 */
 
-#include "proto_value.h"
-#include "gmock/gmock.h"
+#ifndef MESSAGE_VALUE_H_
+#define MESSAGE_VALUE_H_
+#include "proto_value.h";
 
-#include <google/protobuf/util/message_differencer.h>
+namespace wireless_android_play_analytics {
 
-namespace wireless_android_play_analytics{
+class MessageValue : public ProtoValue {
 
-// TODO(alexanderlin): Implement.
+public:
+    // Gets all the fields of the current Message
+    const std::vector<std::unique_ptr<ProtoValue>>& GetFields() const {
+        return fields_;
+    }
+
+    // Gets all the fields of the current Message with intention to modify it.
+    std::vector<std::unique_ptr<ProtoValue>>& GetFieldsMutable() {
+        return fields_;
+    }
+private:
+
+    std::vector<std::unique_ptr<ProtoValue>> fields_;
+};
 
 } // namespace wireless_android_play_analytics
 
-int main(int argc, char *argv[]) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
+#endif // MESSAGE_VALUE_H_
