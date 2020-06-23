@@ -79,11 +79,19 @@ private:
     void UpdateHistory(HologramDataAvailability* availability_proto, 
         absl::Time time, StatusType status);
 
-    absl::flat_hash_map<System, std::string> system_to_cell_;
+    struct HologramClient {
+        System system_;
+
+        std::string last_update_;
+
+        std::string job_start_file_root_;
+
+        std::vector<DataSource> required_source_types_;
+    };
+
+    absl::vector<HologramClient> hologram_client_info_;
     HologramConfigSet hologram_configs_;
-    absl::flat_hash_map<System, absl::flat_hash_map<DataSource,
-        HologramDataAvailability>> system_to_data_source_availability_;
-    absl::flat_hash_map<System, std::string> system_to_last_update_;
+    absl::flat_hash_map<Corpus, std::string> corpus_to_done_file_root;
     absl::TimeZone google_time;
 };
 

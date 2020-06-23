@@ -18,7 +18,15 @@
 #include <string>
 #include "absl/flags/flag.h"
 
-ABSL_DECLARE_FLAG(std::string, chipper_batch_job_cell);
-ABSL_DECLARE_FLAG(std::string, chipper_gdpr_batch_job_cell);
 ABSL_DECLARE_FLAG(std::string, hologram_source_config_file_path);
 ABSL_DECLARE_FLAG(absl::Time, hologram_data_availability_check_time);
+ABSL_DECLARE_FLAG(std::vector<std::string>, chipper_required_sources);
+ABSL_DECLARE_FLAG(std::vector<std::string>, chipper_gdpr_required_sources);
+ABSL_DECLARE_FLAG(std::string, chipper_job_start_root);
+ABSL_DECLARE_FLAG(std::string, chipper_gdpr_job_start_root);
+ABSL_DECLARE_FLAG(std::string, android_spam_done_file_root);
+ABSL_DECLARE_FLAG(std::string, prime_meridian_done_file_root);
+ABSL_DECLARE_FLAG(std::string, default_done_file_root);
+ABSL_DECLARE_FLAG(std::string, spam_done_file_root);
+ABSL_DECLARE_FLAG(std::string, user_attribute_done_file_root);
+ABSL_DECLARE_FLAG(std::string, user_experiment_done_file_root);
