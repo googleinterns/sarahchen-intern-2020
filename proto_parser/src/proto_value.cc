@@ -15,6 +15,8 @@
 */
 
 #include "proto_value.h"
+#include "proto_parser.h"
+#include "message_value.h"
 
 namespace wireless_android_play_analytics {
 
@@ -27,24 +29,21 @@ std::string ProtoValue::PrintToTextProtoHelper(int indent_count) {
   return std::string();
 }
 
-// std::unique_ptr<ProtoValue> ProtoValue::Create(absl::string_view text_proto, 
-//   google::protobuf::Message* message) {
-//   const google::protobuf::Descriptor* descriptor = message->GetDescriptor();
-//   google::protobuf::TextFormat::Parser parser;
-//   google::protobuf::TextFormat::ParseInfoTree tree;
-//   parser.WriteLocationsTo(&tree);
-//   parser.ParseFromString(static_cast<std::string>(text_proto), message);
-//   ProtoParser proto_parser;
-//   proto_parser.DelimiteTextProto(text_proto);
+std::shared_ptr<ProtoValue> ProtoValue::Create(absl::string_view text_proto, 
+  google::protobuf::Message* message) {
+  google::protobuf::TextFormat::Parser parser;
+  google::protobuf::TextFormat::ParseInfoTree tree;
+  parser.WriteLocationsTo(&tree);
+  parser.ParseFromString(static_cast<std::string>(text_proto), message);
+  ProtoParser proto_parser;
+  std::string text_proto_as_string(text_proto);
+  proto_parser.DelimiteTextProto(text_proto_as_string);
   
-//   int last_field_loc = 0;
-//   // Root Message has no field_name;
-//   std::unique_ptr<MessageValue> message_val = absl::make_unique<MessageValue>(""); 
-//   std::vector<std::unique_ptr<ProtoValue>>& message_field = 
-//     message_val->GetFieldsMutable();
-//   proto_parser.PopulateFields(last_field_loc, descriptor, &tree, message,
-//     message_field);
-//   return message_val;
-// }
+  int last_field_loc = 0;
+  // Root Message has no field_name;
+  std::shared_ptr<ProtoValue> message_val = std::make_shared<MessageValue>(""); 
+  proto_parser.PopulateFields(last_field_loc, &tree, message, message_val);
+  return message_val;
+}
 
 } // namespace wireless_android_play_analytics

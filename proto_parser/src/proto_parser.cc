@@ -21,10 +21,12 @@ namespace wireless_android_play_analytics {
 void ProtoParser::PopulateFields(int& last_field_loc, 
   google::protobuf::TextFormat::ParseInfoTree* tree,
   const google::protobuf::Message* message,
-  std::unique_ptr<ProtoValue>& message_val) {
+  std::shared_ptr<ProtoValue>& message_val) {
   const google::protobuf::Reflection* reflection = message->GetReflection();
   const google::protobuf::Descriptor* descriptor = message->GetDescriptor();
-  std::vector<std::unique_ptr<ProtoValue>>& message_field = message_val->
+  std::shared_ptr<MessageValue> message_tmp = std::dynamic_pointer_cast<MessageValue>(message_val);
+  assert(message_tmp);
+  std::vector<std::shared_ptr<ProtoValue>>& message_field = message_tmp->
     GetFieldsMutable();
   int field_count = descriptor->field_count();
   // Get every field of this proto.
@@ -53,18 +55,18 @@ void ProtoParser::PopulateFields(int& last_field_loc,
   }
 }
 
-std::unique_ptr<ProtoValue> ProtoParser::CreateMessage(
+std::shared_ptr<ProtoValue> ProtoParser::CreateMessage(
   const google::protobuf::Message* message, google::protobuf::TextFormat::ParseInfoTree* tree,
   int& last_field_loc, int field_loc, const std::string& name){
-  std::unique_ptr<ProtoValue> message_val = 
-    absl::make_unique<MessageValue>(name);
+  std::shared_ptr<ProtoValue> message_val = 
+    std::make_shared<MessageValue>(name);
   PopulateComments(last_field_loc, field_loc, message_val);
   PopulateFields(last_field_loc, tree, message, message_val);
   return message_val;
 }
 
 void ProtoParser::PopulateComments(int last_field_loc, 
-  int field_loc, std::unique_ptr<ProtoValue>& message) {
+  int field_loc, std::shared_ptr<ProtoValue>& message) {
   std::string comments_above_field;
   for(int i = last_field_loc; i < field_loc; ++i) {
     comments_above_field += lines_[i];
@@ -103,16 +105,18 @@ void ProtoParser::PopulateComments(int last_field_loc,
   message->SetCommentAboveField(comments_above_field);
 }
 
-std::unique_ptr<ProtoValue> ProtoParser::CreatePrimitive(
+std::shared_ptr<ProtoValue> ProtoParser::CreatePrimitive(
   const google::protobuf::Message* message, 
   const google::protobuf::FieldDescriptor* field_descriptor, int index, 
   int last_field_loc, int field_loc) {
   const google::protobuf::Reflection* reflection = message->GetReflection();
   // String used for GetRepeatedStringReference.
   std::string str;
-  std::unique_ptr<ProtoValue> primitive = absl::make_unique<PrimitiveValue>(
+  std::shared_ptr<ProtoValue> message_val = std::make_shared<PrimitiveValue>(
     field_descriptor->name());
-  PopulateComments(last_field_loc, field_loc, primitive);
+  PopulateComments(last_field_loc, field_loc, message_val);
+  std::shared_ptr<PrimitiveValue> primitive = 
+    std::dynamic_pointer_cast<PrimitiveValue>(message_val);
   if (field_descriptor->is_repeated()) {
     switch(field_descriptor->cpp_type()){
       case google::protobuf::FieldDescriptor::CppType::CPPTYPE_INT32:
@@ -189,7 +193,7 @@ std::unique_ptr<ProtoValue> ProtoParser::CreatePrimitive(
         assert(false);
     }
   }
-  return primitive;
+  return std::dynamic_pointer_cast<ProtoValue>(primitive);
 }
 
 int ProtoParser::GetLocation(google::protobuf::TextFormat::ParseInfoTree* tree,

@@ -28,18 +28,18 @@ class MessageValue : public ProtoValue {
   explicit MessageValue(absl::string_view field_name) 
    : ProtoValue(field_name) {}
   // Gets all the fields of the current Message
-  const std::vector<std::unique_ptr<ProtoValue>>& GetFields() const {
+  const std::vector<std::shared_ptr<ProtoValue>>& GetFields() const {
     return fields_;
   }
 
   // Gets all the fields of the current Message with intention to modify it.
-  std::vector<std::unique_ptr<ProtoValue>>& GetFieldsMutable() {
+  std::vector<std::shared_ptr<ProtoValue>>& GetFieldsMutable() {
     return fields_;
   }
 
  private:
 
-  std::vector<std::unique_ptr<ProtoValue>> fields_;
+  std::vector<std::shared_ptr<ProtoValue>> fields_;
 };
 
 } // namespace wireless_android_play_analytics

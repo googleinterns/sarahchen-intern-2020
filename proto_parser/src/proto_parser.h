@@ -34,13 +34,13 @@ class ProtoParser {
   void PopulateFields(int& last_field_loc, 
     google::protobuf::TextFormat::ParseInfoTree* tree,
     const google::protobuf::Message* message,
-    std::unique_ptr<ProtoValue>& message_val);
+    std::shared_ptr<ProtoValue>& message_val);
   void PopulateComments(int last_field_loc, int field_loc, 
-    std::unique_ptr<ProtoValue>& message);
-  std::unique_ptr<ProtoValue> CreateMessage(
+    std::shared_ptr<ProtoValue>& message);
+  std::shared_ptr<ProtoValue> CreateMessage(
     const google::protobuf::Message* message, google::protobuf::TextFormat::ParseInfoTree* tree,
     int& last_field_loc, int field_loc, const std::string& name);
-  std::unique_ptr<ProtoValue> CreatePrimitive(
+  std::shared_ptr<ProtoValue> CreatePrimitive(
     const google::protobuf::Message* message, 
     const google::protobuf::FieldDescriptor* field_descriptor, int index, 
     int last_field_loc, int field_loc);
