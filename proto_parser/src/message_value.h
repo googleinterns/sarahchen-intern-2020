@@ -17,13 +17,16 @@
 #ifndef WIRELESS_ANDROID_PLAY_ANALYTICS_PROTO_PARSER_SRC_MESSAGE_VALUE_H
 #define WIRELESS_ANDROID_PLAY_ANALYTICS_PROTO_PARSER_SRC_MESSAGE_VALUE_H
 
-#include "proto_value.h";
+#include "proto_value.h"
 
 namespace wireless_android_play_analytics {
 
 class MessageValue : public ProtoValue {
 
  public:
+
+  explicit MessageValue(absl::string_view field_name) 
+   : ProtoValue(field_name) {}
   // Gets all the fields of the current Message
   const std::vector<std::unique_ptr<ProtoValue>>& GetFields() const {
     return fields_;

@@ -14,6 +14,7 @@
 *   limitations under the License.
 */
 
+#include "proto_parser.h"
 #include "proto_value.h"
 #include "gmock/gmock.h"
 

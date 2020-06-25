@@ -22,9 +22,11 @@
 #include <google/protobuf/text_format.h>
 #include <vector>
 #include <memory>
+#include <sstream>
 
 #include "absl/types/variant.h"
 #include "absl/strings/string_view.h"
+#include "absl/container/flat_hash_map.h"
 
 namespace wireless_android_play_analytics {
 
@@ -37,6 +39,9 @@ class ProtoValue {
    : field_name_(field_name) {}
 
   virtual ~ProtoValue() = default;
+
+  // static std::unique_ptr<ProtoValue> Create(absl::string_view text_proto, 
+  //   google::protobuf::Message* descriptor);
 
   // Gets the name of current variable.
   const std::string& GetName() const {

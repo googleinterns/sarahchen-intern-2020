@@ -17,24 +17,26 @@
 #ifndef WIRELESS_ANDROID_PLAY_ANALYTICS_PROTO_PARSER_SRC_PRIMITIVE_VALUE_H
 #define WIRELESS_ANDROID_PLAY_ANALYTICS_PROTO_PARSER_SRC_PRIMITIVE_VALUE_H
 
-#include "proto_value.h";
+#include "proto_value.h"
 
 namespace wireless_android_play_analytics {
 
 class PrimitiveValue : public ProtoValue {
 
  public:
+
+  explicit PrimitiveValue(absl::string_view field_name) 
+   : ProtoValue(field_name) {}
+   
   // Gets the value of the current Primitve.
-  const absl::variant<double, float, int64_t, uint64_t, bool>& GetVal() const {
+  const absl::variant<double, float, int64_t, uint64_t, bool, 
+    google::protobuf::EnumValueDescriptor *>& GetVal() const {
     return val_;
   }
 
-  const std::string& GetValAsString() const {
-    return val_as_string_;
-  }
-
   void SetVal(const 
-    absl::variant<double, float, int64_t, uint64_t, bool>& val) {
+    absl::variant<double, float, int64_t, uint64_t, bool, 
+      google::protobuf::EnumValueDescriptor *>& val) {
     val_ = val;
   }
 
@@ -42,8 +44,8 @@ class PrimitiveValue : public ProtoValue {
   absl::variant<double, float, int64_t, uint64_t, bool>& GetValMutable();
  private:
 
-  std::string val_as_string_;
-  absl::variant<double, float, int64_t, uint64_t, bool> val_;
+  absl::variant<double, float, int64_t, uint64_t, bool, 
+    google::protobuf::EnumValueDescriptor *> val_;
 };
 
 } // namespace wireless_android_play_analytics
