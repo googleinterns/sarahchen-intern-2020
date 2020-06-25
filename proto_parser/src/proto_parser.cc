@@ -18,7 +18,7 @@
 
 namespace wireless_android_play_analytics {
 
-void ProtoParser::PopulateFields(int& last_field_loc, 
+void ProtoParser::PopulateFields(int& starting_line, 
   google::protobuf::TextFormat::ParseInfoTree* tree,
   const google::protobuf::Message* message,
   std::shared_ptr<ProtoValue>& message_val) {
@@ -29,30 +29,52 @@ void ProtoParser::PopulateFields(int& last_field_loc,
   std::vector<std::shared_ptr<ProtoValue>>& message_field = message_tmp->
     GetFieldsMutable();
   int field_count = descriptor->field_count();
-  // Get every field of this proto.
+  std::vector<FieldInformation> field_list;
+  // Get the order of textproto
   for (int i = 0; i < field_count; ++i) {
-    const google::protobuf::FieldDescriptor* field_descriptor = descriptor->field(i);
-    int index = GetIndex(field_descriptor);
-    int field_loc = GetLocation(tree, field_descriptor, index);
-    if (field_descriptor->cpp_type() == 
+    const google::protobuf::FieldDescriptor* field = descriptor->field(i);
+    if (field->is_repeated()) {
+      int field_size = reflection->FieldSize(*message, field);
+      for (int j = 0; j < field_size; ++j) {
+        field_list.push_back(FieldInformation(GetLocation(tree, field, j), 
+          field, j));
+      }
+    }
+    else if(reflection->HasField(*message, field) {
+      field_list.push_back(FieldInformation(GetLocation(tree, field, -1), field, 
+        -1));
+    }
+  }
+  std::sort(field_list.begin(), field_list.end());
+  int prev_field_line = starting_line;
+  // Get every field of this proto.
+  for (const FieldInformation& field : field_list) {
+    if (field.field_descriptor_->cpp_type() == 
       google::protobuf::FieldDescriptor::CppType::CPPTYPE_MESSAGE) {
       const google::protobuf::Message* nested_message = nullptr;
-      if (field_descriptor->is_repeated()) {
+      if (field.field_descriptor_->is_repeated()) {
         nested_message = &reflection->GetRepeatedMessage(*message, 
-          field_descriptor, index);
+          field.field_descriptor_, field.index_);
       }
-      nested_message = &reflection->GetMessage(*message, field_descriptor);
+      else {
+        nested_message = &reflection->GetMessage(*message, field_descriptor);
+      }
       google::protobuf::TextFormat::ParseInfoTree* nested_tree = tree->GetTreeForNested(
-        field_descriptor, index);
+        field.field_descriptor_, field.index_);
       message_field.push_back(CreateMessage(nested_message, nested_tree, 
-        last_field_loc, field_loc, field_descriptor->name()));
+        prev_field_line, starting_line + field.line_, field_descriptor->name()));
+      // CreateMessage should update prev_field_line to the line the message
+      // ends.
+      prev_field_line++;
     }
     else {
       message_field.push_back(CreatePrimitive(message, field_descriptor, 
-        index, last_field_loc, field_loc));
+        index, prev_field_line, starting_line + field.line_));
+        prev_field_line = starting_line + field.line_ + 1;
     }
-    last_field_loc = field_loc + 1;
   }
+  // Set the starting line of the next field to be the end of the last field.
+  starting_line = prev_field_line;
 }
 
 std::shared_ptr<ProtoValue> ProtoParser::CreateMessage(
@@ -68,8 +90,19 @@ std::shared_ptr<ProtoValue> ProtoParser::CreateMessage(
 void ProtoParser::PopulateComments(int last_field_loc, 
   int field_loc, std::shared_ptr<ProtoValue>& message) {
   std::string comments_above_field;
+  bool first_comment = false;
   for(int i = last_field_loc; i < field_loc; ++i) {
-    comments_above_field += lines_[i];
+    // Make sure this line is not the closing bracket of a nested message
+    if(!first_comment) {
+      for (const char& c : lines_[i]) {
+        if (c != '}' && c != ' ' && c != '\t') {
+          first_comment = true;
+        }
+      }
+    }
+    if (first_comment) {
+      comments_above_field += lines_[i];
+    }
   }
   // Figure out if the field is a string
   std::string comment_behind_field;
@@ -201,22 +234,6 @@ int ProtoParser::GetLocation(google::protobuf::TextFormat::ParseInfoTree* tree,
   google::protobuf::TextFormat::ParseLocation location = 
     tree->GetLocation(field_descriptor, index);
   return location.line;
-}
-
-int ProtoParser::GetIndex(const google::protobuf::FieldDescriptor*
-  field_descriptor) {
-  int index = -1;
-  if (field_descriptor->is_repeated()) {
-    if (repeated_field_indices_.find(field_descriptor) !=
-      repeated_field_indices_.end()) {
-      index = ++repeated_field_indices_[field_descriptor];
-    }
-    else {
-      index = 0;
-      repeated_field_indices_[field_descriptor] = 0;
-    }
-  }
-  return index;
 }
 
 void ProtoParser::DelimiteTextProto(const std::string& text_proto) {

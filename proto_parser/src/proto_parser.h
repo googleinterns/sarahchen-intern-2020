@@ -30,7 +30,6 @@ class ProtoParser {
   void DelimiteTextProto(const std::string& text_proto);
   int GetLocation(google::protobuf::TextFormat::ParseInfoTree* tree, 
     const google::protobuf::FieldDescriptor* field_descriptor, int index);
-  int GetIndex(const google::protobuf::FieldDescriptor* field_descriptor);
   void PopulateFields(int& last_field_loc, 
     google::protobuf::TextFormat::ParseInfoTree* tree,
     const google::protobuf::Message* message,
@@ -46,7 +45,19 @@ class ProtoParser {
     int last_field_loc, int field_loc);
 
   private:
+  
+  struct FieldInformation {
 
+    FieldInformation(int line, int index, 
+      const google::protobuf::FieldDescriptor* field_descriptor)
+      : line_(line), index_(index), field_descriptor_(field_descriptor) {}
+    bool operator< (const FieldInformation& rhs) {
+      return this.line_ < rhs.line_;
+    }
+    int line_;
+    int index_;
+    const google::protobuf::FieldDescriptor* field_descriptor_;
+  }
   std::vector<std::string> lines_;
   absl::flat_hash_map<const google::protobuf::FieldDescriptor*, int> 
     repeated_field_indices_;
