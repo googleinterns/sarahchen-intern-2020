@@ -27,40 +27,66 @@ class ProtoParser {
 
   public:
 
-  void DelimiteTextProto(const std::string& text_proto);
-  int GetLocation(google::protobuf::TextFormat::ParseInfoTree* tree, 
-    const google::protobuf::FieldDescriptor* field_descriptor, int index);
+  // Populates the message with all the fields of the message.
   void PopulateFields(int& last_field_loc, 
-    google::protobuf::TextFormat::ParseInfoTree* tree,
+    const google::protobuf::TextFormat::ParseInfoTree* tree,
     const google::protobuf::Message* message,
     std::shared_ptr<ProtoValue>& message_val);
-  void PopulateComments(int last_field_loc, int field_loc, 
-    std::shared_ptr<ProtoValue>& message);
-  std::shared_ptr<ProtoValue> CreateMessage(
-    const google::protobuf::Message* message, google::protobuf::TextFormat::ParseInfoTree* tree,
-    int& last_field_loc, int field_loc, const std::string& name);
-  std::shared_ptr<ProtoValue> CreatePrimitive(
-    const google::protobuf::Message* message, 
-    const google::protobuf::FieldDescriptor* field_descriptor, int index, 
-    int last_field_loc, int field_loc);
+
+  // Splits the text proto using endline character into an array of string.
+  void DelimiteTextProto(const std::string& text_proto);
 
   private:
-  
+
+  FRIEND_TEST(ProtoParserTest, DelimiteTextProtoTest);
+  FRIEND_TEST(ProtoParserTest, GetLocationTest);
+  FRIEND_TEST(ProtoParserTest, GetNestedLocationTest);
+  FRIEND_TEST(ProtoParserTest, PopulateCommentsTest);
+  FRIEND_TEST(ProtoParserTest, PopulateCommentsClosingBracket);
+  FRIEND_TEST(ProtoParserTest, PopulateCommentsStringVariable);
+  FRIEND_TEST(ProtoParserTest, CreatePrimitiveTest);
+  FRIEND_TEST(ProtoParserTest, CreatePrimitiveNestedTest);
+  FRIEND_TEST(ProtoParserTest, PopulateFields);
+  FRIEND_TEST(ProtoParserTest, CreateMessageTest);
+
+  // Stores all the information for a field necessary for create functions.
+  // TODO FieldInformation -> FieldInfo
   struct FieldInformation {
 
     FieldInformation(int line, int index, 
       const google::protobuf::FieldDescriptor* field_descriptor)
       : line_(line), index_(index), field_descriptor_(field_descriptor) {}
+
+    // Overrides the comparison operator of FieldInformation.
     bool operator< (const FieldInformation& rhs) {
-      return this.line_ < rhs.line_;
+      return this->line_ < rhs.line_;
     }
+
     int line_;
+    // Index of the repeated field, -1 if not repeated.
     int index_;
     const google::protobuf::FieldDescriptor* field_descriptor_;
-  }
+  };
+
+  // Acquires and populates the comments of a specific field.
+  void PopulateComments(int last_field_loc, int field_loc, 
+    std::shared_ptr<ProtoValue>& message);
+
+  // Creates a MessageValue field.
+  std::shared_ptr<ProtoValue> CreateMessage(
+    const google::protobuf::Message* message, const google::protobuf::TextFormat::ParseInfoTree* tree,
+    int& last_field_loc, int field_loc, const std::string& name);
+
+  // Creates a PrimitiveValue field.
+  std::shared_ptr<ProtoValue> CreatePrimitive(
+    const google::protobuf::Message* message, const FieldInformation& field, 
+    int last_field_loc);
+
+  // Acquires the location of a field.
+  int GetLocation(const google::protobuf::TextFormat::ParseInfoTree* tree, 
+    const google::protobuf::FieldDescriptor* field_descriptor, int index);
+
   std::vector<std::string> lines_;
-  absl::flat_hash_map<const google::protobuf::FieldDescriptor*, int> 
-    repeated_field_indices_;
 };
 
 } // namespace wireless_android_play_analytics

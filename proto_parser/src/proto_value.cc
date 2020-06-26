@@ -34,14 +34,15 @@ std::shared_ptr<ProtoValue> ProtoValue::Create(absl::string_view text_proto,
   google::protobuf::TextFormat::Parser parser;
   google::protobuf::TextFormat::ParseInfoTree tree;
   parser.WriteLocationsTo(&tree);
-  parser.ParseFromString(static_cast<std::string>(text_proto), message);
+  parser.ParseFromString(std::string(text_proto), message);
   ProtoParser proto_parser;
-  std::string text_proto_as_string(text_proto);
-  proto_parser.DelimiteTextProto(text_proto_as_string);
+  // Put this in constructor TODO;
+  proto_parser.DelimiteTextProto(std::string(text_proto));
   
   int last_field_loc = 0;
-  // Root Message has no field_name;
+  // Root Message has no field_name.
   std::shared_ptr<ProtoValue> message_val = std::make_shared<MessageValue>(""); 
+  //message_val.get()
   proto_parser.PopulateFields(last_field_loc, &tree, message, message_val);
   return message_val;
 }

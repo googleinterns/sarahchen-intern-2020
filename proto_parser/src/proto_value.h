@@ -41,7 +41,7 @@ class ProtoValue {
   virtual ~ProtoValue() = default;
 
   static std::shared_ptr<ProtoValue> Create(absl::string_view text_proto, 
-    google::protobuf::Message* descriptor);
+    google::protobuf::Message* message);
 
   // Gets the name of current variable.
   const std::string& GetName() const {

@@ -39,6 +39,7 @@ cc_test(
     srcs = ["proto_value_test.cc"],
     deps = [
         "proto_parser", 
-        "proto_value"
+        "proto_value",
+        "//proto:example_cc_proto"
     ],
 )
