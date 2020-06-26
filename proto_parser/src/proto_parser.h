@@ -20,6 +20,7 @@
 #include "proto_value.h"
 #include "primitive_value.h"
 #include "message_value.h"
+#include "absl/strings/str_split.h"
 
 namespace wireless_android_play_analytics {
 
@@ -27,14 +28,16 @@ class ProtoParser {
 
   public:
 
+  ProtoParser() {}
+
+  ProtoParser(absl::string_view text_proto) {
+    DelimiteTextProto(text_proto);
+  }
   // Populates the message with all the fields of the message.
   void PopulateFields(int& last_field_loc, 
     const google::protobuf::TextFormat::ParseInfoTree* tree,
     const google::protobuf::Message* message,
-    std::shared_ptr<ProtoValue>& message_val);
-
-  // Splits the text proto using endline character into an array of string.
-  void DelimiteTextProto(const std::string& text_proto);
+    std::shared_ptr<ProtoValue>& proto_value);
 
   private:
 
@@ -50,15 +53,14 @@ class ProtoParser {
   FRIEND_TEST(ProtoParserTest, CreateMessageTest);
 
   // Stores all the information for a field necessary for create functions.
-  // TODO FieldInformation -> FieldInfo
-  struct FieldInformation {
+  struct FieldInfo {
 
-    FieldInformation(int line, int index, 
+    FieldInfo(int line, int index, 
       const google::protobuf::FieldDescriptor* field_descriptor)
       : line_(line), index_(index), field_descriptor_(field_descriptor) {}
 
-    // Overrides the comparison operator of FieldInformation.
-    bool operator< (const FieldInformation& rhs) {
+    // Overrides the comparison operator of FieldInfo.
+    bool operator< (const FieldInfo& rhs) {
       return this->line_ < rhs.line_;
     }
 
@@ -68,18 +70,22 @@ class ProtoParser {
     const google::protobuf::FieldDescriptor* field_descriptor_;
   };
 
+  // Splits the text proto using endline character into an array of string.
+  void DelimiteTextProto(absl::string_view text_proto);
+
   // Acquires and populates the comments of a specific field.
   void PopulateComments(int last_field_loc, int field_loc, 
-    std::shared_ptr<ProtoValue>& message);
+    std::shared_ptr<ProtoValue> message);
 
   // Creates a MessageValue field.
-  std::shared_ptr<ProtoValue> CreateMessage(
-    const google::protobuf::Message* message, const google::protobuf::TextFormat::ParseInfoTree* tree,
+  std::shared_ptr<MessageValue> CreateMessage(
+    const google::protobuf::Message* message, 
+    const google::protobuf::TextFormat::ParseInfoTree* tree,
     int& last_field_loc, int field_loc, const std::string& name);
 
   // Creates a PrimitiveValue field.
-  std::shared_ptr<ProtoValue> CreatePrimitive(
-    const google::protobuf::Message* message, const FieldInformation& field, 
+  std::shared_ptr<PrimitiveValue> CreatePrimitive(
+    const google::protobuf::Message* message, const FieldInfo& field, 
     int last_field_loc);
 
   // Acquires the location of a field.

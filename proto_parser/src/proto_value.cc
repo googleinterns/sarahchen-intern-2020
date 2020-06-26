@@ -35,9 +35,7 @@ std::shared_ptr<ProtoValue> ProtoValue::Create(absl::string_view text_proto,
   google::protobuf::TextFormat::ParseInfoTree tree;
   parser.WriteLocationsTo(&tree);
   parser.ParseFromString(std::string(text_proto), message);
-  ProtoParser proto_parser;
-  // Put this in constructor TODO;
-  proto_parser.DelimiteTextProto(std::string(text_proto));
+  ProtoParser proto_parser(text_proto);
   
   int last_field_loc = 0;
   // Root Message has no field_name.

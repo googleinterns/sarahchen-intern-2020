@@ -96,7 +96,8 @@ TEST(ProtoParserTest, GetNestedLocationTest) {
   const google::protobuf::Descriptor* descriptor = test.GetDescriptor();
   const google::protobuf::FieldDescriptor* field_descriptor = nullptr;
   const google::protobuf::TextFormat::ParseInfoTree* nested_tree = nullptr;
-  field_descriptor = descriptor->FindFieldByLowercaseName("field_nested_message");
+  field_descriptor = descriptor->FindFieldByLowercaseName(
+    "field_nested_message");
   // Acquire the field descriptor and tree for the nested type
   descriptor = field_descriptor->message_type();
   nested_tree = tree.GetTreeForNested(field_descriptor, 0);
@@ -152,12 +153,8 @@ TEST(ProtoParserTest, CreatePrimitiveTest) {
   std::shared_ptr<PrimitiveValue> primitive = nullptr;
   field_descriptor = descriptor->FindFieldByLowercaseName("int32_field");
   parser.DelimiteTextProto(text_proto);
-  ProtoParser::FieldInformation field(2, -1, field_descriptor);
-  std::shared_ptr<ProtoValue>message = parser.CreatePrimitive(
-    &test, field, 0);
-  
-  primitive = std::dynamic_pointer_cast<PrimitiveValue>(message);
-  ASSERT_NE(primitive, nullptr);
+  ProtoParser::FieldInfo field(2, -1, field_descriptor);
+  primitive = parser.CreatePrimitive(&test, field, 0);
   absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
     google::protobuf::EnumValueDescriptor *, std::string> val = 1;
   ASSERT_TRUE(absl::holds_alternative<int>(primitive->GetVal()));
@@ -177,10 +174,8 @@ TEST(ProtoParserTest, CreatePrimitiveNestedTest) {
   std::shared_ptr<PrimitiveValue> primitive = nullptr;
   field_descriptor = descriptor->FindFieldByLowercaseName("bool_field");
   parser.DelimiteTextProto(text_proto);
-  ProtoParser::FieldInformation field(17, 1, field_descriptor);
-  primitive = std::dynamic_pointer_cast<PrimitiveValue>(parser.CreatePrimitive(
-    &test, field, 17));
-  ASSERT_NE(primitive, nullptr);
+  ProtoParser::FieldInfo field(17, 1, field_descriptor);
+  primitive = parser.CreatePrimitive(&test, field, 17);
   absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
     google::protobuf::EnumValueDescriptor *, std::string> val = false;
   ASSERT_TRUE(absl::holds_alternative<bool>(primitive->GetVal()));
@@ -188,31 +183,6 @@ TEST(ProtoParserTest, CreatePrimitiveNestedTest) {
   ASSERT_EQ("", primitive->GetCommentAboveField());
   ASSERT_EQ("# comment 6", primitive->GetCommentBehindField());
   ASSERT_EQ("bool_field", primitive->GetName());
-}
-
-TEST(ProtoParserTest, PopulateFields) {
-  ProtoParser parser;
-  TestProto test;
-  google::protobuf::TextFormat::ParseInfoTree tree;
-  google::protobuf::TextFormat::Parser google_parser;
-  google_parser.WriteLocationsTo(&tree);
-  google_parser.ParseFromString(text_proto, &test);
-  std::shared_ptr<ProtoValue> message = std::make_shared<MessageValue>("");
-  int last_field_loc = 0;
-  parser.DelimiteTextProto(text_proto);
-  parser.PopulateFields(last_field_loc, &tree, &test, message);
-  std::shared_ptr<MessageValue> message_value = 
-    std::dynamic_pointer_cast<MessageValue>(message);
-  const std::vector<std::shared_ptr<ProtoValue>>& fields = 
-    message_value->GetFields();
-  // Ensure last_field_loc is updated accordingly.
-  ASSERT_EQ(18, last_field_loc);
-  // Ensure the types are correct.
-  ASSERT_NE(nullptr, std::dynamic_pointer_cast<PrimitiveValue>(fields[0]));
-  ASSERT_NE(nullptr, std::dynamic_pointer_cast<MessageValue>(fields[1]));
-  ASSERT_NE(nullptr, std::dynamic_pointer_cast<MessageValue>(fields[2]));
-  ASSERT_NE(nullptr, std::dynamic_pointer_cast<PrimitiveValue>(fields[3]));
-  ASSERT_NE(nullptr, std::dynamic_pointer_cast<PrimitiveValue>(fields[4]));
 }
 
 TEST(ProtoParserTest, CreateMessageTest) {
@@ -224,7 +194,8 @@ TEST(ProtoParserTest, CreateMessageTest) {
   const google::protobuf::Reflection* reflection = test.GetReflection();
   const google::protobuf::FieldDescriptor* field_descriptor = nullptr;
   const google::protobuf::TextFormat::ParseInfoTree* nested_tree = nullptr;
-  field_descriptor = descriptor->FindFieldByLowercaseName("field_nested_message");
+  field_descriptor = descriptor->FindFieldByLowercaseName(
+      "field_nested_message");
   google_parser.WriteLocationsTo(&tree);
   google_parser.ParseFromString(text_proto, &test);
   parser.DelimiteTextProto(text_proto);
