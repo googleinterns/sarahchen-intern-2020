@@ -77,173 +77,24 @@ void ProtoParser::PopulateFields(int& prev_field_line,
 }
 
 std::shared_ptr<MessageValue> ProtoParser::CreateMessage(
-  const google::protobuf::Message* message, 
-  const google::protobuf::TextFormat::ParseInfoTree* tree,
-  int& last_field_loc, int field_loc, const std::string& name){
-  std::shared_ptr<ProtoValue> message_val = 
-    std::make_shared<MessageValue>(name);
-  PopulateComments(last_field_loc, field_loc, message_val);
-  // Make sure the fields start from after the parent message.
-  last_field_loc = field_loc + 1;
-  PopulateFields(last_field_loc, tree, message, message_val);
-  return std::dynamic_pointer_cast<MessageValue>(message_val);
+  // TODO(alexanderlin): Implement.
 }
 
 void ProtoParser::PopulateComments(int last_field_loc, 
-  int field_loc, std::shared_ptr<ProtoValue> message) {
-  std::string comments_above_field;
-  bool first_comment = false;
-  for(int i = last_field_loc; i < field_loc; ++i) {
-    // Make sure this line is not the closing bracket of a nested message
-    if(!first_comment) {
-      for (const char& c : lines_[i]) {
-        if (c != '}' && c != ' ' && c != '\t') {
-          first_comment = true;
-        }
-      }
-    }
-    if (first_comment) {
-      comments_above_field += lines_[i] + "\n";
-    }
-  }
-  // Figure out if the field is a string
-  std::string comment_behind_field;
-  std::string field_line = lines_[field_loc];
-  size_t begin_quote_idx = field_line.find('\"');
-  size_t pound_idx = field_line.find('#');
-  
-  if (begin_quote_idx != std::string::npos) {
-    size_t end_quote_idx = field_line.find("\"", begin_quote_idx + 1);
-    // Only if beginning and end quote exist is this a string.
-    if (end_quote_idx != std::string::npos) {
-      while(pound_idx != std::string::npos) {
-        if (pound_idx < begin_quote_idx) {
-          // If pound sign is before the string, then the string must be part of
-          // the comment eg. a: 2 #"hi"comment.
-          comment_behind_field = field_line.substr(pound_idx);
-          break;
-        }
-        else if (pound_idx > end_quote_idx) {
-          // If pound sign is after the string, then it must indicate beginning 
-          // of comment eg. a : "hi" #comment.
-          comment_behind_field = field_line.substr(pound_idx);
-          break;
-        }
-        pound_idx = field_line.find('#', pound_idx + 1);
-      }
-    }
-  }
-  else if (pound_idx != std::string::npos) {
-    comment_behind_field = field_line.substr(pound_idx);
-  }
-  message->SetCommentBehindField(comment_behind_field);
-  message->SetCommentAboveField(comments_above_field);
+  // TODO(alexanderlin): Implement.
 }
 
 // TODO: Change return type to primitive value
 std::shared_ptr<PrimitiveValue> ProtoParser::CreatePrimitive(
-  const google::protobuf::Message* message, const FieldInfo& field, 
-  int last_field_loc) {
-  const google::protobuf::Reflection* reflection = message->GetReflection();
-  int field_loc = field.line_;
-  int index = field.index_;
-  const google::protobuf::FieldDescriptor* field_descriptor = 
-    field.field_descriptor_;
-  // String used for GetRepeatedStringReference.
-  std::string str;
-  std::shared_ptr<PrimitiveValue> primitive = std::make_shared<PrimitiveValue>(
-    field_descriptor->name());
-  PopulateComments(last_field_loc, field_loc, 
-    std::dynamic_pointer_cast<ProtoValue>(primitive));
-  if (field_descriptor->is_repeated()) {
-    switch(field_descriptor->cpp_type()){
-      case google::protobuf::FieldDescriptor::CppType::CPPTYPE_INT32:
-        primitive->SetVal(reflection->GetRepeatedInt32(*message, 
-          field_descriptor, index));
-        break;
-      case google::protobuf::FieldDescriptor::CppType::CPPTYPE_INT64:
-        primitive->SetVal(reflection->GetRepeatedInt64(*message, 
-          field_descriptor, index));
-        break;
-      case google::protobuf::FieldDescriptor::CppType::CPPTYPE_UINT32:
-        primitive->SetVal(reflection->GetRepeatedUInt32(*message, 
-          field_descriptor, index));
-        break;
-      case google::protobuf::FieldDescriptor::CppType::CPPTYPE_UINT64:
-        primitive->SetVal(reflection->GetRepeatedUInt64(*message, 
-          field_descriptor, index));
-        break;
-      case google::protobuf::FieldDescriptor::CppType::CPPTYPE_DOUBLE:
-        primitive->SetVal(reflection->GetRepeatedDouble(*message, 
-          field_descriptor, index));
-        break;
-      case google::protobuf::FieldDescriptor::CppType::CPPTYPE_FLOAT:
-      primitive->SetVal(reflection->GetRepeatedFloat(*message, field_descriptor, 
-        index));
-        break;
-      case google::protobuf::FieldDescriptor::CppType::CPPTYPE_BOOL:
-        primitive->SetVal(reflection->GetRepeatedBool(*message, 
-          field_descriptor, index));
-        break;
-      case google::protobuf::FieldDescriptor::CppType::CPPTYPE_ENUM:
-        primitive->SetVal(reflection->GetRepeatedEnum(*message, 
-          field_descriptor, index));
-        break;
-      case google::protobuf::FieldDescriptor::CppType::CPPTYPE_STRING:
-        str = reflection->GetRepeatedStringReference(*message, field_descriptor, 
-          index, &str);
-        primitive->SetVal(str);
-        break;
-      case google::protobuf::FieldDescriptor::CppType::CPPTYPE_MESSAGE:
-        assert(false);
-    }
-  }
-  else {
-    switch(field_descriptor->cpp_type()){
-      case google::protobuf::FieldDescriptor::CppType::CPPTYPE_INT32:
-        primitive->SetVal(reflection->GetInt32(*message, field_descriptor));
-        break;
-      case google::protobuf::FieldDescriptor::CppType::CPPTYPE_INT64:
-        primitive->SetVal(reflection->GetInt64(*message, field_descriptor));
-        break;
-      case google::protobuf::FieldDescriptor::CppType::CPPTYPE_UINT32:
-        primitive->SetVal(reflection->GetUInt32(*message, field_descriptor));
-        break;
-      case google::protobuf::FieldDescriptor::CppType::CPPTYPE_UINT64:
-        primitive->SetVal(reflection->GetUInt64(*message, field_descriptor));
-        break;
-      case google::protobuf::FieldDescriptor::CppType::CPPTYPE_DOUBLE:
-        primitive->SetVal(reflection->GetDouble(*message, field_descriptor));
-        break;
-      case google::protobuf::FieldDescriptor::CppType::CPPTYPE_FLOAT:
-        primitive->SetVal(reflection->GetFloat(*message, field_descriptor));
-        break;
-      case google::protobuf::FieldDescriptor::CppType::CPPTYPE_BOOL:
-        primitive->SetVal(reflection->GetBool(*message, field_descriptor));
-        break;
-      case google::protobuf::FieldDescriptor::CppType::CPPTYPE_ENUM:
-        primitive->SetVal(reflection->GetEnum(*message, field_descriptor));
-        break;
-      case google::protobuf::FieldDescriptor::CppType::CPPTYPE_STRING:
-        primitive->SetVal(reflection->GetString(*message, field_descriptor));
-        break;
-      case google::protobuf::FieldDescriptor::CppType::CPPTYPE_MESSAGE:
-        assert(false);
-    }
-  }
-  return primitive;
+  // TODO(alexanderlin): Implement.
 }
 
 int ProtoParser::GetLocation(
-  const google::protobuf::TextFormat::ParseInfoTree* tree,
-  const google::protobuf::FieldDescriptor* field_descriptor, int index) {
-  google::protobuf::TextFormat::ParseLocation location = 
-    tree->GetLocation(field_descriptor, index);
-  return location.line;
+  // TODO(alexanderlin): Implement.
 }
 
 void ProtoParser::DelimiteTextProto(absl::string_view text_proto) {
-  lines_ = absl::StrSplit(text_proto, '\n');
+  // TODO(alexanderlin): Implement.
 }
 
 } // namespace wireless_android_play_analytics
