@@ -81,10 +81,11 @@ std::shared_ptr<MessageValue> ProtoParser::CreateMessage(
   const google::protobuf::TextFormat::ParseInfoTree* tree,
   int& last_field_loc, int field_loc, const std::string& name) {
   // TODO(alexanderlin): Implement.
+  return nullptr;
 }
 
-void ProtoParser::PopulateComments(int last_field_loc, int last_field_loc, 
-int field_loc, std::shared_ptr<ProtoValue> message) {
+void ProtoParser::PopulateComments(int last_field_loc, int field_loc, 
+  std::shared_ptr<ProtoValue> message) {
   // TODO(alexanderlin): Implement.
 }
 
@@ -93,12 +94,14 @@ std::shared_ptr<PrimitiveValue> ProtoParser::CreatePrimitive(
   const google::protobuf::Message& message, const FieldInfo& field,
   int last_field_loc) {
   // TODO(alexanderlin): Implement.
+  return nullptr;
 }
 
 int ProtoParser::GetLocation(
   const google::protobuf::TextFormat::ParseInfoTree* tree,
   const google::protobuf::FieldDescriptor* field_descriptor, int index) {
   // TODO(alexanderlin): Implement.
+  return 0;
 }
 
 void ProtoParser::DelimiteTextProto(absl::string_view text_proto) {
