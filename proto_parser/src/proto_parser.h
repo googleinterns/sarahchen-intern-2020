@@ -40,18 +40,7 @@ class ProtoParser {
     std::shared_ptr<ProtoValue>& proto_value);
 
   private:
-
-  FRIEND_TEST(ProtoParserTest, DelimiteTextProtoTest);
-  FRIEND_TEST(ProtoParserTest, GetLocationTest);
-  FRIEND_TEST(ProtoParserTest, GetNestedLocationTest);
-  FRIEND_TEST(ProtoParserTest, PopulateCommentsTest);
-  FRIEND_TEST(ProtoParserTest, PopulateCommentsClosingBracket);
-  FRIEND_TEST(ProtoParserTest, PopulateCommentsStringVariable);
-  FRIEND_TEST(ProtoParserTest, CreatePrimitiveTest);
-  FRIEND_TEST(ProtoParserTest, CreatePrimitiveNestedTest);
-  FRIEND_TEST(ProtoParserTest, PopulateFields);
-  FRIEND_TEST(ProtoParserTest, CreateMessageTest);
-
+  
   // Stores all the information for a field necessary for create functions.
   struct FieldInfo {
 
