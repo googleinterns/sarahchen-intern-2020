@@ -20,10 +20,10 @@ namespace wireless_android_play_analytics {
 
 void ProtoParser::PopulateFields(int& prev_field_line, 
   const google::protobuf::TextFormat::ParseInfoTree* tree,
-  const google::protobuf::Message* message,
+  const google::protobuf::Message& message,
   std::shared_ptr<ProtoValue>& proto_value) {
-  const google::protobuf::Reflection* reflection = message->GetReflection();
-  const google::protobuf::Descriptor* descriptor = message->GetDescriptor();
+  const google::protobuf::Reflection* reflection = message.GetReflection();
+  const google::protobuf::Descriptor* descriptor = message.GetDescriptor();
   std::shared_ptr<MessageValue> message_tmp = 
     std::dynamic_pointer_cast<MessageValue>(proto_value);
   assert(message_tmp);
@@ -36,12 +36,12 @@ void ProtoParser::PopulateFields(int& prev_field_line,
     const google::protobuf::FieldDescriptor* field_descriptor = 
       descriptor->field(i);
     if (field_descriptor->is_repeated()) {
-      int field_size = reflection->FieldSize(*message, field_descriptor);
+      int field_size = reflection->FieldSize(message, field_descriptor);
       for (int j = 0; j < field_size; ++j) {
         field_info_list.push_back(FieldInfo(GetLocation(tree, field_descriptor, 
           j), j, field_descriptor));
       }
-    } else if(reflection->HasField(*message, field_descriptor)) {
+    } else if(reflection->HasField(message, field_descriptor)) {
       field_info_list.push_back(FieldInfo(GetLocation(tree, field_descriptor, 
       -1), -1, field_descriptor));
     }
@@ -53,11 +53,11 @@ void ProtoParser::PopulateFields(int& prev_field_line,
       google::protobuf::FieldDescriptor::CppType::CPPTYPE_MESSAGE) {
       const google::protobuf::Message* nested_message = nullptr;
       if (field.field_descriptor_->is_repeated()) {
-        nested_message = &reflection->GetRepeatedMessage(*message, 
+        nested_message = &reflection->GetRepeatedMessage(message, 
           field.field_descriptor_, field.index_);
       }
       else {
-        nested_message = &reflection->GetMessage(*message, 
+        nested_message = &reflection->GetMessage(message, 
           field.field_descriptor_);
       }
       google::protobuf::TextFormat::ParseInfoTree* nested_tree = tree->
@@ -65,7 +65,7 @@ void ProtoParser::PopulateFields(int& prev_field_line,
       // CreateMessage should update prev_field_line to the line the message
       // ends.
       message_field.push_back(std::dynamic_pointer_cast<MessageValue>(
-        CreateMessage(nested_message, nested_tree, prev_field_line, field.line_, 
+        CreateMessage(*nested_message, nested_tree, prev_field_line, field.line_, 
         field.field_descriptor_->name())));
     }
     else {
@@ -77,7 +77,7 @@ void ProtoParser::PopulateFields(int& prev_field_line,
 }
 
 std::shared_ptr<MessageValue> ProtoParser::CreateMessage(
-  const google::protobuf::Message* message, 
+  const google::protobuf::Message& message, 
   const google::protobuf::TextFormat::ParseInfoTree* tree,
   int& last_field_loc, int field_loc, const std::string& name){
   std::shared_ptr<ProtoValue> message_val = 
@@ -142,9 +142,9 @@ void ProtoParser::PopulateComments(int last_field_loc,
 
 // TODO: Change return type to primitive value
 std::shared_ptr<PrimitiveValue> ProtoParser::CreatePrimitive(
-  const google::protobuf::Message* message, const FieldInfo& field, 
+  const google::protobuf::Message& message, const FieldInfo& field, 
   int last_field_loc) {
-  const google::protobuf::Reflection* reflection = message->GetReflection();
+  const google::protobuf::Reflection* reflection = message.GetReflection();
   int field_loc = field.line_;
   int index = field.index_;
   const google::protobuf::FieldDescriptor* field_descriptor = 
@@ -158,39 +158,39 @@ std::shared_ptr<PrimitiveValue> ProtoParser::CreatePrimitive(
   if (field_descriptor->is_repeated()) {
     switch(field_descriptor->cpp_type()){
       case google::protobuf::FieldDescriptor::CppType::CPPTYPE_INT32:
-        primitive->SetVal(reflection->GetRepeatedInt32(*message, 
+        primitive->SetVal(reflection->GetRepeatedInt32(message, 
           field_descriptor, index));
         break;
       case google::protobuf::FieldDescriptor::CppType::CPPTYPE_INT64:
-        primitive->SetVal(reflection->GetRepeatedInt64(*message, 
+        primitive->SetVal(reflection->GetRepeatedInt64(message, 
           field_descriptor, index));
         break;
       case google::protobuf::FieldDescriptor::CppType::CPPTYPE_UINT32:
-        primitive->SetVal(reflection->GetRepeatedUInt32(*message, 
+        primitive->SetVal(reflection->GetRepeatedUInt32(message, 
           field_descriptor, index));
         break;
       case google::protobuf::FieldDescriptor::CppType::CPPTYPE_UINT64:
-        primitive->SetVal(reflection->GetRepeatedUInt64(*message, 
+        primitive->SetVal(reflection->GetRepeatedUInt64(message, 
           field_descriptor, index));
         break;
       case google::protobuf::FieldDescriptor::CppType::CPPTYPE_DOUBLE:
-        primitive->SetVal(reflection->GetRepeatedDouble(*message, 
+        primitive->SetVal(reflection->GetRepeatedDouble(message, 
           field_descriptor, index));
         break;
       case google::protobuf::FieldDescriptor::CppType::CPPTYPE_FLOAT:
-      primitive->SetVal(reflection->GetRepeatedFloat(*message, field_descriptor, 
+      primitive->SetVal(reflection->GetRepeatedFloat(message, field_descriptor, 
         index));
         break;
       case google::protobuf::FieldDescriptor::CppType::CPPTYPE_BOOL:
-        primitive->SetVal(reflection->GetRepeatedBool(*message, 
+        primitive->SetVal(reflection->GetRepeatedBool(message, 
           field_descriptor, index));
         break;
       case google::protobuf::FieldDescriptor::CppType::CPPTYPE_ENUM:
-        primitive->SetVal(reflection->GetRepeatedEnum(*message, 
+        primitive->SetVal(reflection->GetRepeatedEnum(message, 
           field_descriptor, index));
         break;
       case google::protobuf::FieldDescriptor::CppType::CPPTYPE_STRING:
-        str = reflection->GetRepeatedStringReference(*message, field_descriptor, 
+        str = reflection->GetRepeatedStringReference(message, field_descriptor, 
           index, &str);
         primitive->SetVal(str);
         break;
@@ -201,31 +201,31 @@ std::shared_ptr<PrimitiveValue> ProtoParser::CreatePrimitive(
   else {
     switch(field_descriptor->cpp_type()){
       case google::protobuf::FieldDescriptor::CppType::CPPTYPE_INT32:
-        primitive->SetVal(reflection->GetInt32(*message, field_descriptor));
+        primitive->SetVal(reflection->GetInt32(message, field_descriptor));
         break;
       case google::protobuf::FieldDescriptor::CppType::CPPTYPE_INT64:
-        primitive->SetVal(reflection->GetInt64(*message, field_descriptor));
+        primitive->SetVal(reflection->GetInt64(message, field_descriptor));
         break;
       case google::protobuf::FieldDescriptor::CppType::CPPTYPE_UINT32:
-        primitive->SetVal(reflection->GetUInt32(*message, field_descriptor));
+        primitive->SetVal(reflection->GetUInt32(message, field_descriptor));
         break;
       case google::protobuf::FieldDescriptor::CppType::CPPTYPE_UINT64:
-        primitive->SetVal(reflection->GetUInt64(*message, field_descriptor));
+        primitive->SetVal(reflection->GetUInt64(message, field_descriptor));
         break;
       case google::protobuf::FieldDescriptor::CppType::CPPTYPE_DOUBLE:
-        primitive->SetVal(reflection->GetDouble(*message, field_descriptor));
+        primitive->SetVal(reflection->GetDouble(message, field_descriptor));
         break;
       case google::protobuf::FieldDescriptor::CppType::CPPTYPE_FLOAT:
-        primitive->SetVal(reflection->GetFloat(*message, field_descriptor));
+        primitive->SetVal(reflection->GetFloat(message, field_descriptor));
         break;
       case google::protobuf::FieldDescriptor::CppType::CPPTYPE_BOOL:
-        primitive->SetVal(reflection->GetBool(*message, field_descriptor));
+        primitive->SetVal(reflection->GetBool(message, field_descriptor));
         break;
       case google::protobuf::FieldDescriptor::CppType::CPPTYPE_ENUM:
-        primitive->SetVal(reflection->GetEnum(*message, field_descriptor));
+        primitive->SetVal(reflection->GetEnum(message, field_descriptor));
         break;
       case google::protobuf::FieldDescriptor::CppType::CPPTYPE_STRING:
-        primitive->SetVal(reflection->GetString(*message, field_descriptor));
+        primitive->SetVal(reflection->GetString(message, field_descriptor));
         break;
       case google::protobuf::FieldDescriptor::CppType::CPPTYPE_MESSAGE:
         assert(false);

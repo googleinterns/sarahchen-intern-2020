@@ -30,23 +30,23 @@ class PrimitiveValue : public ProtoValue {
    
   // Gets the value of the current Primitve.
   const absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
-    google::protobuf::EnumValueDescriptor *, std::string>& GetVal() const {
+    const google::protobuf::EnumValueDescriptor*, std::string>& GetVal() const{
     return val_;
   }
 
   void SetVal(const 
     absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
-    google::protobuf::EnumValueDescriptor *, std::string>& val) {
+    const google::protobuf::EnumValueDescriptor*, std::string>& val) {
     val_ = val;
   }
 
   // Gets the value of the current primitive with intention to modify it.
   absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
-    google::protobuf::EnumValueDescriptor *, std::string>& GetValMutable();
+    const google::protobuf::EnumValueDescriptor*, std::string>& GetValMutable();
  private:
 
   absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
-    google::protobuf::EnumValueDescriptor *, std::string> val_;
+    const google::protobuf::EnumValueDescriptor*, std::string> val_;
 };
 
 } // namespace wireless_android_play_analytics

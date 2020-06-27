@@ -30,11 +30,11 @@ std::string ProtoValue::PrintToTextProtoHelper(int indent_count) {
 }
 
 std::shared_ptr<ProtoValue> ProtoValue::Create(absl::string_view text_proto, 
-  google::protobuf::Message* message) {
+  google::protobuf::Message& message) {
   google::protobuf::TextFormat::Parser parser;
   google::protobuf::TextFormat::ParseInfoTree tree;
   parser.WriteLocationsTo(&tree);
-  parser.ParseFromString(std::string(text_proto), message);
+  parser.ParseFromString(std::string(text_proto), &message);
   ProtoParser proto_parser(text_proto);
   
   int last_field_loc = 0;

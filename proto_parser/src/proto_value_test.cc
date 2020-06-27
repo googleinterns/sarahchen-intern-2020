@@ -48,7 +48,7 @@ TEST(ProtoValueTest, CreateTest) {
   TestProto test;
   std::shared_ptr<MessageValue> message = 
     std::dynamic_pointer_cast<MessageValue>(ProtoValue::Create(text_proto, 
-    &test));
+    test));
   ASSERT_NE(nullptr, message);
   const std::vector<std::shared_ptr<ProtoValue>>& fields = 
     message->GetFields();
@@ -56,6 +56,78 @@ TEST(ProtoValueTest, CreateTest) {
   ASSERT_EQ("", message->GetCommentAboveField());
   ASSERT_EQ("", message->GetCommentBehindField());
   ASSERT_EQ(5, fields.size());
+  // Check the first field is correct.
+  std::shared_ptr<PrimitiveValue> int32_field = 
+    std::dynamic_pointer_cast<PrimitiveValue>(fields[0]);
+  ASSERT_NE(nullptr, int32_field);
+  ASSERT_EQ("int32_field", int32_field->GetName());
+  ASSERT_EQ("  # comment 1\n", int32_field->GetCommentAboveField());
+  ASSERT_EQ("", int32_field->GetCommentBehindField());
+  int int32_field_val = 1;
+  absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
+    const google::protobuf::EnumValueDescriptor *, std::string> val = int32_field_val;
+  ASSERT_TRUE(absl::holds_alternative<int>(int32_field->GetVal()));
+  ASSERT_EQ(val, int32_field->GetVal());
+  // Check the second field is correct.
+  std::shared_ptr<MessageValue> field_nested_message = nullptr;
+  std::shared_ptr<PrimitiveValue> int64_field = nullptr;
+  int64_t int64_field_val = 100;
+  val = int64_field_val;
+  field_nested_message = std::dynamic_pointer_cast<MessageValue>(fields[1]);
+  ASSERT_NE(nullptr, field_nested_message);
+  ASSERT_EQ("field_nested_message", field_nested_message->GetName());
+  ASSERT_EQ("  # comment 2\n", field_nested_message->GetCommentAboveField());
+  ASSERT_EQ("# comment 3", field_nested_message->GetCommentBehindField());
+  const std::vector<std::shared_ptr<ProtoValue>>& 
+    first_field_nested_message_fields = field_nested_message->GetFields();
+  ASSERT_EQ(1, first_field_nested_message_fields.size());
+  int64_field = std::dynamic_pointer_cast<PrimitiveValue>(
+    first_field_nested_message_fields[0]);
+  ASSERT_NE(nullptr, int64_field);
+  ASSERT_EQ("int64_field", int64_field->GetName());
+  ASSERT_EQ("", int64_field->GetCommentAboveField());
+  ASSERT_EQ("", int64_field->GetCommentBehindField());
+  ASSERT_TRUE(absl::holds_alternative<int64_t>(int64_field->GetVal()));
+  ASSERT_EQ(val, int64_field->GetVal());
+  // Check the third field is correct.
+  field_nested_message = std::dynamic_pointer_cast<MessageValue>(fields[2]);
+  ASSERT_NE(nullptr, field_nested_message);
+  ASSERT_EQ("field_nested_message", field_nested_message->GetName());
+  ASSERT_EQ("", field_nested_message->GetCommentAboveField());
+  ASSERT_EQ("", field_nested_message->GetCommentBehindField());
+  const std::vector<std::shared_ptr<ProtoValue>>& 
+    second_field_nested_message_fields = field_nested_message->GetFields();
+  ASSERT_EQ(1, second_field_nested_message_fields.size());
+  int64_field = std::dynamic_pointer_cast<PrimitiveValue>(
+    second_field_nested_message_fields[0]);
+  ASSERT_NE(nullptr, int64_field);
+  ASSERT_EQ("int64_field", int64_field->GetName());
+  ASSERT_EQ("      # comment 4\n      # comment 5\n", 
+    int64_field->GetCommentAboveField());
+  ASSERT_EQ("", int64_field->GetCommentBehindField());
+  ASSERT_TRUE(absl::holds_alternative<int64_t>(int64_field->GetVal()));
+  ASSERT_EQ(val, int64_field->GetVal());
+  // Check the fourth field is correct.
+  std::shared_ptr<PrimitiveValue> bool_field = nullptr;
+  bool_field = std::dynamic_pointer_cast<PrimitiveValue>(fields[3]);
+  ASSERT_NE(nullptr, bool_field);
+  ASSERT_EQ("bool_field", bool_field->GetName());
+  ASSERT_EQ("", bool_field->GetCommentAboveField());
+  ASSERT_EQ("", bool_field->GetCommentBehindField());
+  bool bool_field_val = true;
+  val = bool_field_val;
+  ASSERT_TRUE(absl::holds_alternative<bool>(bool_field->GetVal()));
+  ASSERT_EQ(val, bool_field->GetVal());
+  // Check the fifth field is correct.
+  bool_field = std::dynamic_pointer_cast<PrimitiveValue>(fields[4]);
+  ASSERT_NE(nullptr, bool_field);
+  ASSERT_EQ("bool_field", bool_field->GetName());
+  ASSERT_EQ("", bool_field->GetCommentAboveField());
+  ASSERT_EQ("# comment 6", bool_field->GetCommentBehindField());
+  bool_field_val = false;
+  val = bool_field_val;
+  ASSERT_TRUE(absl::holds_alternative<bool>(bool_field->GetVal()));
+  ASSERT_EQ(val, bool_field->GetVal());
 }
 
 TEST(ProtoParserTest, DelimiteTextProtoTest) {
@@ -154,9 +226,9 @@ TEST(ProtoParserTest, CreatePrimitiveTest) {
   field_descriptor = descriptor->FindFieldByLowercaseName("int32_field");
   parser.DelimiteTextProto(text_proto);
   ProtoParser::FieldInfo field(2, -1, field_descriptor);
-  primitive = parser.CreatePrimitive(&test, field, 0);
+  primitive = parser.CreatePrimitive(test, field, 0);
   absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
-    google::protobuf::EnumValueDescriptor *, std::string> val = 1;
+    const google::protobuf::EnumValueDescriptor *, std::string> val = 1;
   ASSERT_TRUE(absl::holds_alternative<int>(primitive->GetVal()));
   ASSERT_EQ(val, primitive->GetVal());
   ASSERT_EQ("  # comment 1\n", primitive->GetCommentAboveField());
@@ -175,9 +247,9 @@ TEST(ProtoParserTest, CreatePrimitiveNestedTest) {
   field_descriptor = descriptor->FindFieldByLowercaseName("bool_field");
   parser.DelimiteTextProto(text_proto);
   ProtoParser::FieldInfo field(17, 1, field_descriptor);
-  primitive = parser.CreatePrimitive(&test, field, 17);
+  primitive = parser.CreatePrimitive(test, field, 17);
   absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
-    google::protobuf::EnumValueDescriptor *, std::string> val = false;
+    const google::protobuf::EnumValueDescriptor *, std::string> val = false;
   ASSERT_TRUE(absl::holds_alternative<bool>(primitive->GetVal()));
   ASSERT_EQ(val, primitive->GetVal());
   ASSERT_EQ("", primitive->GetCommentAboveField());
@@ -205,7 +277,7 @@ TEST(ProtoParserTest, CreateMessageTest) {
   int last_field_loc = 3;
   std::shared_ptr<MessageValue> message = 
     std::dynamic_pointer_cast<MessageValue>(
-    parser.CreateMessage(&nested_message, nested_tree, last_field_loc, 5, 
+    parser.CreateMessage(nested_message, nested_tree, last_field_loc, 5, 
     field_descriptor->name()));
   ASSERT_NE(nullptr, message);
   ASSERT_EQ(7, last_field_loc);
@@ -220,7 +292,7 @@ TEST(ProtoParserTest, CreateMessageTest) {
   ASSERT_EQ("int64_field", primitive->GetName());
   int64_t primitive_val = 100;
   absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
-    google::protobuf::EnumValueDescriptor *, std::string> val = primitive_val;
+    const google::protobuf::EnumValueDescriptor *, std::string> val = primitive_val;
   ASSERT_TRUE(absl::holds_alternative<int64_t>(primitive->GetVal()));
   ASSERT_EQ(val, primitive->GetVal());
   ASSERT_EQ("", primitive->GetCommentAboveField());
