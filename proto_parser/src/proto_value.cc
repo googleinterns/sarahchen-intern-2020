@@ -30,7 +30,7 @@ std::string ProtoValue::PrintToTextProtoHelper(int indent_count) {
 }
 
 std::shared_ptr<ProtoValue> ProtoValue::Create(absl::string_view text_proto, 
-  google::protobuf::Message* message) {
+  const google::protobuf::Message& message) {
   // TODO(alexanderlin): Implement.
 }
 
