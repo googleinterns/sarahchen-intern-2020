@@ -19,7 +19,7 @@
 namespace wireless_android_play_analytics {
 
 void ProtoParser::PopulateFields(int& prev_field_line, 
-  const google::protobuf::TextFormat::ParseInfoTree* tree,
+  const google::protobuf::TextFormat::ParseInfoTree& tree,
   const google::protobuf::Message& message,
   std::shared_ptr<ProtoValue>& proto_value) {
   // TODO(alexanderlin): Implement.
@@ -27,7 +27,7 @@ void ProtoParser::PopulateFields(int& prev_field_line,
 
 std::shared_ptr<MessageValue> ProtoParser::CreateMessage(
   const google::protobuf::Message& message, 
-  const google::protobuf::TextFormat::ParseInfoTree* tree,
+  const google::protobuf::TextFormat::ParseInfoTree& tree,
   int& last_field_loc, int field_loc, const std::string& name) {
   // TODO(alexanderlin): Implement.
   return nullptr;
@@ -47,7 +47,7 @@ std::shared_ptr<PrimitiveValue> ProtoParser::CreatePrimitive(
 }
 
 int ProtoParser::GetLocation(
-  const google::protobuf::TextFormat::ParseInfoTree* tree,
+  const google::protobuf::TextFormat::ParseInfoTree& tree,
   const google::protobuf::FieldDescriptor* field_descriptor, int index) {
   // TODO(alexanderlin): Implement.
   return 0;
