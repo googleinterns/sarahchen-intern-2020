@@ -15,30 +15,33 @@
 */
 
 #include "proto_value.h"
-#include "proto_parser.h"
 #include "message_value.h"
 
 namespace wireless_android_play_analytics {
 
-std::string ProtoValue::PrintToTextProto() {
-  return PrintToTextProtoHelper();
-}
+std::string MessageValue::PrintToTextProtoHelper() {
+  // Get indents.
+  std::string indents;
+  for(int i = 0; i < this->GetIndentCount(); ++i) {
+    indents += "  ";
+  }
+  // Print the comments.
+  std::string output;
+  if (!this->GetName().empty()) {
+    output += this->GetCommentAboveField();
+    output += indents + this->GetName();
+    output += " { " + this->GetCommentBehindField() + "\n";
+  }
 
-std::unique_ptr<ProtoValue> ProtoValue::Create(absl::string_view text_proto, 
-    google::protobuf::Message& message) {
-  google::protobuf::TextFormat::Parser parser;
-  google::protobuf::TextFormat::ParseInfoTree tree;
-  parser.WriteLocationsTo(&tree);
-  parser.ParseFromString(std::string(text_proto), &message);
-  ProtoParser proto_parser(text_proto);
-  
-  int last_field_loc = 0;
-  // Root Message has no field_name.
-  std::unique_ptr<ProtoValue> message_val = absl::make_unique<MessageValue>("", 
-      0); 
+  for (const std::unique_ptr<ProtoValue>& field : fields_) {
+    output += field->PrintToTextProto();
+  }
 
-  proto_parser.PopulateFields(last_field_loc, tree, message, message_val, 0);
-  return message_val;
+  if (!this->GetName().empty()) {
+    output += indents + "}\n";
+  }
+
+  return output;
 }
 
 } // namespace wireless_android_play_analytics

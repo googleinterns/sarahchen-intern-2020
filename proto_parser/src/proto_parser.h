@@ -37,7 +37,7 @@ class ProtoParser {
   void PopulateFields(int& last_field_loc, 
     const google::protobuf::TextFormat::ParseInfoTree& tree,
     const google::protobuf::Message& message,
-    std::shared_ptr<ProtoValue>& proto_value);
+    std::unique_ptr<ProtoValue>& proto_value, int indent_count);
 
   private:
 
@@ -56,7 +56,7 @@ class ProtoParser {
   struct FieldInfo {
 
     FieldInfo(int line, int index, 
-      const google::protobuf::FieldDescriptor* field_descriptor)
+        const google::protobuf::FieldDescriptor* field_descriptor)
       : line_(line), index_(index), field_descriptor_(field_descriptor) {}
 
     // Overrides the comparison operator of FieldInfo.
@@ -75,22 +75,22 @@ class ProtoParser {
 
   // Acquires and populates the comments of a specific field.
   void PopulateComments(int last_field_loc, int field_loc, 
-    std::shared_ptr<ProtoValue> message);
+    std::unique_ptr<ProtoValue>& message);
 
   // Creates a MessageValue field.
-  std::shared_ptr<MessageValue> CreateMessage(
-    const google::protobuf::Message& message, 
-    const google::protobuf::TextFormat::ParseInfoTree& tree,
+  std::unique_ptr<ProtoValue> CreateMessage(
+      const google::protobuf::Message& message, 
+      const google::protobuf::TextFormat::ParseInfoTree& tree, int indent_count,
     int& last_field_loc, int field_loc, const std::string& name);
 
   // Creates a PrimitiveValue field.
-  std::shared_ptr<PrimitiveValue> CreatePrimitive(
-    const google::protobuf::Message& message, const FieldInfo& field, 
-    int last_field_loc);
+  std::unique_ptr<ProtoValue> CreatePrimitive(
+      const google::protobuf::Message& message, const FieldInfo& field, 
+      int last_field_loc, int indent_count);
 
   // Acquires the location of a field.
   int GetLocation(const google::protobuf::TextFormat::ParseInfoTree& tree, 
-    const google::protobuf::FieldDescriptor* field_descriptor, int index);
+      const google::protobuf::FieldDescriptor* field_descriptor, int index);
 
   std::vector<std::string> lines_;
 };
