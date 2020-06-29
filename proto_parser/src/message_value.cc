@@ -15,19 +15,33 @@
 */
 
 #include "proto_value.h"
-#include "proto_parser.h"
 #include "message_value.h"
 
 namespace wireless_android_play_analytics {
 
-std::string ProtoValue::PrintToTextProto() {
-  return PrintToTextProtoHelper();
-}
+std::string MessageValue::PrintToTextProtoHelper() {
+  // Get indents.
+  std::string indents;
+  for(int i = 0; i < this->GetIndentCount(); ++i) {
+    indents += "  ";
+  }
+  // Print the comments.
+  std::string output;
+  if (!this->GetName().empty()) {
+    output += this->GetCommentAboveField();
+    output += indents + this->GetName();
+    output += " { " + this->GetCommentBehindField() + "\n";
+  }
 
-std::unique_ptr<ProtoValue> ProtoValue::Create(absl::string_view text_proto, 
-    google::protobuf::Message& message) {
-  // TODO(alexanderlin): Implement.
-  return std::unique_ptr<ProtoValue>();
+  for (const std::unique_ptr<ProtoValue>& field : fields_) {
+    output += field->PrintToTextProto();
+  }
+
+  if (!this->GetName().empty()) {
+    output += indents + "}\n";
+  }
+
+  return output;
 }
 
 } // namespace wireless_android_play_analytics

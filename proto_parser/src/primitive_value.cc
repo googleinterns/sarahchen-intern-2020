@@ -14,20 +14,19 @@
 *   limitations under the License.
 */
 
-#include "proto_value.h"
-#include "proto_parser.h"
-#include "message_value.h"
+#include "primitive_value.h"
 
 namespace wireless_android_play_analytics {
 
-std::string ProtoValue::PrintToTextProto() {
-  return PrintToTextProtoHelper();
+std::string PrimitiveValue::PrintToTextProtoHelper() {
+  // TODO(alexanderlin): Implement.
+  return std::string();
 }
 
-std::unique_ptr<ProtoValue> ProtoValue::Create(absl::string_view text_proto, 
-    google::protobuf::Message& message) {
+void PrimitiveValue::SetVal(const 
+    absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
+    const google::protobuf::EnumValueDescriptor*, std::string>& val) {
   // TODO(alexanderlin): Implement.
-  return std::unique_ptr<ProtoValue>();
 }
 
 } // namespace wireless_android_play_analytics

@@ -19,36 +19,36 @@
 namespace wireless_android_play_analytics {
 
 void ProtoParser::PopulateFields(int& prev_field_line, 
-  const google::protobuf::TextFormat::ParseInfoTree& tree,
-  const google::protobuf::Message& message,
-  std::shared_ptr<ProtoValue>& proto_value) {
+    const google::protobuf::TextFormat::ParseInfoTree& tree,
+    const google::protobuf::Message& message,
+    std::unique_ptr<ProtoValue>& proto_value, int indent_count) {
   // TODO(alexanderlin): Implement.
 }
 
-std::shared_ptr<MessageValue> ProtoParser::CreateMessage(
-  const google::protobuf::Message& message, 
-  const google::protobuf::TextFormat::ParseInfoTree& tree,
-  int& last_field_loc, int field_loc, const std::string& name) {
+std::unique_ptr<ProtoValue> ProtoParser::CreateMessage(
+    const google::protobuf::Message& message, 
+    const google::protobuf::TextFormat::ParseInfoTree& tree, int indent_count,
+    int& last_field_loc, int field_loc, const std::string& name){
   // TODO(alexanderlin): Implement.
   return nullptr;
 }
 
-void ProtoParser::PopulateComments(int last_field_loc, int field_loc, 
-  std::shared_ptr<ProtoValue> message) {
+void ProtoParser::PopulateComments(int last_field_loc, 
+    int field_loc, std::unique_ptr<ProtoValue>& message) {
   // TODO(alexanderlin): Implement.
 }
 
 // TODO: Change return type to primitive value
-std::shared_ptr<PrimitiveValue> ProtoParser::CreatePrimitive(
-  const google::protobuf::Message& message, const FieldInfo& field,
-  int last_field_loc) {
+std::unique_ptr<ProtoValue> ProtoParser::CreatePrimitive(
+    const google::protobuf::Message& message, const FieldInfo& field, 
+    int last_field_loc, int indent_count) {
   // TODO(alexanderlin): Implement.
   return nullptr;
 }
 
 int ProtoParser::GetLocation(
-  const google::protobuf::TextFormat::ParseInfoTree& tree,
-  const google::protobuf::FieldDescriptor* field_descriptor, int index) {
+    const google::protobuf::TextFormat::ParseInfoTree& tree,
+    const google::protobuf::FieldDescriptor* field_descriptor, int index) {
   // TODO(alexanderlin): Implement.
   return 0;
 }

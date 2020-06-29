@@ -25,12 +25,14 @@ cc_library(
 cc_library(
     name = "message_value",
     hdrs = ["message_value.h"],
+    srcs = ["message_value.cc"],
     deps = ["proto_value"]
 )
 
 cc_library(
     name = "primitive_value",
     hdrs = ["primitive_value.h"],
+    srcs = ["primitive_value.cc"],
     deps = ["proto_value"]
 )
 
