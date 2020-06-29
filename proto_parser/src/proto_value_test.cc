@@ -58,6 +58,24 @@ bool_field: true
 bool_field: false # comment 6
 )pb";
 
+const std::string modified_text_proto = R"pb(# comment 1
+int32_field: 1 
+# comment 2
+field_nested_message { # comment 3
+  int64_field: 100 
+}
+# new comment
+#
+field_nested_message { 
+  # comment 4
+  # comment 5
+  int64_field: 1234567890 # another new comment
+}
+bool_field: true 
+bool_field: false # comment 6
+)pb";
+
+
 class ProtoValueTest : public ::testing::Test {
  protected:
   
@@ -71,10 +89,31 @@ class ProtoValueTest : public ::testing::Test {
   std::unique_ptr<ProtoValue> message;
 };
 
-TEST_F(ProtoValueTest, PrintToTextProtoText) {
+TEST_F(ProtoValueTest, PrintToTextProtoTest) {
   MessageValue* message_val = dynamic_cast<MessageValue*>(message.get());
   std::string printed_text_proto = message_val->PrintToTextProto();
   ASSERT_EQ(printed_text_proto, well_formatted_text_proto);
+}
+
+TEST_F(ProtoValueTest, PrintModifiedTextProtoTest) {
+  MessageValue* message_val = dynamic_cast<MessageValue*>(message.get());
+  const std::vector<std::unique_ptr<ProtoValue>>& fields = 
+      message_val->GetFields();
+  MessageValue* field_nested_message = dynamic_cast<MessageValue*>(
+      fields[2].get());
+  field_nested_message->SetCommentAboveField("# new comment\n#\n");
+  const std::vector<std::unique_ptr<ProtoValue>>& 
+      first_field_nested_message_fields = field_nested_message->GetFields();
+  PrimitiveValue* primitive = dynamic_cast<PrimitiveValue*>(
+      first_field_nested_message_fields[0].get());
+  primitive->SetCommentBehindField("# another new comment");
+  int64_t int64_field_val = 1234567890;
+  absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
+      const google::protobuf::EnumValueDescriptor *, std::string> val =
+      int64_field_val;
+  primitive->SetVal(val);
+  std::string printed_text_proto = message_val->PrintToTextProto();
+  ASSERT_EQ(printed_text_proto, modified_text_proto);
 }
 
 TEST_F(ProtoValueTest, CreateTest) {
