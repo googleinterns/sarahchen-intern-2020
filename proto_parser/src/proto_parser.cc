@@ -19,7 +19,7 @@
 namespace wireless_android_play_analytics {
 
 void ProtoParser::PopulateFields(int& prev_field_line, 
-  const google::protobuf::TextFormat::ParseInfoTree* tree,
+  const google::protobuf::TextFormat::ParseInfoTree& tree,
   const google::protobuf::Message& message,
   std::shared_ptr<ProtoValue>& proto_value) {
   const google::protobuf::Reflection* reflection = message.GetReflection();
@@ -60,12 +60,12 @@ void ProtoParser::PopulateFields(int& prev_field_line,
         nested_message = &reflection->GetMessage(message, 
           field.field_descriptor_);
       }
-      google::protobuf::TextFormat::ParseInfoTree* nested_tree = tree->
+      google::protobuf::TextFormat::ParseInfoTree* nested_tree = tree.
         GetTreeForNested(field.field_descriptor_, field.index_);
       // CreateMessage should update prev_field_line to the line the message
       // ends.
       message_field.push_back(std::dynamic_pointer_cast<MessageValue>(
-        CreateMessage(*nested_message, nested_tree, prev_field_line, field.line_, 
+        CreateMessage(*nested_message, *nested_tree, prev_field_line, field.line_, 
         field.field_descriptor_->name())));
     }
     else {
@@ -78,7 +78,7 @@ void ProtoParser::PopulateFields(int& prev_field_line,
 
 std::shared_ptr<MessageValue> ProtoParser::CreateMessage(
   const google::protobuf::Message& message, 
-  const google::protobuf::TextFormat::ParseInfoTree* tree,
+  const google::protobuf::TextFormat::ParseInfoTree& tree,
   int& last_field_loc, int field_loc, const std::string& name){
   std::shared_ptr<ProtoValue> message_val = 
     std::make_shared<MessageValue>(name);
@@ -235,10 +235,10 @@ std::shared_ptr<PrimitiveValue> ProtoParser::CreatePrimitive(
 }
 
 int ProtoParser::GetLocation(
-  const google::protobuf::TextFormat::ParseInfoTree* tree,
+  const google::protobuf::TextFormat::ParseInfoTree& tree,
   const google::protobuf::FieldDescriptor* field_descriptor, int index) {
   google::protobuf::TextFormat::ParseLocation location = 
-    tree->GetLocation(field_descriptor, index);
+    tree.GetLocation(field_descriptor, index);
   return location.line;
 }
 

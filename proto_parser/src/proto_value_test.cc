@@ -152,10 +152,10 @@ TEST(ProtoParserTest, GetLocationTest) {
   const google::protobuf::Descriptor* descriptor = test.GetDescriptor();
   const google::protobuf::FieldDescriptor* field_descriptor = nullptr;
   field_descriptor = descriptor->FindFieldByLowercaseName("int32_field");
-  ASSERT_EQ(2, parser.GetLocation(&tree, field_descriptor, -1));
+  ASSERT_EQ(2, parser.GetLocation(tree, field_descriptor, -1));
   field_descriptor = descriptor->FindFieldByLowercaseName("bool_field");
-  ASSERT_EQ(16, parser.GetLocation(&tree, field_descriptor, 0));
-  ASSERT_EQ(17, parser.GetLocation(&tree, field_descriptor, 1));
+  ASSERT_EQ(16, parser.GetLocation(tree, field_descriptor, 0));
+  ASSERT_EQ(17, parser.GetLocation(tree, field_descriptor, 1));
 }
 
 TEST(ProtoParserTest, GetNestedLocationTest) {
@@ -174,7 +174,7 @@ TEST(ProtoParserTest, GetNestedLocationTest) {
   descriptor = field_descriptor->message_type();
   nested_tree = tree.GetTreeForNested(field_descriptor, 0);
   field_descriptor = descriptor->FindFieldByLowercaseName("int64_field");
-  ASSERT_EQ(6, parser.GetLocation(nested_tree, field_descriptor, -1));  
+  ASSERT_EQ(6, parser.GetLocation(*nested_tree, field_descriptor, -1));  
 }
 
 TEST(ProtoParserTest, PopulateCommentsTest) {
@@ -277,7 +277,7 @@ TEST(ProtoParserTest, CreateMessageTest) {
   int last_field_loc = 3;
   std::shared_ptr<MessageValue> message = 
     std::dynamic_pointer_cast<MessageValue>(
-    parser.CreateMessage(nested_message, nested_tree, last_field_loc, 5, 
+    parser.CreateMessage(nested_message, *nested_tree, last_field_loc, 5, 
     field_descriptor->name()));
   ASSERT_NE(nullptr, message);
   ASSERT_EQ(7, last_field_loc);

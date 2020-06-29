@@ -41,7 +41,7 @@ std::shared_ptr<ProtoValue> ProtoValue::Create(absl::string_view text_proto,
   // Root Message has no field_name.
   std::shared_ptr<ProtoValue> message_val = std::make_shared<MessageValue>(""); 
   //message_val.get()
-  proto_parser.PopulateFields(last_field_loc, &tree, message, message_val);
+  proto_parser.PopulateFields(last_field_loc, tree, message, message_val);
   return message_val;
 }
 

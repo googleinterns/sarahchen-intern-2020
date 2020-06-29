@@ -35,7 +35,7 @@ class ProtoParser {
   }
   // Populates the message with all the fields of the message.
   void PopulateFields(int& last_field_loc, 
-    const google::protobuf::TextFormat::ParseInfoTree* tree,
+    const google::protobuf::TextFormat::ParseInfoTree& tree,
     const google::protobuf::Message& message,
     std::shared_ptr<ProtoValue>& proto_value);
 
@@ -80,7 +80,7 @@ class ProtoParser {
   // Creates a MessageValue field.
   std::shared_ptr<MessageValue> CreateMessage(
     const google::protobuf::Message& message, 
-    const google::protobuf::TextFormat::ParseInfoTree* tree,
+    const google::protobuf::TextFormat::ParseInfoTree& tree,
     int& last_field_loc, int field_loc, const std::string& name);
 
   // Creates a PrimitiveValue field.
@@ -89,7 +89,7 @@ class ProtoParser {
     int last_field_loc);
 
   // Acquires the location of a field.
-  int GetLocation(const google::protobuf::TextFormat::ParseInfoTree* tree, 
+  int GetLocation(const google::protobuf::TextFormat::ParseInfoTree& tree, 
     const google::protobuf::FieldDescriptor* field_descriptor, int index);
 
   std::vector<std::string> lines_;
