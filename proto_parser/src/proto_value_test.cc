@@ -26,32 +26,60 @@ namespace wireless_android_play_analytics{
 const std::string text_proto = R"pb(
 # comment 1
 int32_field: 1
+
 # comment 2
 field_nested_message { # comment 3
   int64_field: 100
 }
+
 field_nested_message {
   # comment 4
   # comment 5
   int64_field: 100
 }
+
+
 bool_field: true
 bool_field: false # comment 6
 )pb";
 
-TEST(ProtoValueTest, CreateTest) {
-  ProtoParser parser;
+const std::string well_formatted_text_proto = R"pb(# comment 1
+int32_field: 1 
+# comment 2
+field_nested_message { # comment 3
+  int64_field: 100 
+}
+field_nested_message { 
+  # comment 4
+  # comment 5
+  int64_field: 100 
+}
+bool_field: true 
+bool_field: false # comment 6
+)pb";
+
+class ProtoValueTest : public ::testing::Test {
+ protected:
+  
+  virtual void SetUp() {
+    message = ProtoValue::Create(text_proto, test);
+  }
+
+  // virtual void TearDown() {}
+
   TestProto test;
-  std::unique_ptr<ProtoValue> message_val = ProtoValue::Create(text_proto, 
-      test);
-  MessageValue* message = dynamic_cast<MessageValue*>(message_val.get());
-  ASSERT_NE(nullptr, message);
+  std::unique_ptr<ProtoValue> message;
+};
+
+TEST_F(ProtoValueTest, CreateTest) {
+  MessageValue* message_val = dynamic_cast<MessageValue*>(message.get());
+  ASSERT_NE(nullptr, message_val);
   const std::vector<std::unique_ptr<ProtoValue>>& fields = 
-      message->GetFields();
-  ASSERT_EQ("", message->GetName());
-  ASSERT_EQ("", message->GetCommentAboveField());
-  ASSERT_EQ("", message->GetCommentBehindField());
-  ASSERT_EQ(0, message->GetIndentCount());
+      message_val->GetFields();
+  ASSERT_EQ("", message_val->GetName());
+  ASSERT_EQ("", message_val->GetCommentAboveField());
+  ASSERT_EQ("", message_val->GetCommentBehindField());
+  ASSERT_EQ(0, message_val->GetIndentCount());
   ASSERT_EQ(5, fields.size());
   // Check the first field is correct.
   PrimitiveValue* int32_field = dynamic_cast<PrimitiveValue*>(fields[0].get());
