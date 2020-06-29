@@ -17,15 +17,15 @@
 #include "proto_parser.h"
 
 namespace wireless_android_play_analytics {
-
+  
 void ProtoParser::PopulateFields(int& prev_field_line, 
     const google::protobuf::TextFormat::ParseInfoTree& tree,
     const google::protobuf::Message& message,
-    std::unique_ptr<ProtoValue>& proto_value, int indent_count) {
+    ProtoValue* proto_value, int indent_count) {
   const google::protobuf::Reflection* reflection = message.GetReflection();
   const google::protobuf::Descriptor* descriptor = message.GetDescriptor();
   MessageValue* message_tmp = 
-      dynamic_cast<MessageValue*>(proto_value.get());
+      dynamic_cast<MessageValue*>(proto_value);
   assert(message_tmp);
   std::vector<std::unique_ptr<ProtoValue>>& message_field = message_tmp->
       GetFieldsMutable();
@@ -82,15 +82,15 @@ std::unique_ptr<ProtoValue> ProtoParser::CreateMessage(
     int& last_field_loc, int field_loc, const std::string& name){
   std::unique_ptr<ProtoValue> message_val = 
       absl::make_unique<MessageValue>(name, indent_count);
-  PopulateComments(last_field_loc, field_loc, message_val);
+  PopulateComments(last_field_loc, field_loc, message_val.get());
   // Make sure the fields start from after the parent message.
   last_field_loc = field_loc + 1;
-  PopulateFields(last_field_loc, tree, message, message_val, indent_count + 1);
+  PopulateFields(last_field_loc, tree, message, message_val.get(), indent_count + 1);
   return message_val;
 }
 
 void ProtoParser::PopulateComments(int last_field_loc, 
-    int field_loc, std::unique_ptr<ProtoValue>& message) {
+    int field_loc, ProtoValue* message) {
   std::string comments_above_field;
   bool first_comment = false;
   for(int i = last_field_loc; i < field_loc; ++i) {
@@ -140,7 +140,6 @@ void ProtoParser::PopulateComments(int last_field_loc,
   message->SetCommentAboveField(comments_above_field);
 }
 
-// TODO: Change return type to primitive value
 std::unique_ptr<ProtoValue> ProtoParser::CreatePrimitive(
     const google::protobuf::Message& message, const FieldInfo& field, 
     int last_field_loc, int indent_count) {
@@ -153,7 +152,7 @@ std::unique_ptr<ProtoValue> ProtoParser::CreatePrimitive(
   std::string str;
   std::unique_ptr<ProtoValue> message_val = absl::make_unique<PrimitiveValue>(
       field_descriptor->name(), indent_count);
-  PopulateComments(last_field_loc, field_loc, message_val);
+  PopulateComments(last_field_loc, field_loc, message_val.get());
   PrimitiveValue* primitive = dynamic_cast<PrimitiveValue*>(message_val.get());
   if (field_descriptor->is_repeated()) {
     switch(field_descriptor->cpp_type()){

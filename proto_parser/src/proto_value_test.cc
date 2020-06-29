@@ -22,7 +22,7 @@
 #include <google/protobuf/util/message_differencer.h>
 
 namespace wireless_android_play_analytics{
-
+ 
 const std::string text_proto = R"pb(
 # comment 1
 int32_field: 1
@@ -58,29 +58,34 @@ bool_field: true
 bool_field: false # comment 6
 )pb";
 
-TEST(ProtoValueTest, PrintToTextProtoText) {
-  ProtoParser parser;
+class ProtoValueTest : public ::testing::Test {
+ protected:
+  
+  virtual void SetUp() {
+    message = ProtoValue::Create(text_proto, test);
+  }
+
+  // virtual void TearDown() {}
+
   TestProto test;
-  std::unique_ptr<ProtoValue> message = ProtoValue::Create(text_proto, 
-      test);
+  std::unique_ptr<ProtoValue> message;
+};
+
+TEST_F(ProtoValueTest, PrintToTextProtoText) {
   MessageValue* message_val = dynamic_cast<MessageValue*>(message.get());
   std::string printed_text_proto = message_val->PrintToTextProto();
   ASSERT_EQ(printed_text_proto, well_formatted_text_proto);
 }
 
-TEST(ProtoValueTest, CreateTest) {
-  ProtoParser parser;
-  TestProto test;
-  std::unique_ptr<ProtoValue> message_val = ProtoValue::Create(text_proto, 
-      test);
-  MessageValue* message = dynamic_cast<MessageValue*>(message_val.get());
-  ASSERT_NE(nullptr, message);
+TEST_F(ProtoValueTest, CreateTest) {
+  MessageValue* message_val = dynamic_cast<MessageValue*>(message.get());
+  ASSERT_NE(nullptr, message_val);
   const std::vector<std::unique_ptr<ProtoValue>>& fields = 
-      message->GetFields();
-  ASSERT_EQ("", message->GetName());
-  ASSERT_EQ("", message->GetCommentAboveField());
-  ASSERT_EQ("", message->GetCommentBehindField());
-  ASSERT_EQ(0, message->GetIndentCount());
+      message_val->GetFields();
+  ASSERT_EQ("", message_val->GetName());
+  ASSERT_EQ("", message_val->GetCommentAboveField());
+  ASSERT_EQ("", message_val->GetCommentBehindField());
+  ASSERT_EQ(0, message_val->GetIndentCount());
   ASSERT_EQ(5, fields.size());
   // Check the first field is correct.
   PrimitiveValue* int32_field = dynamic_cast<PrimitiveValue*>(fields[0].get());
@@ -214,7 +219,7 @@ TEST(ProtoParserTest, PopulateCommentsTest) {
   parser.lines_.push_back("#hi");
   parser.lines_.push_back("#bye");
   parser.lines_.push_back("test: 15 #more comment");
-  parser.PopulateComments(0, 2, message);
+  parser.PopulateComments(0, 2, message.get());
   ASSERT_EQ("#hi\n#bye\n", message->GetCommentAboveField());
   ASSERT_EQ("#more comment", message->GetCommentBehindField());
 }
@@ -227,7 +232,7 @@ TEST(ProtoParserTest, PopulateCommentsClosingBracket) {
   parser.lines_.push_back("\t}");
   parser.lines_.push_back("#comment");
   parser.lines_.push_back("test: 1");
-  parser.PopulateComments(0, 4, message);
+  parser.PopulateComments(0, 4, message.get());
   ASSERT_EQ("#comment\n", message->GetCommentAboveField());
 }
 
@@ -236,13 +241,13 @@ TEST(ProtoParserTest, PopulateCommentsStringVariable) {
   ProtoParser parser;
   parser.lines_.push_back("");
   parser.lines_.push_back("test: 4 #\"#\"#\"#\"\"");
-  parser.PopulateComments(0, 1, message);
+  parser.PopulateComments(0, 1, message.get());
   ASSERT_EQ("#\"#\"#\"#\"\"", message->GetCommentBehindField());
   parser.lines_[1] = "test: \"string#not a comment\"";
-  parser.PopulateComments(0, 1, message);
+  parser.PopulateComments(0, 1, message.get());
   ASSERT_EQ("", message->GetCommentBehindField());
   parser.lines_[1] = "test: \"string\" #some comment";
-  parser.PopulateComments(0, 1, message);
+  parser.PopulateComments(0, 1, message.get());
   ASSERT_EQ("#some comment", message->GetCommentBehindField());
 }
 
