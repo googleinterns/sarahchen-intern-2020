@@ -37,7 +37,7 @@ class ProtoParser {
   void PopulateFields(int& last_field_loc, 
     const google::protobuf::TextFormat::ParseInfoTree& tree,
     const google::protobuf::Message& message,
-    std::unique_ptr<ProtoValue>& proto_value, int indent_count);
+    ProtoValue* proto_value, int indent_count);
 
  private:
   
@@ -66,7 +66,7 @@ class ProtoParser {
 
   // Acquires and populates the comments of a specific field.
   void PopulateComments(int last_field_loc, int field_loc, 
-    std::unique_ptr<ProtoValue>& message);
+    ProtoValue* message);
 
   // Creates a MessageValue field.
   std::unique_ptr<ProtoValue> CreateMessage(
