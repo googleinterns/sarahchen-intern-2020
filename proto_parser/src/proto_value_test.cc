@@ -23,7 +23,114 @@
 
 namespace wireless_android_play_analytics{
 
-// TODO(alexanderlin): Implement.
+const std::string text_proto = R"pb(
+# comment 1
+int32_field: 1
+# comment 2
+field_nested_message { # comment 3
+  int64_field: 100
+}
+field_nested_message {
+  # comment 4
+  # comment 5
+  int64_field: 100
+}
+bool_field: true
+bool_field: false # comment 6
+)pb";
+
+TEST(ProtoValueTest, CreateTest) {
+  ProtoParser parser;
+  TestProto test;
+  std::unique_ptr<ProtoValue> message_val = ProtoValue::Create(text_proto, 
+      test);
+  MessageValue* message = dynamic_cast<MessageValue*>(message_val.get());
+  ASSERT_NE(nullptr, message);
+  const std::vector<std::unique_ptr<ProtoValue>>& fields = 
+      message->GetFields();
+  ASSERT_EQ("", message->GetName());
+  ASSERT_EQ("", message->GetCommentAboveField());
+  ASSERT_EQ("", message->GetCommentBehindField());
+  ASSERT_EQ(0, message->GetIndentCount());
+  ASSERT_EQ(5, fields.size());
+  // Check the first field is correct.
+  PrimitiveValue* int32_field = dynamic_cast<PrimitiveValue*>(fields[0].get());
+  ASSERT_NE(nullptr, int32_field);
+  ASSERT_EQ("int32_field", int32_field->GetName());
+  ASSERT_EQ("# comment 1\n", int32_field->GetCommentAboveField());
+  ASSERT_EQ("", int32_field->GetCommentBehindField());
+  int int32_field_val = 1;
+  absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
+      const google::protobuf::EnumValueDescriptor *, std::string> val = int32_field_val;
+  ASSERT_TRUE(absl::holds_alternative<int>(int32_field->GetVal()));
+  ASSERT_EQ(val, int32_field->GetVal());
+  // Check the second field is correct.
+  MessageValue* field_nested_message = nullptr;
+  PrimitiveValue* int64_field = nullptr;
+  int64_t int64_field_val = 100;
+  val = int64_field_val;
+  field_nested_message = dynamic_cast<MessageValue*>(fields[1].get());
+  ASSERT_NE(nullptr, field_nested_message);
+  ASSERT_EQ("field_nested_message", field_nested_message->GetName());
+  ASSERT_EQ("# comment 2\n", field_nested_message->GetCommentAboveField());
+  ASSERT_EQ("# comment 3", field_nested_message->GetCommentBehindField());
+  ASSERT_EQ(0, field_nested_message->GetIndentCount());
+  const std::vector<std::unique_ptr<ProtoValue>>& 
+      first_field_nested_message_fields = field_nested_message->GetFields();
+  ASSERT_EQ(1, first_field_nested_message_fields.size());
+  int64_field = dynamic_cast<PrimitiveValue*>(
+      first_field_nested_message_fields[0].get());
+  ASSERT_NE(nullptr, int64_field);
+  ASSERT_EQ("int64_field", int64_field->GetName());
+  ASSERT_EQ("", int64_field->GetCommentAboveField());
+  ASSERT_EQ("", int64_field->GetCommentBehindField());
+  ASSERT_EQ(1, int64_field->GetIndentCount());
+  ASSERT_TRUE(absl::holds_alternative<int64_t>(int64_field->GetVal()));
+  ASSERT_EQ(val, int64_field->GetVal());
+  // Check the third field is correct.
+  field_nested_message = dynamic_cast<MessageValue*>(fields[2].get());
+  ASSERT_NE(nullptr, field_nested_message);
+  ASSERT_EQ("field_nested_message", field_nested_message->GetName());
+  ASSERT_EQ("", field_nested_message->GetCommentAboveField());
+  ASSERT_EQ("", field_nested_message->GetCommentBehindField());
+  ASSERT_EQ(0, field_nested_message->GetIndentCount());
+  const std::vector<std::unique_ptr<ProtoValue>>& 
+      second_field_nested_message_fields = field_nested_message->GetFields();
+  ASSERT_EQ(1, second_field_nested_message_fields.size());
+  int64_field = dynamic_cast<PrimitiveValue*>(
+      second_field_nested_message_fields[0].get());
+  ASSERT_NE(nullptr, int64_field);
+  ASSERT_EQ("int64_field", int64_field->GetName());
+  ASSERT_EQ("  # comment 4\n  # comment 5\n", 
+      int64_field->GetCommentAboveField());
+  ASSERT_EQ("", int64_field->GetCommentBehindField());
+  ASSERT_EQ(1, int64_field->GetIndentCount());
+  ASSERT_TRUE(absl::holds_alternative<int64_t>(int64_field->GetVal()));
+  ASSERT_EQ(val, int64_field->GetVal());
+  // Check the fourth field is correct.
+  PrimitiveValue* bool_field = nullptr;
+  bool_field = dynamic_cast<PrimitiveValue*>(fields[3].get());
+  ASSERT_NE(nullptr, bool_field);
+  ASSERT_EQ("bool_field", bool_field->GetName());
+  ASSERT_EQ("", bool_field->GetCommentAboveField());
+  ASSERT_EQ("", bool_field->GetCommentBehindField());
+  ASSERT_EQ(0, bool_field->GetIndentCount());
+  bool bool_field_val = true;
+  val = bool_field_val;
+  ASSERT_TRUE(absl::holds_alternative<bool>(bool_field->GetVal()));
+  ASSERT_EQ(val, bool_field->GetVal());
+  // Check the fifth field is correct.
+  bool_field = dynamic_cast<PrimitiveValue*>(fields[4].get());
+  ASSERT_NE(nullptr, bool_field);
+  ASSERT_EQ("bool_field", bool_field->GetName());
+  ASSERT_EQ("", bool_field->GetCommentAboveField());
+  ASSERT_EQ("# comment 6", bool_field->GetCommentBehindField());
+  ASSERT_EQ(0, bool_field->GetIndentCount());
+  bool_field_val = false;
+  val = bool_field_val;
+  ASSERT_TRUE(absl::holds_alternative<bool>(bool_field->GetVal()));
+  ASSERT_EQ(val, bool_field->GetVal());
+}
 
 } // namespace wireless_android_play_analytics
 
