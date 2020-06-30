@@ -205,18 +205,6 @@ TEST_F(ProtoValueTest, CreateTest) {
   ASSERT_EQ(val, bool_field->GetVal());
 }
 
-TEST(ProtoParserTest, DelimiteTextProtoTest) {
-  ProtoParser parser;
-  parser.DelimiteTextProto(text_proto);
-  int idx = 0;
-  std::istringstream iss(text_proto);
-  while (iss.good()) {
-    std::string tmp;
-    getline(iss,tmp);
-    EXPECT_EQ(parser.lines_[idx++], tmp);
-  }
-}
-
 TEST(ProtoParserTest, GetLocationTest) {
   ProtoParser parser;
   TestProto test;
@@ -291,7 +279,7 @@ TEST(ProtoParserTest, PopulateCommentsStringVariable) {
 }
 
 TEST(ProtoParserTest, CreatePrimitiveTest) {
-  ProtoParser parser;
+  ProtoParser parser(text_proto);
   TestProto test;
   google::protobuf::TextFormat::Parser google_parser;
   google_parser.ParseFromString(text_proto, &test);
@@ -299,7 +287,6 @@ TEST(ProtoParserTest, CreatePrimitiveTest) {
   const google::protobuf::FieldDescriptor* field_descriptor = nullptr;
   std::unique_ptr<ProtoValue> message = nullptr;
   field_descriptor = descriptor->FindFieldByLowercaseName("int32_field");
-  parser.DelimiteTextProto(text_proto);
   ProtoParser::FieldInfo field(2, -1, field_descriptor);
   message = parser.CreatePrimitive(test, field, 0, 0);
   PrimitiveValue* primitive = dynamic_cast<PrimitiveValue*>(message.get());
@@ -314,7 +301,7 @@ TEST(ProtoParserTest, CreatePrimitiveTest) {
 }
 
 TEST(ProtoParserTest, CreatePrimitiveNestedTest) {
-  ProtoParser parser;
+  ProtoParser parser(text_proto);
   TestProto test;
   google::protobuf::TextFormat::Parser google_parser;
   google_parser.ParseFromString(text_proto, &test);
@@ -322,7 +309,6 @@ TEST(ProtoParserTest, CreatePrimitiveNestedTest) {
   const google::protobuf::FieldDescriptor* field_descriptor = nullptr;
   std::unique_ptr<ProtoValue> message = nullptr;
   field_descriptor = descriptor->FindFieldByLowercaseName("bool_field");
-  parser.DelimiteTextProto(text_proto);
   ProtoParser::FieldInfo field(17, 1, field_descriptor);
   message = parser.CreatePrimitive(test, field, 17, 0);
   PrimitiveValue* primitive = dynamic_cast<PrimitiveValue*>(message.get());
@@ -337,7 +323,7 @@ TEST(ProtoParserTest, CreatePrimitiveNestedTest) {
 }
 
 TEST(ProtoParserTest, CreateMessageTest) {
-  ProtoParser parser;
+  ProtoParser parser(text_proto);
   TestProto test;
   google::protobuf::TextFormat::Parser google_parser;
   google::protobuf::TextFormat::ParseInfoTree tree;
@@ -349,7 +335,6 @@ TEST(ProtoParserTest, CreateMessageTest) {
       "field_nested_message");
   google_parser.WriteLocationsTo(&tree);
   google_parser.ParseFromString(text_proto, &test);
-  parser.DelimiteTextProto(text_proto);
   const google::protobuf::Message& nested_message = 
     reflection->GetRepeatedMessage(test, field_descriptor, 0);
   nested_tree = tree.GetTreeForNested(field_descriptor, 0);
