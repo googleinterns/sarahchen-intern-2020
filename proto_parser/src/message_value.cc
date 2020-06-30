@@ -24,4 +24,9 @@ std::string MessageValue::PrintToTextProtoHelper() {
   return std::string();
 }
 
+std::vector<ProtoValue*>& MessageValue::GetFieldsMutable() {
+  std::vector<ProtoValue*> fields;
+  return fields; 
+}
+
 } // namespace wireless_android_play_analytics

@@ -28,7 +28,7 @@ void ProtoParser::PopulateFields(int& prev_field_line,
 std::unique_ptr<ProtoValue> ProtoParser::CreateMessage(
     const google::protobuf::Message& message, 
     const google::protobuf::TextFormat::ParseInfoTree& tree, int indent_count,
-    int& last_field_loc, int field_loc, const std::string& name){
+    int& last_field_loc, int field_loc, absl::string_view name){
   // TODO(alexanderlin): Implement.
   return nullptr;
 }
@@ -51,10 +51,6 @@ int ProtoParser::GetLocation(
     const google::protobuf::FieldDescriptor* field_descriptor, int index) {
   // TODO(alexanderlin): Implement.
   return 0;
-}
-
-void ProtoParser::DelimiteTextProto(absl::string_view text_proto) {
-  // TODO(alexanderlin): Implement.
 }
 
 } // namespace wireless_android_play_analytics
