@@ -44,4 +44,18 @@ std::string MessageValue::PrintToTextProtoHelper() {
   return output;
 }
 
+void MessageValue::AddField(std::unique_ptr<ProtoValue> field) {
+  fields_.push_back(std::move(field));
+}
+
+std::vector<ProtoValue*> MessageValue::GetFieldsMutable() {
+  std::vector<ProtoValue*> result;
+
+  for (const std::unique_ptr<ProtoValue>& proto_value : fields_) {
+    result.push_back(proto_value.get());
+  }
+
+  return result;
+}
+
 } // namespace wireless_android_play_analytics

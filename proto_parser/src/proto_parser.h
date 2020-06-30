@@ -26,7 +26,7 @@ namespace wireless_android_play_analytics {
 
 class ProtoParser {
 
-  public:
+ public:
 
   ProtoParser() {}
 
@@ -52,6 +52,8 @@ class ProtoParser {
   FRIEND_TEST(ProtoParserTest, PopulateFields);
   FRIEND_TEST(ProtoParserTest, CreateMessageTest);
 
+ private:
+  
   // Stores all the information for a field necessary for create functions.
   struct FieldInfo {
 
@@ -64,9 +66,11 @@ class ProtoParser {
       return this->line < rhs.line;
     }
 
+    // Location of the field in the text proto.
     int line;
     // Index of the repeated field, -1 if not repeated.
     int index;
+    // Field Descriptor of the current field.
     const google::protobuf::FieldDescriptor* field_descriptor;
   };
 
