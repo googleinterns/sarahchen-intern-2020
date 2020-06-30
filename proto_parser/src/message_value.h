@@ -27,21 +27,20 @@ class MessageValue : public ProtoValue {
 
   explicit MessageValue(absl::string_view field_name, int indent_count) 
    : ProtoValue(field_name, indent_count) {}
+
   // Gets all the fields of the current Message
   const std::vector<std::unique_ptr<ProtoValue>>& GetFields() const {
     return fields_;
   }
 
   // Gets all the fields of the current Message with intention to modify it.
-  std::vector<ProtoValue*>& GetFieldsMutable() {
-    return fields_mutable_;
-  }
+  std::vector<ProtoValue*> GetFieldsMutable();
+
+  void AddField(std::unique_ptr<ProtoValue> field);
 
  private:
 
   std::string PrintToTextProtoHelper();
-
-  std::vector<ProtoValue*> fields_mutable_;
 
   std::vector<std::unique_ptr<ProtoValue>> fields_;
 };

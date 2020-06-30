@@ -28,7 +28,7 @@ void ProtoParser::PopulateFields(int& prev_field_line,
 std::unique_ptr<ProtoValue> ProtoParser::CreateMessage(
     const google::protobuf::Message& message, 
     const google::protobuf::TextFormat::ParseInfoTree& tree, int indent_count,
-    int& last_field_loc, int field_loc, absl::string_view name){
+    int& last_field_loc, int field_loc, absl::string_view name) {
   // TODO(alexanderlin): Implement.
   return nullptr;
 }
