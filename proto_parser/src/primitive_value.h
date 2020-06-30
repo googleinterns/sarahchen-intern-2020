@@ -31,7 +31,7 @@ class PrimitiveValue : public ProtoValue {
   // Gets the value of the current Primitve.
   const absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
       const google::protobuf::EnumValueDescriptor*, std::string>& GetVal() 
-      const{
+      const {
     return val_;
   }
 
@@ -39,10 +39,6 @@ class PrimitiveValue : public ProtoValue {
       absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
       const google::protobuf::EnumValueDescriptor*, std::string>& val);
 
-  // Gets the value of the current primitive with intention to modify it.
-  absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
-      const google::protobuf::EnumValueDescriptor*, std::string>& 
-      GetValMutable();
  private:
 
   std::string PrintToTextProtoHelper();

@@ -28,4 +28,14 @@ void MessageValue::AddField(std::unique_ptr<ProtoValue> field) {
   // TODO(alexanderlin): Implement.
 }
 
+std::vector<ProtoValue*> MessageValue::GetFieldsMutable() {
+  std::vector<ProtoValue*> result;
+
+  for (const std::unique_ptr<ProtoValue>& proto_value : fields_) {
+    result.push_back(proto_value.get());
+  }
+
+  return result;
+}
+
 } // namespace wireless_android_play_analytics
