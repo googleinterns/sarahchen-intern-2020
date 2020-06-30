@@ -30,8 +30,10 @@ class ProtoParser {
 
   ProtoParser() {}
 
-  ProtoParser(absl::string_view text_proto);
-
+  ProtoParser(absl::string_view text_proto) {
+    lines_ = absl::StrSplit(text_proto, '\n');
+  }
+  
   // Populates the message with all the fields of the message.
   void PopulateFields(int& last_field_loc, 
     const google::protobuf::TextFormat::ParseInfoTree& tree,
