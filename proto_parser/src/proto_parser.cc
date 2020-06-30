@@ -22,6 +22,7 @@ void ProtoParser::PopulateFields(int& prev_field_line,
     const google::protobuf::TextFormat::ParseInfoTree& tree,
     const google::protobuf::Message& message,
     ProtoValue* proto_value, int indent_count) {
+  assert(proto_value != nullptr);
   const google::protobuf::Reflection* reflection = message.GetReflection();
   const google::protobuf::Descriptor* descriptor = message.GetDescriptor();
   MessageValue* message_tmp = 
@@ -31,23 +32,24 @@ void ProtoParser::PopulateFields(int& prev_field_line,
       GetFieldsMutable();
   int field_count = descriptor->field_count();
   std::vector<FieldInfo> field_info_list;
-  // Get the order of textproto
+  // Populate field_info_list with all the fields in the text proto. 
   for (int i = 0; i < field_count; ++i) {
     const google::protobuf::FieldDescriptor* field_descriptor = 
         descriptor->field(i);
     if (field_descriptor->is_repeated()) {
       int field_size = reflection->FieldSize(message, field_descriptor);
       for (int j = 0; j < field_size; ++j) {
-        field_info_list.push_back(FieldInfo(GetLocation(tree, field_descriptor, 
-            j), j, field_descriptor));
+        field_info_list.push_back(FieldInfo(/*line=*/GetLocation(tree, 
+            field_descriptor, j), /*index=*/j, field_descriptor));
       }
     } else if(reflection->HasField(message, field_descriptor)) {
-      field_info_list.push_back(FieldInfo(GetLocation(tree, field_descriptor, 
-          -1), -1, field_descriptor));
+      field_info_list.push_back(FieldInfo(/*line=*/GetLocation(tree, 
+          field_descriptor, -1), /*index=*/-1, field_descriptor));
     }
   }
+  // Sort the fields by their line number.
   std::sort(field_info_list.begin(), field_info_list.end());
-  // Get every field of this proto.
+  // Set message fields back into message_tmp.
   for (const FieldInfo& field : field_info_list) {
     if (field.field_descriptor->cpp_type() == 
       google::protobuf::FieldDescriptor::CppType::CPPTYPE_MESSAGE) {
@@ -55,8 +57,7 @@ void ProtoParser::PopulateFields(int& prev_field_line,
       if (field.field_descriptor->is_repeated()) {
         nested_message = &reflection->GetRepeatedMessage(message, 
             field.field_descriptor, field.index);
-      }
-      else {
+      } else {
         nested_message = &reflection->GetMessage(message, 
             field.field_descriptor);
       }
@@ -67,8 +68,7 @@ void ProtoParser::PopulateFields(int& prev_field_line,
       message_field.push_back(CreateMessage(*nested_message, *nested_tree, 
           indent_count, prev_field_line, field.line, 
           field.field_descriptor->name()));
-    }
-    else {
+    } else {
       message_field.push_back(CreatePrimitive(message, field, prev_field_line, 
           indent_count));
       prev_field_line = field.line + 1;
