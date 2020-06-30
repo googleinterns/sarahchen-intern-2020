@@ -44,21 +44,21 @@ class ProtoParser {
   // Stores all the information for a field necessary for create functions.
   struct FieldInfo {
 
-    FieldInfo(int line, int index, 
-        const google::protobuf::FieldDescriptor* field_descriptor)
-      : line_(line), index_(index), field_descriptor_(field_descriptor) {}
+    FieldInfo(int line_in, int index_in, 
+        const google::protobuf::FieldDescriptor* field_descriptor_in)
+      : line(line_in), index(index_in), field_descriptor(field_descriptor_in) {}
 
     // Overrides the comparison operator of FieldInfo.
     bool operator< (const FieldInfo& rhs) {
-      return this->line_ < rhs.line_;
+      return this->line < rhs.line;
     }
 
     // Location of the field in the text proto.
-    int line_;
+    int line;
     // Index of the repeated field, -1 if not repeated.
-    int index_;
+    int index;
     // Field Descriptor of the current field.
-    const google::protobuf::FieldDescriptor* field_descriptor_;
+    const google::protobuf::FieldDescriptor* field_descriptor;
   };
 
   // Splits the text proto using endline character into an array of string.
