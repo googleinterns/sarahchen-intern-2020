@@ -31,7 +31,7 @@ class ProtoParser {
   ProtoParser() {}
 
   ProtoParser(absl::string_view text_proto) {
-    DelimiteTextProto(text_proto);
+    lines_ = absl::StrSplit(text_proto, '\n');
   }
   // Populates the message with all the fields of the message.
   void PopulateFields(int& last_field_loc, 
@@ -61,9 +61,6 @@ class ProtoParser {
     const google::protobuf::FieldDescriptor* field_descriptor;
   };
 
-  // Splits the text proto using endline character into an array of string.
-  void DelimiteTextProto(absl::string_view text_proto);
-
   // Acquires and populates the comments of a specific field.
   void PopulateComments(int last_field_loc, int field_loc, 
     ProtoValue* message);
@@ -72,7 +69,7 @@ class ProtoParser {
   std::unique_ptr<ProtoValue> CreateMessage(
       const google::protobuf::Message& message, 
       const google::protobuf::TextFormat::ParseInfoTree& tree, int indent_count,
-      int& last_field_loc, int field_loc, const std::string& name);
+    int& last_field_loc, int field_loc, absl::string_view name);
 
   // Creates a PrimitiveValue field.
   std::unique_ptr<ProtoValue> CreatePrimitive(
