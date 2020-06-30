@@ -33,13 +33,21 @@ class MessageValue : public ProtoValue {
   }
 
   // Gets all the fields of the current Message with intention to modify it.
-  std::vector<std::unique_ptr<ProtoValue>>& GetFieldsMutable() {
-    return fields_;
+  std::vector<ProtoValue*>& GetFieldsMutable() {
+    return fields_mutable_;
+  }
+
+  // Appends a field to the back of fields and fields mutable
+  void AddField(std::unique_ptr<ProtoValue> field) {
+    fields_.push_back(std::move(field));
+    fields_mutable_.push_back(field.get());
   }
 
  private:
 
   std::string PrintToTextProtoHelper();
+
+  std::vector<ProtoValue*> fields_mutable_;
 
   std::vector<std::unique_ptr<ProtoValue>> fields_;
 };

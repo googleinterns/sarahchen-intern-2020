@@ -28,8 +28,6 @@ void ProtoParser::PopulateFields(int& prev_field_line,
   MessageValue* message_tmp = 
       dynamic_cast<MessageValue*>(proto_value);
   assert(message_tmp);
-  std::vector<std::unique_ptr<ProtoValue>>& message_field = message_tmp->
-      GetFieldsMutable();
   int field_count = descriptor->field_count();
   std::vector<FieldInfo> field_info_list;
   // Populate field_info_list with all the fields in the text proto. 
@@ -65,12 +63,12 @@ void ProtoParser::PopulateFields(int& prev_field_line,
         GetTreeForNested(field.field_descriptor, field.index);
       // CreateMessage should update prev_field_line to the line the message
       // ends.
-      message_field.push_back(CreateMessage(*nested_message, *nested_tree, 
-          indent_count, prev_field_line, field.line, 
-          field.field_descriptor->name()));
+      message_tmp->AddField(std::move(CreateMessage(*nested_message, 
+          *nested_tree, indent_count, prev_field_line, field.line, 
+          field.field_descriptor->name())));
     } else {
-      message_field.push_back(CreatePrimitive(message, field, prev_field_line, 
-          indent_count));
+      message_tmp->AddField(std::move(CreatePrimitive(message, field, 
+          prev_field_line, indent_count)));
       prev_field_line = field.line + 1;
     }
   }
