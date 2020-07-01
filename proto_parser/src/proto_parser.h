@@ -71,7 +71,7 @@ class ProtoParser {
   };
 
   // Acquires and populates the comments of a specific field.
-  void PopulateComments(int last_field_loc, int field_loc, 
+  void PopulateComments(const UpperLayerInfo& last_field_loc, int field_loc, 
     ProtoValue* message);
 
   // Creates a MessageValue field.
@@ -83,7 +83,7 @@ class ProtoParser {
   // Creates a PrimitiveValue field.
   std::unique_ptr<ProtoValue> CreatePrimitive(
       const google::protobuf::Message& message, const FieldInfo& field, 
-      int last_field_loc, int indent_count);
+      const UpperLayerInfo& last_field_loc, int indent_count);
 
   // Acquires the location of a field.
   int GetLocation(const google::protobuf::TextFormat::ParseInfoTree& tree, 

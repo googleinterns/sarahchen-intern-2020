@@ -65,12 +65,12 @@ void ProtoParser::PopulateFields(UpperLayerInfo* prev_field_line,
         GetTreeForNested(field.field_descriptor, field.index);
       // CreateMessage should update prev_field_line to the line the message
       // ends.
-      message_tmp->AddField(std::move(CreateMessage(*nested_message, 
+      message_tmp->AddField(CreateMessage(*nested_message, 
           *nested_tree, indent_count, prev_field_line, field.line, 
-          field.field_descriptor->name())));
+          field.field_descriptor->name()));
     } else {
-      message_tmp->AddField(std::move(CreatePrimitive(message, field, 
-          prev_field_line->line, indent_count)));
+      message_tmp->AddField(CreatePrimitive(message, field, 
+          prev_field_line->line, indent_count));
       prev_field_line->line = field.line + 1;
     }
   }
@@ -84,14 +84,14 @@ std::unique_ptr<ProtoValue> ProtoParser::CreateMessage(
   return nullptr;
 }
 
-void ProtoParser::PopulateComments(int last_field_loc, 
+void ProtoParser::PopulateComments(const UpperLayerInfo& last_field_loc, 
     int field_loc, ProtoValue* message) {
   // TODO(alexanderlin): Implement.
 }
 
 std::unique_ptr<ProtoValue> ProtoParser::CreatePrimitive(
     const google::protobuf::Message& message, const FieldInfo& field, 
-    int last_field_loc, int indent_count) {
+    const UpperLayerInfo& last_field_loc, int indent_count) {
   // TODO(alexanderlin): Implement.
   return nullptr;
 }
