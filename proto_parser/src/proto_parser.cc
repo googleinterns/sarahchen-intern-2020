@@ -70,7 +70,7 @@ void ProtoParser::PopulateFields(UpperLayerInfo* prev_field_line,
           field.field_descriptor->name()));
     } else {
       message_tmp->AddField(CreatePrimitive(message, field, 
-          prev_field_line->line, indent_count));
+          *prev_field_line, indent_count));
       prev_field_line->line = field.line + 1;
     }
   }
