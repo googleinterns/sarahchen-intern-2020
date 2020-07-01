@@ -18,7 +18,7 @@
 
 namespace wireless_android_play_analytics {
 
-void ProtoParser::PopulateFields(PrevFieldLine& prev_field_line, 
+void ProtoParser::PopulateFields(UpperLayerInfo* prev_field_line, 
     const google::protobuf::TextFormat::ParseInfoTree& tree,
     const google::protobuf::Message& message,
     ProtoValue* proto_value, int indent_count) {
@@ -28,12 +28,12 @@ void ProtoParser::PopulateFields(PrevFieldLine& prev_field_line,
 std::unique_ptr<ProtoValue> ProtoParser::CreateMessage(
     const google::protobuf::Message& message, 
     const google::protobuf::TextFormat::ParseInfoTree& tree, int indent_count,
-    PrevFieldLine& last_field_loc, int field_loc, absl::string_view name) {
+    UpperLayerInfo* last_field_loc, int field_loc, absl::string_view name) {
   // TODO(alexanderlin): Implement.
   return nullptr;
 }
 
-void ProtoParser::PopulateComments(int last_field_loc, 
+void ProtoParser::PopulateComments(const UpperLayerInfo& last_field_loc, 
     int field_loc, ProtoValue* message) {
   // TODO(alexanderlin): Implement.
 }
@@ -41,7 +41,7 @@ void ProtoParser::PopulateComments(int last_field_loc,
 // TODO: Change return type to primitive value
 std::unique_ptr<ProtoValue> ProtoParser::CreatePrimitive(
     const google::protobuf::Message& message, const FieldInfo& field, 
-    int last_field_loc, int indent_count) {
+    const UpperLayerInfo& last_field_loc, int indent_count) {
   // TODO(alexanderlin): Implement.
   return nullptr;
 }
