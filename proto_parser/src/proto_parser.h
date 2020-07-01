@@ -36,17 +36,13 @@ class ProtoParser {
 
   struct UpperLayerInfo {
 
-    UpperLayerInfo(int line_in) 
-      : line(line_in) {}
-
-    int line;
+    int last_field_line_num;
   };
 
   // Populates the message with all the fields of the message.
-  void PopulateFields(UpperLayerInfo* last_field_loc, 
-    const google::protobuf::TextFormat::ParseInfoTree& tree,
-    const google::protobuf::Message& message,
-    ProtoValue* proto_value, int indent_count);
+  void PopulateFields(const google::protobuf::Message& message,
+    const google::protobuf::TextFormat::ParseInfoTree& tree, int indent_count, 
+    ProtoValue* proto_value, UpperLayerInfo* last_field_loc);
 
  private:
   
@@ -78,7 +74,7 @@ class ProtoParser {
   std::unique_ptr<ProtoValue> CreateMessage(
       const google::protobuf::Message& message, 
       const google::protobuf::TextFormat::ParseInfoTree& tree, int indent_count,
-    UpperLayerInfo* last_field_loc, int field_loc, absl::string_view name);
+      int field_loc, absl::string_view name, UpperLayerInfo* last_field_loc);
 
   // Creates a PrimitiveValue field.
   std::unique_ptr<ProtoValue> CreatePrimitive(

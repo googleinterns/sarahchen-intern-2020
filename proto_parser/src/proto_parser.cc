@@ -20,10 +20,9 @@
 
 namespace wireless_android_play_analytics {
   
-void ProtoParser::PopulateFields(UpperLayerInfo* prev_field_line, 
-    const google::protobuf::TextFormat::ParseInfoTree& tree,
-    const google::protobuf::Message& message,
-    ProtoValue* proto_value, int indent_count) {
+void ProtoParser::PopulateFields(const google::protobuf::Message& message,
+    const google::protobuf::TextFormat::ParseInfoTree& tree, int indent_count, 
+    ProtoValue* proto_value, UpperLayerInfo* last_field_loc){
   assert(proto_value != nullptr);
   const google::protobuf::Reflection* reflection = message.GetReflection();
   const google::protobuf::Descriptor* descriptor = message.GetDescriptor();
@@ -66,12 +65,12 @@ void ProtoParser::PopulateFields(UpperLayerInfo* prev_field_line,
       // CreateMessage should update prev_field_line to the line the message
       // ends.
       message_tmp->AddField(CreateMessage(*nested_message, 
-          *nested_tree, indent_count, prev_field_line, field.line, 
-          field.field_descriptor->name()));
+          *nested_tree, indent_count, field.line, 
+          field.field_descriptor->name(), last_field_loc));
     } else {
       message_tmp->AddField(CreatePrimitive(message, field, 
-          *prev_field_line, indent_count));
-      prev_field_line->line = field.line + 1;
+          *last_field_loc, indent_count));
+      last_field_loc->last_field_line_num = field.line + 1;
     }
   }
 }
@@ -79,7 +78,7 @@ void ProtoParser::PopulateFields(UpperLayerInfo* prev_field_line,
 std::unique_ptr<ProtoValue> ProtoParser::CreateMessage(
     const google::protobuf::Message& message, 
     const google::protobuf::TextFormat::ParseInfoTree& tree, int indent_count,
-    UpperLayerInfo* last_field_loc, int field_loc, absl::string_view name) {
+    int field_loc, absl::string_view name, UpperLayerInfo* last_field_loc) {
   // TODO(alexanderlin): Implement.
   return nullptr;
 }
