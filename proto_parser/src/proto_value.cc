@@ -32,7 +32,7 @@ std::unique_ptr<ProtoValue> ProtoValue::Create(absl::string_view text_proto,
   parser.ParseFromString(std::string(text_proto), &message);
   ProtoParser proto_parser(text_proto);
   
-  int last_field_loc = 0;
+  ProtoParser::PrevFieldLine last_field_loc(0);
   // Root Message has no field_name.
   std::unique_ptr<ProtoValue> message_val = absl::make_unique<MessageValue>("", 
       0); 

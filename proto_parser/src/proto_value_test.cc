@@ -338,13 +338,13 @@ TEST(ProtoParserTest, CreateMessageTest) {
   const google::protobuf::Message& nested_message = 
     reflection->GetRepeatedMessage(test, field_descriptor, 0);
   nested_tree = tree.GetTreeForNested(field_descriptor, 0);
-  int last_field_loc = 3;
+  ProtoParser::PrevFieldLine last_field_loc(3);
   std::unique_ptr<ProtoValue> message_val = 
       parser.CreateMessage(nested_message, *nested_tree, 0, last_field_loc, 5, 
       field_descriptor->name());
   MessageValue* message = dynamic_cast<MessageValue*>(message_val.get());
   ASSERT_NE(nullptr, message);
-  ASSERT_EQ(7, last_field_loc);
+  ASSERT_EQ(7, last_field_loc.line);
   ASSERT_EQ("# comment 2\n", message->GetCommentAboveField());
   ASSERT_EQ("# comment 3", message->GetCommentBehindField());
   ASSERT_EQ("field_nested_message", message->GetName());
