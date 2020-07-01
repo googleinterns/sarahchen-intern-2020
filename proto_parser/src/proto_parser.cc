@@ -18,7 +18,7 @@
 
 namespace wireless_android_play_analytics {
 
-void ProtoParser::PopulateFields(int& prev_field_line, 
+void ProtoParser::PopulateFields(PrevFieldLine& prev_field_line, 
     const google::protobuf::TextFormat::ParseInfoTree& tree,
     const google::protobuf::Message& message,
     ProtoValue* proto_value, int indent_count) {
@@ -28,7 +28,7 @@ void ProtoParser::PopulateFields(int& prev_field_line,
 std::unique_ptr<ProtoValue> ProtoParser::CreateMessage(
     const google::protobuf::Message& message, 
     const google::protobuf::TextFormat::ParseInfoTree& tree, int indent_count,
-    int& last_field_loc, int field_loc, absl::string_view name) {
+    PrevFieldLine& last_field_loc, int field_loc, absl::string_view name) {
   // TODO(alexanderlin): Implement.
   return nullptr;
 }

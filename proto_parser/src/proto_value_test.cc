@@ -62,17 +62,17 @@ class ProtoValueTest : public ::testing::Test {
  protected:
   
   virtual void SetUp() {
-    message = ProtoValue::Create(text_proto, test);
+    message_ = ProtoValue::Create(text_proto, test_);
   }
 
   // virtual void TearDown() {}
 
-  TestProto test;
-  std::unique_ptr<ProtoValue> message;
+  TestProto test_;
+  std::unique_ptr<ProtoValue> message_;
 };
 
 TEST_F(ProtoValueTest, CreateTest) {
-  MessageValue* message_val = dynamic_cast<MessageValue*>(message.get());
+  MessageValue* message_val = dynamic_cast<MessageValue*>(message_.get());
   ASSERT_NE(nullptr, message_val);
   const std::vector<std::unique_ptr<ProtoValue>>& fields = 
       message_val->GetFields();
