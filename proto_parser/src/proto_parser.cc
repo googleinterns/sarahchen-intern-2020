@@ -18,7 +18,7 @@
 
 namespace wireless_android_play_analytics {
   
-void ProtoParser::PopulateFields(PrevFieldLine& prev_field_line, 
+void ProtoParser::PopulateFields(UpperLayerInfo* prev_field_line, 
     const google::protobuf::TextFormat::ParseInfoTree& tree,
     const google::protobuf::Message& message,
     ProtoValue* proto_value, int indent_count) {
@@ -63,13 +63,13 @@ void ProtoParser::PopulateFields(PrevFieldLine& prev_field_line,
         GetTreeForNested(field.field_descriptor, field.index);
       // CreateMessage should update prev_field_line to the line the message
       // ends.
-      message_tmp->AddField(std::move(CreateMessage(*nested_message, 
+      message_tmp->AddField(CreateMessage(*nested_message, 
           *nested_tree, indent_count, prev_field_line, field.line, 
-          field.field_descriptor->name())));
+          field.field_descriptor->name()));
     } else {
-      message_tmp->AddField(std::move(CreatePrimitive(message, field, 
-          prev_field_line.line, indent_count)));
-      prev_field_line.line = field.line + 1;
+      message_tmp->AddField(CreatePrimitive(message, field, 
+          *prev_field_line, indent_count));
+      prev_field_line->line = field.line + 1;
     }
   }
 }
@@ -77,22 +77,22 @@ void ProtoParser::PopulateFields(PrevFieldLine& prev_field_line,
 std::unique_ptr<ProtoValue> ProtoParser::CreateMessage(
     const google::protobuf::Message& message, 
     const google::protobuf::TextFormat::ParseInfoTree& tree, int indent_count,
-    PrevFieldLine& last_field_loc, int field_loc, absl::string_view name){
+    UpperLayerInfo* last_field_loc, int field_loc, absl::string_view name){
   std::unique_ptr<ProtoValue> message_val = 
       absl::make_unique<MessageValue>(std::string(name), indent_count);
-  PopulateComments(last_field_loc.line, field_loc, message_val.get());
+  PopulateComments(*last_field_loc, field_loc, message_val.get());
   // Make sure the fields start from after the parent message.
-  last_field_loc.line = field_loc + 1;
+  last_field_loc->line = field_loc + 1;
   PopulateFields(last_field_loc, tree, message, message_val.get(), indent_count 
       + 1);
   return message_val;
 }
 
-void ProtoParser::PopulateComments(int last_field_loc, 
+void ProtoParser::PopulateComments(const UpperLayerInfo& last_field_loc, 
     int field_loc, ProtoValue* message) {
   std::string comments_above_field;
   bool first_comment = false;
-  for(int i = last_field_loc; i < field_loc; ++i) {
+  for(int i = last_field_loc.line; i < field_loc; ++i) {
     // Make sure this line is not the closing bracket of a nested message
     if(!first_comment) {
       for (const char& c : lines_[i]) {
@@ -141,7 +141,7 @@ void ProtoParser::PopulateComments(int last_field_loc,
 
 std::unique_ptr<ProtoValue> ProtoParser::CreatePrimitive(
     const google::protobuf::Message& message, const FieldInfo& field, 
-    int last_field_loc, int indent_count) {
+    const UpperLayerInfo& last_field_loc, int indent_count) {
   const google::protobuf::Reflection* reflection = message.GetReflection();
   int field_loc = field.line;
   int index = field.index;

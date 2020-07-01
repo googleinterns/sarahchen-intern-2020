@@ -338,9 +338,9 @@ TEST(ProtoParserTest, CreateMessageTest) {
   const google::protobuf::Message& nested_message = 
     reflection->GetRepeatedMessage(test, field_descriptor, 0);
   nested_tree = tree.GetTreeForNested(field_descriptor, 0);
-  ProtoParser::PrevFieldLine last_field_loc(3);
+  ProtoParser::UpperLayerInfo last_field_loc(3);
   std::unique_ptr<ProtoValue> message_val = 
-      parser.CreateMessage(nested_message, *nested_tree, 0, last_field_loc, 5, 
+      parser.CreateMessage(nested_message, *nested_tree, 0, &last_field_loc, 5, 
       field_descriptor->name());
   MessageValue* message = dynamic_cast<MessageValue*>(message_val.get());
   ASSERT_NE(nullptr, message);

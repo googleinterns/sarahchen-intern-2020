@@ -34,16 +34,16 @@ class ProtoParser {
     lines_ = absl::StrSplit(text_proto, '\n');
   }
 
-  struct PrevFieldLine {
+  struct UpperLayerInfo {
 
-    PrevFieldLine(int line_in) 
+    UpperLayerInfo(int line_in) 
       : line(line_in) {}
 
     int line;
   };
 
   // Populates the message with all the fields of the message.
-  void PopulateFields(PrevFieldLine& last_field_loc, 
+  void PopulateFields(UpperLayerInfo* last_field_loc, 
     const google::protobuf::TextFormat::ParseInfoTree& tree,
     const google::protobuf::Message& message,
     ProtoValue* proto_value, int indent_count);
@@ -84,19 +84,19 @@ class ProtoParser {
   };
 
   // Acquires and populates the comments of a specific field.
-  void PopulateComments(int last_field_loc, int field_loc, 
+  void PopulateComments(const UpperLayerInfo& last_field_loc, int field_loc, 
     ProtoValue* message);
 
   // Creates a MessageValue field.
   std::unique_ptr<ProtoValue> CreateMessage(
       const google::protobuf::Message& message, 
       const google::protobuf::TextFormat::ParseInfoTree& tree, int indent_count,
-      PrevFieldLine& last_field_loc, int field_loc, absl::string_view name);
+      UpperLayerInfo* last_field_loc, int field_loc, absl::string_view name);
 
   // Creates a PrimitiveValue field.
   std::unique_ptr<ProtoValue> CreatePrimitive(
       const google::protobuf::Message& message, const FieldInfo& field, 
-      int last_field_loc, int indent_count);
+      const UpperLayerInfo&, int indent_count);
 
   // Acquires the location of a field.
   int GetLocation(const google::protobuf::TextFormat::ParseInfoTree& tree, 
