@@ -33,8 +33,17 @@ class ProtoParser {
   ProtoParser(absl::string_view text_proto) {
     lines_ = absl::StrSplit(text_proto, '\n');
   }
+
+  struct PrevFieldLine {
+
+    PrevFieldLine(int line_in) 
+      : line(line_in) {}
+
+    int line;
+  };
+
   // Populates the message with all the fields of the message.
-  void PopulateFields(int& last_field_loc, 
+  void PopulateFields(PrevFieldLine& last_field_loc, 
     const google::protobuf::TextFormat::ParseInfoTree& tree,
     const google::protobuf::Message& message,
     ProtoValue* proto_value, int indent_count);
@@ -69,7 +78,7 @@ class ProtoParser {
   std::unique_ptr<ProtoValue> CreateMessage(
       const google::protobuf::Message& message, 
       const google::protobuf::TextFormat::ParseInfoTree& tree, int indent_count,
-    int& last_field_loc, int field_loc, absl::string_view name);
+    PrevFieldLine& last_field_loc, int field_loc, absl::string_view name);
 
   // Creates a PrimitiveValue field.
   std::unique_ptr<ProtoValue> CreatePrimitive(
