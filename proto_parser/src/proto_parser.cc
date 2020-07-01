@@ -65,12 +65,12 @@ void ProtoParser::PopulateFields(int& prev_field_line,
         GetTreeForNested(field.field_descriptor, field.index);
       // CreateMessage should update prev_field_line to the line the message
       // ends.
-      message_tmp->AddField(std::move(CreateMessage(*nested_message, 
+      message_tmp->AddField(CreateMessage(*nested_message, 
           *nested_tree, indent_count, prev_field_line, field.line, 
-          field.field_descriptor->name())));
+          field.field_descriptor->name()));
     } else {
-      message_tmp->AddField(std::move(CreatePrimitive(message, field, 
-          prev_field_line, indent_count)));
+      message_tmp->AddField(CreatePrimitive(message, field, 
+          prev_field_line, indent_count));
       prev_field_line = field.line + 1;
     }
   }
