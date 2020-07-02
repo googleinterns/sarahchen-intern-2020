@@ -25,10 +25,14 @@ std::string MessageValue::PrintToTextProtoHelper() {
   for(int i = 0; i < this->GetIndentCount(); ++i) {
     indents += "  ";
   }
-  // Print the comments.
+  // Only print name and brackets if this isn't a proto-text holder.
   std::string output;
   if (!this->GetName().empty()) {
-    output += this->GetCommentAboveField();
+    const std::vector<std::string>& comment_above_field = 
+        this->GetCommentAboveField();
+    for(const std::string& comment : comment_above_field) {
+      output += indents + comment + "\n";
+    }
     output += indents + this->GetName();
     output += " { " + this->GetCommentBehindField() + "\n";
   }
@@ -45,7 +49,7 @@ std::string MessageValue::PrintToTextProtoHelper() {
 }
 
 void MessageValue::AddField(std::unique_ptr<ProtoValue> field) {
-  // TODO(alexanderlin): Implement.
+  fields_.push_back(std::move(field));
 }
 
 std::vector<ProtoValue*> MessageValue::GetFieldsMutable() {

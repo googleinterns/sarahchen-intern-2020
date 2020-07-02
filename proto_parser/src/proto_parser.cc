@@ -17,31 +17,29 @@
 #include "proto_parser.h"
 
 namespace wireless_android_play_analytics {
-
-void ProtoParser::PopulateFields(int& prev_field_line, 
-    const google::protobuf::TextFormat::ParseInfoTree& tree,
-    const google::protobuf::Message& message,
-    ProtoValue* proto_value, int indent_count) {
+  
+void ProtoParser::PopulateFields(const google::protobuf::Message& message,
+    const google::protobuf::TextFormat::ParseInfoTree& tree, int indent_count,
+    ProtoValue* proto_value) {
   // TODO(alexanderlin): Implement.
 }
 
 std::unique_ptr<ProtoValue> ProtoParser::CreateMessage(
     const google::protobuf::Message& message, 
     const google::protobuf::TextFormat::ParseInfoTree& tree, int indent_count,
-    int& last_field_loc, int field_loc, absl::string_view name) {
+    int field_loc, absl::string_view name){
   // TODO(alexanderlin): Implement.
   return nullptr;
 }
 
-void ProtoParser::PopulateComments(int last_field_loc, 
-    int field_loc, ProtoValue* message) {
+void ProtoParser::PopulateComments(int field_loc, ProtoValue* message) {
   // TODO(alexanderlin): Implement.
 }
 
-// TODO: Change return type to primitive value
 std::unique_ptr<ProtoValue> ProtoParser::CreatePrimitive(
-    const google::protobuf::Message& message, const FieldInfo& field, 
-    int last_field_loc, int indent_count) {
+    const google::protobuf::Message& message, int field_loc, int index, 
+    const google::protobuf::FieldDescriptor* field_descriptor, 
+    int indent_count) {
   // TODO(alexanderlin): Implement.
   return nullptr;
 }
@@ -49,8 +47,9 @@ std::unique_ptr<ProtoValue> ProtoParser::CreatePrimitive(
 int ProtoParser::GetLocation(
     const google::protobuf::TextFormat::ParseInfoTree& tree,
     const google::protobuf::FieldDescriptor* field_descriptor, int index) {
-  // TODO(alexanderlin): Implement.
-  return 0;
+  google::protobuf::TextFormat::ParseLocation location = 
+      tree.GetLocation(field_descriptor, index);
+  return location.line;
 }
 
 } // namespace wireless_android_play_analytics
