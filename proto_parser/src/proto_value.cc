@@ -26,19 +26,17 @@ std::string ProtoValue::PrintToTextProto() {
 
 std::unique_ptr<ProtoValue> ProtoValue::Create(absl::string_view text_proto, 
     google::protobuf::Message& message) {
-  google::protobuf::TextFormat::Parser google_parser;
+  google::protobuf::TextFormat::Parser parser;
   google::protobuf::TextFormat::ParseInfoTree tree;
-  google_parser.WriteLocationsTo(&tree);
-  google_parser.ParseFromString(std::string(text_proto), &message);
+  parser.WriteLocationsTo(&tree);
+  parser.ParseFromString(std::string(text_proto), &message);
   ProtoParser proto_parser(text_proto);
   
-  ProtoParser::UpperLayerInfo last_field_loc(0);
   // Root Message has no field_name.
   std::unique_ptr<ProtoValue> message_val = absl::make_unique<MessageValue>("", 
-      0); 
+      0, 0); 
 
-  proto_parser.PopulateFields(&last_field_loc, tree, message, message_val.get()
-      , 0);
+  proto_parser.PopulateFields(message, tree, 0, message_val.get());
   return message_val;
 }
 
