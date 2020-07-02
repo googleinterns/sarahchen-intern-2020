@@ -36,7 +36,7 @@ std::unique_ptr<ProtoValue> ProtoValue::Create(absl::string_view text_proto,
   std::unique_ptr<ProtoValue> message_val = absl::make_unique<MessageValue>("", 
       0, 0); 
 
-  proto_parser.PopulateFields(message, tree, message_val.get(), 0);
+  proto_parser.PopulateFields(message, tree, 0, message_val.get());
   return message_val;
 }
 

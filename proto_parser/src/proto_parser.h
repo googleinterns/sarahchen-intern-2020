@@ -36,8 +36,8 @@ class ProtoParser {
 
   // Populates the message with all the fields of the message.
   void PopulateFields(const google::protobuf::Message& message,
-    const google::protobuf::TextFormat::ParseInfoTree& tree,
-    ProtoValue* proto_value, int indent_count);
+    const google::protobuf::TextFormat::ParseInfoTree& tree, int indent_count,
+    ProtoValue* proto_value);
 
  private:
 

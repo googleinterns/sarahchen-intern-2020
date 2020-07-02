@@ -19,8 +19,8 @@
 namespace wireless_android_play_analytics {
   
 void ProtoParser::PopulateFields(const google::protobuf::Message& message,
-    const google::protobuf::TextFormat::ParseInfoTree& tree,
-    ProtoValue* proto_value, int indent_count) {
+    const google::protobuf::TextFormat::ParseInfoTree& tree, int indent_count,
+    ProtoValue* proto_value) {
   assert(proto_value != nullptr);
   const google::protobuf::Reflection* reflection = message.GetReflection();
   const google::protobuf::Descriptor* descriptor = message.GetDescriptor();
@@ -78,7 +78,7 @@ std::unique_ptr<ProtoValue> ProtoParser::CreateMessage(
       absl::make_unique<MessageValue>(std::string(name), indent_count, 
       field_loc);
   PopulateComments(field_loc, message_val.get());
-  PopulateFields(message, tree, message_val.get(), indent_count + 1);
+  PopulateFields(message, tree, indent_count + 1, message_val.get());
   return message_val;
 }
 
