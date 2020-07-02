@@ -25,8 +25,9 @@ class PrimitiveValue : public ProtoValue {
 
  public:
 
-  explicit PrimitiveValue(absl::string_view field_name, int indent_count) 
-   : ProtoValue(field_name, indent_count) {}
+  explicit PrimitiveValue(absl::string_view field_name, int indent_count, 
+      int field_line) 
+   :ProtoValue(field_name, indent_count, field_line) {}
    
   // Gets the value of the current Primitve.
   const absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 

@@ -25,8 +25,9 @@ class MessageValue : public ProtoValue {
 
  public:
 
-  explicit MessageValue(absl::string_view field_name, int indent_count) 
-   : ProtoValue(field_name, indent_count) {}
+  explicit MessageValue(absl::string_view field_name, int indent_count, 
+      int field_line) 
+   :ProtoValue(field_name, indent_count, field_line) {}
 
   // Gets all the fields of the current Message
   const std::vector<std::unique_ptr<ProtoValue>>& GetFields() const {
@@ -36,9 +37,23 @@ class MessageValue : public ProtoValue {
   // Gets all the fields of the current Message with intention to modify it.
   std::vector<ProtoValue*> GetFieldsMutable();
 
+  // Appends a field to the back of fields and fields mutable
   void AddField(std::unique_ptr<ProtoValue> field);
 
+  // Sorts the fields_ vector.
+  void SortFields() {
+    std::sort(fields_.begin(), fields_.end(), FieldComparator());
+  }
+
  private:
+
+  // Custom comparator for fields_ vector.
+  struct FieldComparator {
+    bool operator() (const std::unique_ptr<ProtoValue>& lhs, 
+        const std::unique_ptr<ProtoValue>& rhs) {
+      return lhs->GetLineNumber() < rhs->GetLineNumber();
+    }
+  };
 
   std::string PrintToTextProtoHelper();
 

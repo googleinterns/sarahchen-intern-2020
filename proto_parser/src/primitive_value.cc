@@ -19,14 +19,38 @@
 namespace wireless_android_play_analytics {
 
 std::string PrimitiveValue::PrintToTextProtoHelper() {
-  // TODO(alexanderlin): Implement.
+  // TODO (alexanderlin): Implement.
   return std::string();
 }
 
 void PrimitiveValue::SetVal(const 
     absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
     const google::protobuf::EnumValueDescriptor*, std::string>& val) {
-  // TODO(alexanderlin): Implement.
+  val_ = val;
+  if (absl::holds_alternative<double>(val)) {
+    val_as_string_ = std::to_string(absl::get<double>(val));
+  } else if (absl::holds_alternative<float>(val)) {
+    val_as_string_ = std::to_string(absl::get<float>(val));
+  } else if (absl::holds_alternative<int>(val)) {
+    val_as_string_ = std::to_string(absl::get<int>(val));
+  } else if (absl::holds_alternative<unsigned int>(val)) {
+    val_as_string_ = std::to_string(absl::get<unsigned int>(val));
+  } else if (absl::holds_alternative<int64_t>(val)) {
+    val_as_string_ = std::to_string(absl::get<int64_t>(val));
+  } else if (absl::holds_alternative<uint64_t>(val)) {
+    val_as_string_ = std::to_string(absl::get<uint64_t>(val));
+  } else if (absl::holds_alternative<bool>(val)) {
+    bool input_val = absl::get<bool>(val);
+    if (input_val) {
+      val_as_string_ = "true";
+    } else {
+      val_as_string_ = "false";
+    }
+  } else if (absl::holds_alternative<const google::protobuf::EnumValueDescriptor*>(
+      val)) {
+    const google::protobuf::EnumValueDescriptor* input_val = 
+        absl::get<const google::protobuf::EnumValueDescriptor*>(val);
+    val_as_string_ = input_val->name();
+  }
 }
-
 } // namespace wireless_android_play_analytics
