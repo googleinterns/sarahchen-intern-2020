@@ -27,7 +27,11 @@ std::string PrimitiveValue::PrintToTextProtoHelper() {
 
   // Print the comments.
   std::string output;
-  output += this->GetCommentAboveField();
+  const std::vector<std::string>& comment_above_field = 
+      this->GetCommentAboveField();
+  for(const std::string& comment : comment_above_field) {
+    output += indents + comment + "\n";
+  }
   output += indents + this->GetName();
 
   // Print the value.

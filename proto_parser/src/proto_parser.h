@@ -34,69 +34,27 @@ class ProtoParser {
     lines_ = absl::StrSplit(text_proto, '\n');
   }
 
-  struct UpperLayerInfo {
-
-    UpperLayerInfo(int line_in) 
-      : line(line_in) {}
-
-    int line;
-  };
-
   // Populates the message with all the fields of the message.
-  void PopulateFields(UpperLayerInfo* last_field_loc, 
+  void PopulateFields(const google::protobuf::Message& message,
     const google::protobuf::TextFormat::ParseInfoTree& tree,
-    const google::protobuf::Message& message,
     ProtoValue* proto_value, int indent_count);
 
-  private:
-
-  FRIEND_TEST(ProtoParserTest, DelimiteTextProtoTest);
-  FRIEND_TEST(ProtoParserTest, GetLocationTest);
-  FRIEND_TEST(ProtoParserTest, GetNestedLocationTest);
-  FRIEND_TEST(ProtoParserTest, PopulateCommentsTest);
-  FRIEND_TEST(ProtoParserTest, PopulateCommentsClosingBracket);
-  FRIEND_TEST(ProtoParserTest, PopulateCommentsStringVariable);
-  FRIEND_TEST(ProtoParserTest, CreatePrimitiveTest);
-  FRIEND_TEST(ProtoParserTest, CreatePrimitiveNestedTest);
-  FRIEND_TEST(ProtoParserTest, PopulateFields);
-  FRIEND_TEST(ProtoParserTest, CreateMessageTest);
-
  private:
-  
-  // Stores all the information for a field necessary for create functions.
-  struct FieldInfo {
-
-    FieldInfo(int line_in, int index_in, 
-        const google::protobuf::FieldDescriptor* field_descriptor_in)
-      : line(line_in), index(index_in), field_descriptor(field_descriptor_in) {}
-
-    // Overrides the comparison operator of FieldInfo.
-    bool operator< (const FieldInfo& rhs) {
-      return this->line < rhs.line;
-    }
-
-    // Location of the field in the text proto.
-    int line;
-    // Index of the repeated field, -1 if not repeated.
-    int index;
-    // Field Descriptor of the current field.
-    const google::protobuf::FieldDescriptor* field_descriptor;
-  };
 
   // Acquires and populates the comments of a specific field.
-  void PopulateComments(const UpperLayerInfo& last_field_loc, int field_loc, 
-    ProtoValue* message);
+  void PopulateComments(int field_loc, ProtoValue* message);
 
   // Creates a MessageValue field.
   std::unique_ptr<ProtoValue> CreateMessage(
       const google::protobuf::Message& message, 
       const google::protobuf::TextFormat::ParseInfoTree& tree, int indent_count,
-      UpperLayerInfo* last_field_loc, int field_loc, absl::string_view name);
+      int field_loc, absl::string_view name);
 
   // Creates a PrimitiveValue field.
   std::unique_ptr<ProtoValue> CreatePrimitive(
-      const google::protobuf::Message& message, const FieldInfo& field, 
-      const UpperLayerInfo&, int indent_count);
+      const google::protobuf::Message& message, int field_loc, int index, 
+      const google::protobuf::FieldDescriptor* field_descriptor, 
+      int indent_count);
 
   // Acquires the location of a field.
   int GetLocation(const google::protobuf::TextFormat::ParseInfoTree& tree, 
