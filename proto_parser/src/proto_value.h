@@ -35,8 +35,10 @@ class ProtoValue {
  public:
   // The only place where name can be set publicly since once set it should
   // not be changed.
-  explicit ProtoValue(absl::string_view field_name, int indent_count) 
-   : field_name_(field_name), indent_count_(indent_count) {}
+  explicit ProtoValue(absl::string_view field_name, int indent_count, 
+      int field_line) 
+    :field_name_(field_name), indent_count_(indent_count), 
+        field_line_(field_line) {}
 
   virtual ~ProtoValue() = default;
 
@@ -49,8 +51,8 @@ class ProtoValue {
   }
 
   // Gets the comment above current field.
-  const std::string& GetCommentAboveField() const {
-    return comment_above_field_;
+  const std::vector<std::string>& GetCommentAboveField() const {
+    return comments_above_field_;
   }
 
   // Gets the comment behind current field.
@@ -63,10 +65,12 @@ class ProtoValue {
     comment_behind_field_ = std::string(val);
   }
 
-  // Sets the comment behind current field.
-  void SetCommentAboveField(absl::string_view val) {
-    comment_above_field_ = std::string(val);
+  int GetLineNumber() {
+    return field_line_;
   }
+
+  // Sets the comment above current field.
+  void SetCommentAboveField(absl::string_view val);
 
   int GetIndentCount() {
     return indent_count_;
@@ -78,10 +82,11 @@ class ProtoValue {
   
  private:
 
-  std::string comment_above_field_;
+  std::vector<std::string> comments_above_field_;
   std::string comment_behind_field_;
   std::string field_name_;
   int indent_count_;
+  int field_line_;
 
   // Helper function to print text proto in order to abstract indent_count
   // from the user.

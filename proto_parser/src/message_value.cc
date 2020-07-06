@@ -25,7 +25,7 @@ std::string MessageValue::PrintToTextProtoHelper() {
 }
 
 void MessageValue::AddField(std::unique_ptr<ProtoValue> field) {
-  // TODO(alexanderlin): Implement.
+  fields_.push_back(std::move(field));
 }
 
 std::vector<ProtoValue*> MessageValue::GetFieldsMutable() {

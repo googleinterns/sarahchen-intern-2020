@@ -30,4 +30,15 @@ std::unique_ptr<ProtoValue> ProtoValue::Create(absl::string_view text_proto,
   return std::unique_ptr<ProtoValue>();
 }
 
+void ProtoValue::SetCommentAboveField(absl::string_view val) {
+  comments_above_field_ = absl::StrSplit(val, '\n');
+
+  // Add pound before comment if user forgets.
+  for (std::string& comment : comments_above_field_) {
+    if (!comment.empty() && comment[0] != '#') {
+      comment = "# " + comment;
+    }
+  }
+}
+
 } // namespace wireless_android_play_analytics
