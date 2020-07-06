@@ -103,7 +103,7 @@ TEST_F(ProtoValueTest, PrintModifiedTextProtoTest) {
       fields[2].get());
 
   // Add comments above nested message.
-  field_nested_message->SetCommentAboveField("# new comment\n#\n");
+  field_nested_message->SetCommentAboveField("# new comment\n#");
 
   const std::vector<std::unique_ptr<ProtoValue>>& 
       first_field_nested_message_fields = field_nested_message->GetFields();

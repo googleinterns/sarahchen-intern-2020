@@ -20,8 +20,32 @@
 namespace wireless_android_play_analytics {
 
 std::string MessageValue::PrintToTextProtoHelper() {
-  // TODO(alexanderlin): Implement.
-  return std::string();
+  // Get indents.
+  std::string indents;
+  for(int i = 0; i < this->GetIndentCount(); ++i) {
+    indents += "  ";
+  }
+  // Only print name and brackets if this isn't a proto-text holder.
+  std::string output;
+  if (!this->GetName().empty()) {
+    const std::vector<std::string>& comment_above_field = 
+        this->GetCommentAboveField();
+    for(const std::string& comment : comment_above_field) {
+      output += indents + comment + "\n";
+    }
+    output += indents + this->GetName();
+    output += " { " + this->GetCommentBehindField() + "\n";
+  }
+
+  for (const std::unique_ptr<ProtoValue>& field : fields_) {
+    output += field->PrintToTextProto();
+  }
+
+  if (!this->GetName().empty()) {
+    output += indents + "}\n";
+  }
+
+  return output;
 }
 
 void MessageValue::AddField(std::unique_ptr<ProtoValue> field) {
