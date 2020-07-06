@@ -42,18 +42,14 @@ class MessageValue : public ProtoValue {
 
   // Sorts the fields_ vector.
   void SortFields() {
-    std::sort(fields_.begin(), fields_.end(), FieldComparator());
+    std::sort(fields_.begin(), fields_.end(), [](
+        const std::unique_ptr<ProtoValue>& lhs,
+        const std::unique_ptr<ProtoValue>& rhs){
+          return lhs->GetLineNumber() < rhs->GetLineNumber();
+        });
   }
 
  private:
-
-  // Custom comparator for fields_ vector.
-  struct FieldComparator {
-    bool operator() (const std::unique_ptr<ProtoValue>& left_hand_side, 
-        const std::unique_ptr<ProtoValue>& right_hand_side) {
-      return left_hand_side->GetLineNumber() < right_hand_side->GetLineNumber();
-    }
-  };
 
   std::string PrintToTextProtoHelper();
 

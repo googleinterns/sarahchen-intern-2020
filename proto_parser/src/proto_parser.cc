@@ -99,8 +99,7 @@ int ProtoParser::GetLocation(
     const google::protobuf::TextFormat::ParseInfoTree& tree,
     const google::protobuf::FieldDescriptor* field_descriptor, 
     int repeated_field_index) {
-  // TODO(alexanderlin): Implement.
-  return 0;
+  return tree.GetLocation(field_descriptor, repeated_field_index).line;
 }
 
 } // namespace wireless_android_play_analytics
