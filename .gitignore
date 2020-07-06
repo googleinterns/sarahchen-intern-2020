@@ -3,3 +3,4 @@ hologram_dashboard/.vscode
 hologram_dashboard/fetcher/.vscode
 /.vscode
 proto_parser/bazel-*
+proto_parser/.vscode

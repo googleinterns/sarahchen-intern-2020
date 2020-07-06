@@ -26,18 +26,19 @@ std::string ProtoValue::PrintToTextProto() {
 
 std::unique_ptr<ProtoValue> ProtoValue::Create(absl::string_view text_proto, 
     google::protobuf::Message& message) {
-  google::protobuf::TextFormat::Parser parser;
-  google::protobuf::TextFormat::ParseInfoTree tree;
-  parser.WriteLocationsTo(&tree);
-  parser.ParseFromString(std::string(text_proto), &message);
-  ProtoParser proto_parser(text_proto);
-  
-  // Root Message has no field_name.
-  std::unique_ptr<ProtoValue> message_val = absl::make_unique<MessageValue>("", 
-      0, 0); 
+  // TODO(alexanderlin): Implement.
+  return std::unique_ptr<ProtoValue>();
+}
 
-  proto_parser.PopulateFields(message, tree, 0, message_val.get());
-  return message_val;
+void ProtoValue::SetCommentAboveField(absl::string_view val) {
+  comments_above_field_ = absl::StrSplit(val, '\n');
+
+  // Add pound before comment if user forgets.
+  for (std::string& comment : comments_above_field_) {
+    if (!comment.empty() && comment[0] != '#') {
+      comment = "# " + comment;
+    }
+  }
 }
 
 } // namespace wireless_android_play_analytics
