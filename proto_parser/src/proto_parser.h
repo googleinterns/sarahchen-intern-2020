@@ -60,13 +60,15 @@ class ProtoParser {
 
   // Creates a PrimitiveValue field.
   std::unique_ptr<ProtoValue> CreatePrimitive(
-      const google::protobuf::Message& message, int field_loc, int index, 
+      const google::protobuf::Message& message, int field_loc, 
+      int repeated_field_index, 
       const google::protobuf::FieldDescriptor* field_descriptor, 
       int indent_count);
 
   // Acquires the location of a field.
   int GetLocation(const google::protobuf::TextFormat::ParseInfoTree& tree, 
-      const google::protobuf::FieldDescriptor* field_descriptor, int index);
+      const google::protobuf::FieldDescriptor* field_descriptor, 
+      int repeated_field_index);
 
   std::vector<std::string> lines_;
 };
