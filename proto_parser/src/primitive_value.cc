@@ -19,7 +19,7 @@
 namespace wireless_android_play_analytics {
 
 std::string PrimitiveValue::PrintToTextProtoHelper() {
-  // TODO (alexanderlin): Implement.
+  // TODO(alexanderlin): Implement.
   return std::string();
 }
 

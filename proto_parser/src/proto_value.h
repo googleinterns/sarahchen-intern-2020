@@ -69,10 +69,8 @@ class ProtoValue {
     return field_line_;
   }
 
-  // Sets the comment behind current field.
-  std::vector<std::string>& GetCommentAboveFieldMutable() {
-    return comments_above_field_;
-  }
+  // Sets the comment above current field.
+  std::vector<std::string*> GetCommentAboveFieldMutable();
 
   int GetIndentCount() {
     return indent_count_;

@@ -49,9 +49,9 @@ class MessageValue : public ProtoValue {
 
   // Custom comparator for fields_ vector.
   struct FieldComparator {
-    bool operator() (const std::unique_ptr<ProtoValue>& lhs, 
-        const std::unique_ptr<ProtoValue>& rhs) {
-      return lhs->GetLineNumber() < rhs->GetLineNumber();
+    bool operator() (const std::unique_ptr<ProtoValue>& left_hand_side, 
+        const std::unique_ptr<ProtoValue>& right_hand_side) {
+      return left_hand_side->GetLineNumber() < right_hand_side->GetLineNumber();
     }
   };
 

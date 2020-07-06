@@ -30,4 +30,14 @@ std::unique_ptr<ProtoValue> ProtoValue::Create(absl::string_view text_proto,
   return std::unique_ptr<ProtoValue>();
 }
 
+std::vector<std::string*> ProtoValue::GetCommentAboveFieldMutable() {
+  std::vector<std::string*> ret;
+
+  for (std::string& comment : comments_above_field_) {
+    ret.push_back(&comment);
+  }
+
+  return ret;
+}
+
 } // namespace wireless_android_play_analytics

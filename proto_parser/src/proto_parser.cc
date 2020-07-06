@@ -28,7 +28,7 @@ void ProtoParser::PopulateFields(const google::protobuf::Message& message,
   const google::protobuf::Descriptor* descriptor = message.GetDescriptor();
   MessageValue* message_tmp = 
       dynamic_cast<MessageValue*>(proto_value);
-  assert(message_tmp);
+  assert(message_tmp != nullptr);
   int field_count = descriptor->field_count();
 
   // Populate field_info_list with all the fields in the text proto. 
@@ -44,12 +44,13 @@ void ProtoParser::PopulateFields(const google::protobuf::Message& message,
           const google::protobuf::Message& nested_message = 
               reflection->GetRepeatedMessage(message, field_descriptor, index);
           google::protobuf::TextFormat::ParseInfoTree* nested_tree = 
-              tree.GetTreeForNested(field_descriptor, index);
+              tree.GetTreeForNested(field_descriptor, 
+              /*repeated_field_index=*/index);
           message_tmp->AddField(CreateMessage(nested_message, *nested_tree,
               indent_count, field_loc, field_descriptor->name()));
         } else {
-          message_tmp->AddField(CreatePrimitive(message, field_loc, index,
-              field_descriptor, indent_count));
+          message_tmp->AddField(CreatePrimitive(message, field_loc, 
+              /*repeated_field_index=*/index, field_descriptor, indent_count));
         }
       }
     } else if(reflection->HasField(message, field_descriptor)) {
@@ -59,12 +60,13 @@ void ProtoParser::PopulateFields(const google::protobuf::Message& message,
           const google::protobuf::Message& nested_message = 
               reflection->GetMessage(message, field_descriptor);
           google::protobuf::TextFormat::ParseInfoTree* nested_tree = 
-              tree.GetTreeForNested(field_descriptor, -1);
+              tree.GetTreeForNested(field_descriptor, 
+              /*repeated_field_index=*/-1);
           message_tmp->AddField(CreateMessage(nested_message, *nested_tree,
               indent_count, field_loc, field_descriptor->name()));
         } else {
-          message_tmp->AddField(CreatePrimitive(message, field_loc, -1,
-              field_descriptor, indent_count));
+          message_tmp->AddField(CreatePrimitive(message, field_loc, 
+              /*repeated_field_index=*/-1, field_descriptor, indent_count));
         }
     }
   }
@@ -85,7 +87,8 @@ void ProtoParser::PopulateComments(int field_loc, ProtoValue* message) {
 }
 
 std::unique_ptr<ProtoValue> ProtoParser::CreatePrimitive(
-    const google::protobuf::Message& message, int field_loc, int index, 
+    const google::protobuf::Message& message, int field_loc, 
+    int repeated_field_index, 
     const google::protobuf::FieldDescriptor* field_descriptor, 
     int indent_count) {
   // TODO(alexanderlin): Implement.
@@ -94,7 +97,8 @@ std::unique_ptr<ProtoValue> ProtoParser::CreatePrimitive(
 
 int ProtoParser::GetLocation(
     const google::protobuf::TextFormat::ParseInfoTree& tree,
-    const google::protobuf::FieldDescriptor* field_descriptor, int index) {
+    const google::protobuf::FieldDescriptor* field_descriptor, 
+    int repeated_field_index) {
   // TODO(alexanderlin): Implement.
   return 0;
 }
