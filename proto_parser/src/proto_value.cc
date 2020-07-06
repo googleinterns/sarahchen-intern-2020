@@ -30,14 +30,15 @@ std::unique_ptr<ProtoValue> ProtoValue::Create(absl::string_view text_proto,
   return std::unique_ptr<ProtoValue>();
 }
 
-std::vector<std::string*> ProtoValue::GetCommentAboveFieldMutable() {
-  std::vector<std::string*> ret;
+void ProtoValue::SetCommentAboveField(absl::string_view val) {
+  comments_above_field_ = absl::StrSplit(val, '\n');
 
+  // Add pound before comment if user forgets.
   for (std::string& comment : comments_above_field_) {
-    ret.push_back(&comment);
+    if (!comment.empty() && comment[0] != '#') {
+      comment = "# " + comment;
+    }
   }
-
-  return ret;
 }
 
 } // namespace wireless_android_play_analytics

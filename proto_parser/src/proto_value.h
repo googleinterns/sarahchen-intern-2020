@@ -70,7 +70,7 @@ class ProtoValue {
   }
 
   // Sets the comment above current field.
-  std::vector<std::string*> GetCommentAboveFieldMutable();
+  void SetCommentAboveField(absl::string_view val);
 
   int GetIndentCount() {
     return indent_count_;
