@@ -91,7 +91,7 @@ TEST_F(ProtoValueTest, FirstFieldTest) {
 }
 
 TEST_F(ProtoValueTest, SecondFieldTest) {
-  // Field detail:
+  // Field detail (this is a repeated field):
   //
   // # comment 2
   // field_nested_message { # comment 3
@@ -107,20 +107,20 @@ TEST_F(ProtoValueTest, SecondFieldTest) {
       testing::ElementsAreArray({"# comment 2"}));
   EXPECT_EQ(field_nested_message->GetCommentBehindField(), "# comment 3");
   EXPECT_EQ(field_nested_message->GetIndentCount(), 0);
-  const std::vector<std::unique_ptr<ProtoValue>>& field_nested_message_fields =
+  const std::vector<std::unique_ptr<ProtoValue>>& internal_fields =
       field_nested_message->GetFields();
 
   // int64_field is the nested primitive field of field_nested message with no 
   // comments.
   PrimitiveValue* int64_field = 
-      dynamic_cast<PrimitiveValue*>(field_nested_message_fields[0].get());
+      dynamic_cast<PrimitiveValue*>(internal_fields[0].get());
+  ASSERT_NE(int64_field, nullptr);
   // Iniitialize the value with int64_t to ensure it is held by int64_t.
   int64_t int64_field_val = 100;
   absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
       const google::protobuf::EnumValueDescriptor *, std::string> val = 
       int64_field_val;
-  EXPECT_EQ(field_nested_message_fields.size(), 1);
-  ASSERT_NE(int64_field, nullptr);
+  EXPECT_EQ(internal_fields.size(), 1);
   EXPECT_EQ(int64_field->GetName(), "int64_field");
   EXPECT_EQ(int64_field->GetCommentAboveField().size(), 0);
   EXPECT_EQ(int64_field->GetCommentBehindField(), "");
@@ -131,7 +131,7 @@ TEST_F(ProtoValueTest, SecondFieldTest) {
 }
   
 TEST_F(ProtoValueTest, ThirdFieldTest) {
-  // Field detail:
+  // Field detail (this is a repeated field):
   //
   // field_nested_message {
   //   # comment 4
@@ -147,18 +147,18 @@ TEST_F(ProtoValueTest, ThirdFieldTest) {
   EXPECT_EQ(field_nested_message->GetCommentAboveField().size(), 0);
   EXPECT_EQ(field_nested_message->GetCommentBehindField(), "");
   EXPECT_EQ(field_nested_message->GetIndentCount(), 0);
-  const std::vector<std::unique_ptr<ProtoValue>>& field_nested_message_fields =
+  const std::vector<std::unique_ptr<ProtoValue>>& internal_fields =
       field_nested_message->GetFields();
 
   // This int64_field is a nested primitive with multiple comments above.
   PrimitiveValue* int64_field = 
-      dynamic_cast<PrimitiveValue*>(field_nested_message_fields[0].get());
+      dynamic_cast<PrimitiveValue*>(internal_fields[0].get());
+  ASSERT_NE(int64_field, nullptr);
   int64_t int64_field_val = 100;
   absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
       const google::protobuf::EnumValueDescriptor *, std::string> val = 
       int64_field_val;
-  EXPECT_EQ(1, field_nested_message_fields.size());
-  ASSERT_NE(int64_field, nullptr);
+  EXPECT_EQ(1, internal_fields.size());
   EXPECT_EQ(int64_field->GetName(), "int64_field");
   EXPECT_THAT(int64_field->GetCommentAboveField(),
       testing::ElementsAreArray({"# comment 4", "# comment 5"}));
@@ -169,7 +169,7 @@ TEST_F(ProtoValueTest, ThirdFieldTest) {
 }
   
 TEST_F(ProtoValueTest, FourthFieldTest) {
-  // Field detail:
+  // Field detail (this is a repeated field):
   //
   // bool_field: true
   const std::vector<std::unique_ptr<ProtoValue>>& fields = 
@@ -190,7 +190,7 @@ TEST_F(ProtoValueTest, FourthFieldTest) {
 }
 
 TEST_F(ProtoValueTest, FifthFieldTest) {
-  // Field detail:
+  // Field detail (this is a repeated field):
   //
   // bool_field: false # comment 6
   const std::vector<std::unique_ptr<ProtoValue>>& fields = 
