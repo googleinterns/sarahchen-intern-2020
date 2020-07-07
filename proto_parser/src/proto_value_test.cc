@@ -93,7 +93,7 @@ class ProtoValueTest : public ::testing::Test {
 
 TEST_F(ProtoValueTest, PrintToTextProtoTest) {
   std::string printed_text_proto = message_val->PrintToTextProto();
-  ASSERT_EQ(printed_text_proto, well_formatted_text_proto);
+  EXPECT_EQ(printed_text_proto, well_formatted_text_proto);
 }
 
 TEST_F(ProtoValueTest, PrintModifiedTextProtoTest) {
@@ -119,7 +119,7 @@ TEST_F(ProtoValueTest, PrintModifiedTextProtoTest) {
   primitive->SetVal(val);
 
   std::string printed_text_proto = message_val->PrintToTextProto();
-  ASSERT_EQ(printed_text_proto, modified_text_proto);
+  EXPECT_EQ(printed_text_proto, modified_text_proto);
 }
 
 } // namespace wireless_android_play_analytics
