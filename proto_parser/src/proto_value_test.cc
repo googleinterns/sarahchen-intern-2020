@@ -67,7 +67,8 @@ TEST_F(ProtoValueTest, OuterProtoTest) {
 }
 
 TEST_F(ProtoValueTest, FirstFieldTest) {
-  // First field is int32_field a primitive with only comment above.
+  // #comment 1
+  // int32_field: 1
   const std::vector<std::unique_ptr<ProtoValue>>& fields = 
       message_val_->GetFields();
   PrimitiveValue* int32_field = 
@@ -88,8 +89,10 @@ TEST_F(ProtoValueTest, FirstFieldTest) {
 }
 
 TEST_F(ProtoValueTest, SecondFieldTest) {
-  // Second field is field_nested_message, a nested message with comment above
-  // and behind.
+  //  # comment 2
+  // field_nested_message { # comment 3
+  //   int64_field: 100
+  // }
   const std::vector<std::unique_ptr<ProtoValue>>& fields = 
       message_val_->GetFields();
   MessageValue* field_nested_message = 
@@ -124,7 +127,11 @@ TEST_F(ProtoValueTest, SecondFieldTest) {
 }
   
 TEST_F(ProtoValueTest, ThirdFieldTest) {
-  // Third field is also a nested message but with no comments.
+  //  field_nested_message {
+  //   # comment 4
+  //   # comment 5
+  //   int64_field: 100
+  // }
   const std::vector<std::unique_ptr<ProtoValue>>& fields = 
       message_val_->GetFields();
   MessageValue* field_nested_message = 
@@ -156,7 +163,7 @@ TEST_F(ProtoValueTest, ThirdFieldTest) {
 }
   
 TEST_F(ProtoValueTest, FourthFieldTest) {
-  // Fourth field is a primitive that has no comments.
+  // bool_field: true
   const std::vector<std::unique_ptr<ProtoValue>>& fields = 
       message_val_->GetFields();
   PrimitiveValue* bool_field = 
@@ -175,7 +182,7 @@ TEST_F(ProtoValueTest, FourthFieldTest) {
 }
 
 TEST_F(ProtoValueTest, FifthFieldTest) {
-  // Fifth field is a primitive field with only comment behind the field.
+  // bool_field: false # comment 6
   const std::vector<std::unique_ptr<ProtoValue>>& fields = 
       message_val_->GetFields();
   PrimitiveValue* bool_field = 
