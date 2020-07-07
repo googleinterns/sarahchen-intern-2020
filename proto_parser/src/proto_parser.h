@@ -33,14 +33,6 @@ class ProtoParser {
   ProtoParser(absl::string_view text_proto) {
     lines_ = absl::StrSplit(text_proto, '\n');
   }
-
-  struct UpperLayerInfo {
-
-    UpperLayerInfo(int line_in) 
-      : line(line_in) {}
-      
-    int line;
-  };
   
   // Populates the message with all the fields of the message.
   void PopulateFields(const google::protobuf::Message& message,

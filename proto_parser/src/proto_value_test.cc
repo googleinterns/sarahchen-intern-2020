@@ -51,8 +51,6 @@ class ProtoValueTest : public ::testing::Test {
     message_val = dynamic_cast<MessageValue*>(message.get());
   }
 
-  // virtual void TearDown() {}
-
   TestProto test;
   std::unique_ptr<ProtoValue> message;
   MessageValue* message_val;
@@ -61,11 +59,11 @@ class ProtoValueTest : public ::testing::Test {
 TEST_F(ProtoValueTest, OuterProtoTest) {
   const std::vector<std::unique_ptr<ProtoValue>>& fields = 
       message_val->GetFields();
-  EXPECT_EQ("", message_val->GetName());
-  EXPECT_EQ(0, message_val->GetCommentAboveField().size());
-  EXPECT_EQ("", message_val->GetCommentBehindField());
-  EXPECT_EQ(0, message_val->GetIndentCount());
-  EXPECT_EQ(5, fields.size());
+  EXPECT_EQ(message_val->GetName(), "");
+  EXPECT_EQ(message_val->GetCommentAboveField().size(), 0);
+  EXPECT_EQ(message_val->GetCommentBehindField(), "");
+  EXPECT_EQ(message_val->GetIndentCount(), 0);
+  EXPECT_EQ(fields.size(), 5);
 }
 
 TEST_F(ProtoValueTest, FirstFieldTest) {
@@ -73,16 +71,16 @@ TEST_F(ProtoValueTest, FirstFieldTest) {
       message_val->GetFields();
   PrimitiveValue* int32_field = 
       dynamic_cast<PrimitiveValue*>(fields[0].get());
-  ASSERT_NE(nullptr, int32_field);
-  EXPECT_EQ("int32_field", int32_field->GetName());
+  ASSERT_NE(int32_field, nullptr);
+  EXPECT_EQ(int32_field->GetName(), "int32_field");
   ASSERT_THAT(int32_field->GetCommentAboveField(),
       testing::ElementsAreArray({"# comment 1",}));
-  EXPECT_EQ("", int32_field->GetCommentBehindField());
+  EXPECT_EQ(int32_field->GetCommentBehindField(), "");
   int int32_field_val = 1;
   absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
       const google::protobuf::EnumValueDescriptor *, std::string> val = int32_field_val;
   EXPECT_TRUE(absl::holds_alternative<int>(int32_field->GetVal()));
-  EXPECT_EQ(val, int32_field->GetVal());
+  EXPECT_EQ(int32_field->GetVal(), val);
 }
 
 TEST_F(ProtoValueTest, SecondFieldTest) {
@@ -94,26 +92,26 @@ TEST_F(ProtoValueTest, SecondFieldTest) {
   absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
       const google::protobuf::EnumValueDescriptor *, std::string> val = 
       int64_field_val;
-  ASSERT_NE(nullptr, field_nested_message);
-  EXPECT_EQ("field_nested_message", field_nested_message->GetName());
+  ASSERT_NE(field_nested_message, nullptr);
+  EXPECT_EQ(field_nested_message->GetName(), "field_nested_message");
   EXPECT_THAT(field_nested_message->GetCommentAboveField(),
       testing::ElementsAreArray({"# comment 2"}));
-  EXPECT_EQ("# comment 3", field_nested_message->GetCommentBehindField());
-  EXPECT_EQ(0, field_nested_message->GetIndentCount());
+  EXPECT_EQ(field_nested_message->GetCommentBehindField(), "# comment 3");
+  EXPECT_EQ(field_nested_message->GetIndentCount(), 0);
   const std::vector<std::unique_ptr<ProtoValue>>& field_nested_message_fields =
       field_nested_message->GetFields();
 
   // Nested Primitive values check.
   PrimitiveValue* int64_field = 
       dynamic_cast<PrimitiveValue*>(field_nested_message_fields[0].get());
-  EXPECT_EQ(1, field_nested_message_fields.size());
-  ASSERT_NE(nullptr, int64_field);
-  EXPECT_EQ("int64_field", int64_field->GetName());
-  EXPECT_EQ(0, int64_field->GetCommentAboveField().size());
-  EXPECT_EQ("", int64_field->GetCommentBehindField());
-  EXPECT_EQ(1, int64_field->GetIndentCount());
+  EXPECT_EQ(field_nested_message_fields.size(), 1);
+  ASSERT_NE(int64_field, nullptr);
+  EXPECT_EQ(int64_field->GetName(), "int64_field");
+  EXPECT_EQ(int64_field->GetCommentAboveField().size(), 0);
+  EXPECT_EQ(int64_field->GetCommentBehindField(), "");
+  EXPECT_EQ(int64_field->GetIndentCount(), 1);
   EXPECT_TRUE(absl::holds_alternative<int64_t>(int64_field->GetVal()));
-  EXPECT_EQ(val, int64_field->GetVal());
+  EXPECT_EQ(int64_field->GetVal(), val);
 }
   
 TEST_F(ProtoValueTest, ThirdFieldTest) {
@@ -125,11 +123,11 @@ TEST_F(ProtoValueTest, ThirdFieldTest) {
   absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
       const google::protobuf::EnumValueDescriptor *, std::string> val = 
       int64_field_val;
-  ASSERT_NE(nullptr, field_nested_message);
-  EXPECT_EQ("field_nested_message", field_nested_message->GetName());
-  EXPECT_EQ(0, field_nested_message->GetCommentAboveField().size());
-  EXPECT_EQ("", field_nested_message->GetCommentBehindField());
-  EXPECT_EQ(0, field_nested_message->GetIndentCount());
+  ASSERT_NE(field_nested_message, nullptr);
+  EXPECT_EQ(field_nested_message->GetName(), "field_nested_message");
+  EXPECT_EQ(field_nested_message->GetCommentAboveField().size(), 0);
+  EXPECT_EQ(field_nested_message->GetCommentBehindField(), "");
+  EXPECT_EQ(field_nested_message->GetIndentCount(), 0);
   const std::vector<std::unique_ptr<ProtoValue>>& field_nested_message_fields =
       field_nested_message->GetFields();
 
@@ -137,14 +135,14 @@ TEST_F(ProtoValueTest, ThirdFieldTest) {
   PrimitiveValue* int64_field = 
       dynamic_cast<PrimitiveValue*>(field_nested_message_fields[0].get());
   EXPECT_EQ(1, field_nested_message_fields.size());
-  ASSERT_NE(nullptr, int64_field);
-  EXPECT_EQ("int64_field", int64_field->GetName());
+  ASSERT_NE(int64_field, nullptr);
+  EXPECT_EQ(int64_field->GetName(), "int64_field");
   EXPECT_THAT(int64_field->GetCommentAboveField(),
       testing::ElementsAreArray({"# comment 4", "# comment 5"}));
-  EXPECT_EQ("", int64_field->GetCommentBehindField());
-  EXPECT_EQ(1, int64_field->GetIndentCount());
+  EXPECT_EQ(int64_field->GetCommentBehindField(), "");
+  EXPECT_EQ(int64_field->GetIndentCount(), 1);
   EXPECT_TRUE(absl::holds_alternative<int64_t>(int64_field->GetVal()));
-  EXPECT_EQ(val, int64_field->GetVal());
+  EXPECT_EQ(int64_field->GetVal(), val);
 }
   
 TEST_F(ProtoValueTest, FourthFieldTest) {
@@ -153,16 +151,16 @@ TEST_F(ProtoValueTest, FourthFieldTest) {
   PrimitiveValue* bool_field = 
       dynamic_cast<PrimitiveValue*>(fields[3].get());
   ASSERT_NE(nullptr, bool_field);
-  EXPECT_EQ("bool_field", bool_field->GetName());
-  EXPECT_EQ(0, bool_field->GetCommentAboveField().size());
-  EXPECT_EQ("", bool_field->GetCommentBehindField());
-  EXPECT_EQ(0, bool_field->GetIndentCount());
+  EXPECT_EQ(bool_field->GetName(), "bool_field");
+  EXPECT_EQ(bool_field->GetCommentAboveField().size(), 0);
+  EXPECT_EQ(bool_field->GetCommentBehindField(), "");
+  EXPECT_EQ(bool_field->GetIndentCount(), 0);
   bool bool_field_val = true;
   absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
       const google::protobuf::EnumValueDescriptor *, std::string> val = 
       bool_field_val;
   EXPECT_TRUE(absl::holds_alternative<bool>(bool_field->GetVal()));
-  EXPECT_EQ(val, bool_field->GetVal());
+  EXPECT_EQ(bool_field->GetVal(), val);
 }
 
 TEST_F(ProtoValueTest, FifthFieldTest) {
@@ -171,16 +169,16 @@ TEST_F(ProtoValueTest, FifthFieldTest) {
   PrimitiveValue* bool_field = 
       dynamic_cast<PrimitiveValue*>(fields[4].get());
   ASSERT_NE(nullptr, bool_field);
-  EXPECT_EQ("bool_field", bool_field->GetName());
-  EXPECT_EQ(0, bool_field->GetCommentAboveField().size());
-  EXPECT_EQ("# comment 6", bool_field->GetCommentBehindField());
-  EXPECT_EQ(0, bool_field->GetIndentCount());
+  EXPECT_EQ(bool_field->GetName(), "bool_field");
+  EXPECT_EQ(bool_field->GetCommentAboveField().size(), 0);
+  EXPECT_EQ(bool_field->GetCommentBehindField(), "# comment 6");
+  EXPECT_EQ(bool_field->GetIndentCount(), 0);
   bool bool_field_val = false;
   absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
       const google::protobuf::EnumValueDescriptor *, std::string> val = 
       bool_field_val;
   EXPECT_TRUE(absl::holds_alternative<bool>(bool_field->GetVal()));
-  EXPECT_EQ(val, bool_field->GetVal());
+  EXPECT_EQ(bool_field->GetVal(), val);
 }
 
 } // namespace wireless_android_play_analytics
