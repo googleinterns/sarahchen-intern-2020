@@ -67,7 +67,9 @@ TEST_F(ProtoValueTest, OuterProtoTest) {
 }
 
 TEST_F(ProtoValueTest, FirstFieldTest) {
-  // #comment 1
+  // Field detail:
+  //
+  // # comment 1
   // int32_field: 1
   const std::vector<std::unique_ptr<ProtoValue>>& fields = 
       message_val_->GetFields();
@@ -89,7 +91,9 @@ TEST_F(ProtoValueTest, FirstFieldTest) {
 }
 
 TEST_F(ProtoValueTest, SecondFieldTest) {
-  //  # comment 2
+  // Field detail:
+  //
+  // # comment 2
   // field_nested_message { # comment 3
   //   int64_field: 100
   // }
@@ -127,7 +131,9 @@ TEST_F(ProtoValueTest, SecondFieldTest) {
 }
   
 TEST_F(ProtoValueTest, ThirdFieldTest) {
-  //  field_nested_message {
+  // Field detail:
+  //
+  // field_nested_message {
   //   # comment 4
   //   # comment 5
   //   int64_field: 100
@@ -163,6 +169,8 @@ TEST_F(ProtoValueTest, ThirdFieldTest) {
 }
   
 TEST_F(ProtoValueTest, FourthFieldTest) {
+  // Field detail:
+  //
   // bool_field: true
   const std::vector<std::unique_ptr<ProtoValue>>& fields = 
       message_val_->GetFields();
@@ -182,6 +190,8 @@ TEST_F(ProtoValueTest, FourthFieldTest) {
 }
 
 TEST_F(ProtoValueTest, FifthFieldTest) {
+  // Field detail:
+  //
   // bool_field: false # comment 6
   const std::vector<std::unique_ptr<ProtoValue>>& fields = 
       message_val_->GetFields();
