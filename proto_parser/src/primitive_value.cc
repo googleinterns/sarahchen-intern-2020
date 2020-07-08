@@ -19,8 +19,29 @@
 namespace wireless_android_play_analytics {
 
 std::string PrimitiveValue::PrintToTextProtoHelper() {
-  // TODO(alexanderlin): Implement.
-  return std::string();
+  // Get indents.
+  std::string indents;
+  for(int i = 0; i < this->GetIndentCount(); ++i) {
+    absl::StrAppend(&indents, "  ");
+  }
+
+  // Print the comments.
+  std::string output;
+  const std::vector<std::string>& comment_above_field = 
+      this->GetCommentAboveField();
+  for(const std::string& comment : comment_above_field) {
+    absl::StrAppend(&output, indents, comment, "\n");
+  }
+  absl::StrAppend(&output, indents, this->GetName(), ": ");
+
+  // Print the value.
+  absl::StrAppend(&output, val_as_string_);
+  if (!this->GetCommentBehindField().empty()) {
+     absl::StrAppend(&output, " ", this->GetCommentBehindField());
+  }
+  absl::StrAppend(&output, "\n");
+
+  return output;
 }
 
 void PrimitiveValue::SetVal(const 
