@@ -36,7 +36,10 @@ std::string PrimitiveValue::PrintToTextProtoHelper() {
 
   // Print the value.
   absl::StrAppend(&output, val_as_string_, " ");
-  absl::StrAppend(&output, this->GetCommentBehindField(), "\n");
+  if (!this->GetCommentBehindField().empty()) {
+     absl::StrAppend(&output, " ", this->GetCommentBehindField());
+  }
+  absl::StrAppend(&output, "\n");
 
   return output;
 }

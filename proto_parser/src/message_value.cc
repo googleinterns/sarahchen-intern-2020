@@ -33,8 +33,12 @@ std::string MessageValue::PrintToTextProtoHelper() {
     for(const std::string& comment : comment_above_field) {
       absl::StrAppend(&output, indents, comment, "\n");
     }
-    absl::StrAppend(&output, indents, this->GetName(), " { ");
-    absl::StrAppend(&output, this->GetCommentBehindField(), "\n");
+    
+    absl::StrAppend(&output, indents, this->GetName(), " {");
+    if (!this->GetCommentBehindField().empty()) {
+     absl::StrAppend(&output, " ", this->GetCommentBehindField());
+    }
+    absl::StrAppend(&output, "\n");
   }
 
   for (const std::unique_ptr<ProtoValue>& field : fields_) {
