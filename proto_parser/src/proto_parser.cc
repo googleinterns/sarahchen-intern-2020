@@ -88,7 +88,62 @@ std::unique_ptr<ProtoValue> ProtoParser::CreateMessage(
 }
 
 void ProtoParser::PopulateComments(int field_loc, ProtoValue* message) {
-  // TODO(alexanderlin): Implement.
+  int comment_above_idx = field_loc - 1;
+  std::string comment_above_tmp;
+
+  // Acquire all comments.
+  while(comment_above_idx > 0) {
+    size_t first_non_space = 
+        lines_[comment_above_idx].find_first_not_of(" \t");
+    if (first_non_space == std::string::npos) {
+      comment_above_idx--;
+    } else if (lines_[comment_above_idx][first_non_space] == '#') {
+      comment_above_tmp = lines_[comment_above_idx].substr(first_non_space)
+          + "\n" + comment_above_tmp;
+      comment_above_idx--;
+    } else {
+      break;
+    }
+  }
+
+  // Add comments into the message.
+  if(!comment_above_tmp.empty()) {
+    // Remove the last endline to prevent extraneous empty comment.
+    comment_above_tmp.pop_back();
+    message->SetCommentAboveField(comment_above_tmp);
+  }
+
+  // Figure out if the field is a string
+  std::string comment_behind_field;
+  std::string field_line = lines_[field_loc];
+  size_t begin_quote_idx = field_line.find('\"');
+  size_t pound_idx = field_line.find('#');
+  
+  if (begin_quote_idx != std::string::npos) {
+    size_t end_quote_idx = field_line.find("\"", begin_quote_idx + 1);
+    // Only if beginning and end quote exist is this a string.
+    if (end_quote_idx != std::string::npos) {
+      while(pound_idx != std::string::npos) {
+        if (pound_idx < begin_quote_idx) {
+          // If pound sign is before the string, then the string must be part of
+          // the comment eg. a: 2 #"hi"comment.
+          comment_behind_field = field_line.substr(pound_idx);
+          break;
+        }
+        else if (pound_idx > end_quote_idx) {
+          // If pound sign is after the string, then it must indicate beginning 
+          // of comment eg. a : "hi" #comment.
+          comment_behind_field = field_line.substr(pound_idx);
+          break;
+        }
+        pound_idx = field_line.find('#', pound_idx + 1);
+      }
+    }
+  }
+  else if (pound_idx != std::string::npos) {
+    comment_behind_field = field_line.substr(pound_idx);
+  }
+  message->SetCommentBehindField(comment_behind_field);
 }
 
 std::unique_ptr<ProtoValue> ProtoParser::CreatePrimitive(
