@@ -35,7 +35,7 @@ std::string PrimitiveValue::PrintToTextProtoHelper() {
   absl::StrAppend(&output, indents, this->GetName(), ": ");
 
   // Print the value.
-  absl::StrAppend(&output, val_as_string_, " ");
+  absl::StrAppend(&output, val_as_string_);
   if (!this->GetCommentBehindField().empty()) {
      absl::StrAppend(&output, " ", this->GetCommentBehindField());
   }
