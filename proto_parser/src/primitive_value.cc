@@ -22,7 +22,7 @@ std::string PrimitiveValue::PrintToTextProtoHelper() {
   // Get indents.
   std::string indents;
   for(int i = 0; i < this->GetIndentCount(); ++i) {
-    indents += "  ";
+    absl::StrAppend(&indents, "  ");
   }
 
   // Print the comments.
@@ -30,13 +30,13 @@ std::string PrimitiveValue::PrintToTextProtoHelper() {
   const std::vector<std::string>& comment_above_field = 
       this->GetCommentAboveField();
   for(const std::string& comment : comment_above_field) {
-    output += indents + comment + "\n";
+    absl::StrAppend(&output, indents, comment, "\n");
   }
-  output += indents + this->GetName();
+  absl::StrAppend(&output, indents, this->GetName(), ": ");
 
   // Print the value.
-  output += ": " + val_as_string_;
-  output += " " + this->GetCommentBehindField() + "\n";
+  absl::StrAppend(&output, val_as_string_, " ");
+  absl::StrAppend(&output, this->GetCommentBehindField(), "\n");
 
   return output;
 }
