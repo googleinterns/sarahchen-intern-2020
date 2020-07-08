@@ -44,34 +44,34 @@ bool_field: false # comment 6
 )pb";
 
 const std::string well_formatted_text_proto = R"pb(# comment 1
-int32_field: 1 
+int32_field: 1
 # comment 2
 field_nested_message { # comment 3
-  int64_field: 100 
+  int64_field: 100
 }
-field_nested_message { 
+field_nested_message {
   # comment 4
   # comment 5
-  int64_field: 100 
+  int64_field: 100
 }
-bool_field: true 
+bool_field: true
 bool_field: false # comment 6
 )pb";
 
 const std::string modified_text_proto = R"pb(# comment 1
-int32_field: 1 
+int32_field: 1
 # comment 2
 field_nested_message { # comment 3
-  int64_field: 100 
+  int64_field: 100
 }
 # new comment
 #
-field_nested_message { 
+field_nested_message {
   # comment 4
   # comment 5
   int64_field: 1234567890 # another new comment
 }
-bool_field: true 
+bool_field: true
 bool_field: false # comment 6
 )pb";
 

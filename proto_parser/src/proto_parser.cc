@@ -78,8 +78,12 @@ std::unique_ptr<ProtoValue> ProtoParser::CreateMessage(
     const google::protobuf::Message& message, 
     const google::protobuf::TextFormat::ParseInfoTree& tree, int indent_count,
     int field_loc, absl::string_view name){
-  // TODO(alexanderlin): Implement.
-  return nullptr;
+  std::unique_ptr<ProtoValue> message_val = 
+      absl::make_unique<MessageValue>(std::string(name), indent_count, 
+      field_loc);
+  PopulateComments(field_loc, message_val.get());
+  PopulateFields(message, tree, indent_count + 1, message_val.get());
+  return message_val;
 }
 
 void ProtoParser::PopulateComments(int field_loc, ProtoValue* message) {
