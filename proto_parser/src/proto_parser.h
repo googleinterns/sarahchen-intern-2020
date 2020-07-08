@@ -33,7 +33,7 @@ class ProtoParser {
   ProtoParser(absl::string_view text_proto) {
     lines_ = absl::StrSplit(text_proto, '\n');
   }
-
+  
   // Populates the message with all the fields of the message.
   void PopulateFields(const google::protobuf::Message& message,
     const google::protobuf::TextFormat::ParseInfoTree& tree, int indent_count,
