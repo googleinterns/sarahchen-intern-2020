@@ -50,6 +50,11 @@ class ProtoValue {
     return field_name_;
   }
 
+  // Sets the name of the current variable.
+  void SetName(absl::string_view name) {
+    field_name_ = std::string(name);
+  }
+
   // Gets the comment above current field.
   const std::vector<std::string>& GetCommentAboveField() const {
     return comments_above_field_;
