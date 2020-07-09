@@ -109,7 +109,7 @@ void ProtoParser::PopulateComments(int field_loc, ProtoValue* message) {
   while(comment_above_loc >= 0) {
     std::string line_content = Trim(lines_[comment_above_loc]);
 
-    if (!line_content.empty() || absl::StartsWith(line_content, "#")) {
+    if (line_content.empty() || absl::StartsWith(line_content, "#")) {
       comments_above.push_back(line_content);
     } else {
       break;
