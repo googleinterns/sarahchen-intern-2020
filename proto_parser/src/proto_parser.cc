@@ -22,7 +22,7 @@ namespace wireless_android_play_analytics {
 
 namespace{
 
-  std::string trim(absl::string_view s) {
+  std::string Trim(absl::string_view s) {
     const absl::string_view prefix = " \t";
     size_t first_non_space = s.find_first_not_of(prefix);
     if (first_non_space == absl::string_view::npos) {
@@ -101,38 +101,42 @@ std::unique_ptr<ProtoValue> ProtoParser::CreateMessage(
 }
 
 void ProtoParser::PopulateComments(int field_loc, ProtoValue* message) {
-  int comment_above_idx = field_loc - 1;
+  int comment_above_loc = field_loc - 1;
 
   std::vector<std::string> comments_above;
 
   // Acquire all comments.
-  while(comment_above_idx >= 0) {
-    std::string line = trim(lines_[comment_above_idx]);
+  while(comment_above_loc >= 0) {
+    std::string line_content = Trim(lines_[comment_above_loc]);
 
-    if (!line.empty() && line[0] == '#') {
-      comments_above.push_back(line);
+    if (!line_content.empty() || absl::StartsWith(line_content, "#")) {
+      comments_above.push_back(line_content);
     } else {
       break;
     }
 
-    comment_above_idx--;
+    --comment_above_loc;
   }
   
   // Revert the vector to make sure they're in the correct order.
   std::reverse(comments_above.begin(), comments_above.end());
   message->SetCommentAboveField(comments_above);
 
-  size_t starting_idx = 0;
+  size_t comment_behind_starting_position = 0;
   // If field is a string need to modify when the search starts.
   PrimitiveValue* primitive = static_cast<PrimitiveValue*>(message);
+  // If field is a message, casting to primitive value will result in returning
+  // a nullptr.
   if (primitive != nullptr) {
     if (absl::holds_alternative<std::string>(primitive->GetVal())) {
       std::string val = absl::get<std::string>(primitive->GetVal());
-      starting_idx = lines_[field_loc].find(val) + val.size();
+      comment_behind_starting_position = lines_[field_loc].find(val) + 
+          val.size();
     }
   }
 
-  size_t comment_start = lines_[field_loc].find('#', starting_idx);
+  size_t comment_start = lines_[field_loc].find('#', 
+      comment_behind_starting_position);
   
   if (comment_start != std::string::npos) {
     message->SetCommentBehindField(lines_[field_loc].substr(comment_start));
