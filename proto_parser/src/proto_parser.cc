@@ -149,8 +149,7 @@ std::unique_ptr<ProtoValue> ProtoParser::CreatePrimitive(
     const google::protobuf::FieldDescriptor* field_descriptor, 
     int indent_count) {
   const google::protobuf::Reflection* reflection = message.GetReflection();
-  // String used for GetRepeatedStringReference.
-  std::string str;
+
   std::unique_ptr<ProtoValue> message_val = absl::make_unique<PrimitiveValue>(
       field_descriptor->name(), indent_count, field_loc);
   PopulateComments(field_loc, message_val.get());
@@ -189,10 +188,12 @@ std::unique_ptr<ProtoValue> ProtoParser::CreatePrimitive(
         primitive->SetVal(reflection->GetRepeatedEnum(message, 
             field_descriptor, repeated_field_index));
         break;
-      case google::protobuf::FieldDescriptor::CppType::CPPTYPE_STRING:
-        str = reflection->GetRepeatedStringReference(message, field_descriptor, 
-            repeated_field_index, &str);
-        primitive->SetVal(str);
+      case google::protobuf::FieldDescriptor::CppType::CPPTYPE_STRING: {
+          std::string str;   
+          str = reflection->GetRepeatedStringReference(message, field_descriptor, 
+              repeated_field_index, &str);
+          primitive->SetVal(str);
+        }
         break;
       case google::protobuf::FieldDescriptor::CppType::CPPTYPE_MESSAGE:
         assert(false);
