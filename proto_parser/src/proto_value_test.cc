@@ -23,8 +23,7 @@
 
 namespace wireless_android_play_analytics{
  
-const std::string text_proto = R"pb(
-# comment 1
+const std::string text_proto = R"pb(# comment 1
 int32_field: 1
 
 # comment 2
@@ -39,27 +38,13 @@ field_nested_message {
 }
 
 
-bool_field: true
-bool_field: false # comment 6
-)pb";
-
-const std::string well_formatted_text_proto = R"pb(# comment 1
-int32_field: 1
-# comment 2
-field_nested_message { # comment 3
-  int64_field: 100
-}
-field_nested_message {
-  # comment 4
-  # comment 5
-  int64_field: 100
-}
 bool_field: true
 bool_field: false # comment 6
 )pb";
 
 const std::string modified_text_proto = R"pb(# comment 1
 int32_field: 1
+
 # comment 2
 field_nested_message { # comment 3
   int64_field: 100
@@ -71,6 +56,8 @@ field_nested_message {
   # comment 5
   int64_field: 1234567890 # another new comment
 }
+
+
 bool_field: true
 bool_field: false # comment 6
 )pb";
@@ -91,7 +78,7 @@ class ProtoValueTest : public ::testing::Test {
 
 TEST_F(ProtoValueTest, PrintToTextProtoTest) {
   std::string printed_text_proto = message_val_->PrintToTextProto();
-  EXPECT_EQ(printed_text_proto, well_formatted_text_proto);
+  ASSERT_EQ(printed_text_proto, text_proto);
 }
 
 TEST_F(ProtoValueTest, PrintModifiedTextProtoTest) {
@@ -102,7 +89,6 @@ TEST_F(ProtoValueTest, PrintModifiedTextProtoTest) {
 
   // Add comments above nested message.
   field_nested_message->SetCommentAboveField("# new comment\n#");
-
   const std::vector<std::unique_ptr<ProtoValue>>& 
       first_field_nested_message_fields = field_nested_message->GetFields();
   
@@ -168,7 +154,7 @@ TEST_F(ProtoValueTest, SecondFieldTest) {
   ASSERT_NE(field_nested_message, nullptr);
   EXPECT_EQ(field_nested_message->GetName(), "field_nested_message");
   EXPECT_THAT(field_nested_message->GetCommentAboveField(),
-      testing::ElementsAreArray({"# comment 2"}));
+      testing::ElementsAreArray({"", "# comment 2"}));
   EXPECT_EQ(field_nested_message->GetCommentBehindField(), "# comment 3");
   EXPECT_EQ(field_nested_message->GetIndentCount(), 0);
   const std::vector<std::unique_ptr<ProtoValue>>& internal_fields =
@@ -208,7 +194,8 @@ TEST_F(ProtoValueTest, ThirdFieldTest) {
       dynamic_cast<MessageValue*>(fields[2].get());
   ASSERT_NE(field_nested_message, nullptr);
   EXPECT_EQ(field_nested_message->GetName(), "field_nested_message");
-  EXPECT_EQ(field_nested_message->GetCommentAboveField().size(), 0);
+  EXPECT_THAT(field_nested_message->GetCommentAboveField(),
+      testing::ElementsAreArray({""}));
   EXPECT_EQ(field_nested_message->GetCommentBehindField(), "");
   EXPECT_EQ(field_nested_message->GetIndentCount(), 0);
   const std::vector<std::unique_ptr<ProtoValue>>& internal_fields =
@@ -242,7 +229,8 @@ TEST_F(ProtoValueTest, FourthFieldTest) {
       dynamic_cast<PrimitiveValue*>(fields[3].get());
   ASSERT_NE(nullptr, bool_field);
   EXPECT_EQ(bool_field->GetName(), "bool_field");
-  EXPECT_EQ(bool_field->GetCommentAboveField().size(), 0);
+  EXPECT_THAT(bool_field->GetCommentAboveField(),
+      testing::ElementsAreArray({"", ""}));
   EXPECT_EQ(bool_field->GetCommentBehindField(), "");
   EXPECT_EQ(bool_field->GetIndentCount(), 0);
   bool bool_field_val = true;
