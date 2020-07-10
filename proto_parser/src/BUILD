@@ -14,7 +14,8 @@ cc_library(
 cc_library(
     name = "proto_value",
     srcs = ["proto_value.cc"],
-    hdrs = ["proto_value.h", "proto_parser.h", "message_value.h", "primitive_value.h"],
+    hdrs = ["proto_value.h", "proto_parser.h", "message_value.h", 
+            "primitive_value.h"],
     deps = ["@com_google_gtest//:gtest",
             "@com_google_absl//absl/types:variant",
             "@com_google_absl//absl/strings",
