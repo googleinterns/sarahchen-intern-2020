@@ -33,6 +33,9 @@ class ProtoParser {
   ProtoParser(absl::string_view text_proto) {
     lines_ = absl::StrSplit(text_proto, '\n');
   }
+
+  static std::unique_ptr<ProtoValue> Create(absl::string_view text_proto, 
+      google::protobuf::Message& message);
   
   // Populates the message with all the fields of the message.
   void PopulateFields(const google::protobuf::Message& message,

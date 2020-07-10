@@ -42,9 +42,6 @@ class ProtoValue {
 
   virtual ~ProtoValue() = default;
 
-  static std::unique_ptr<ProtoValue> Create(absl::string_view text_proto, 
-    google::protobuf::Message& message);
-
   // Gets the name of current variable.
   const std::string& GetName() const {
     return field_name_;
