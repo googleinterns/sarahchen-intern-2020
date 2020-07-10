@@ -11,7 +11,7 @@ export class TimeComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    this.time = "Wed May 19 15:46:11 2020";
+    this.time = "TODO";
   }
 
 }
