@@ -37,8 +37,17 @@ class MessageValue : public ProtoValue {
   // Gets all the fields of the current Message with intention to modify it.
   std::vector<ProtoValue*> GetFieldsMutable();
 
-  // Appends a field to the back of fields and fields mutable
+  // Appends a field to the back of fields and fields mutable.
   void AddField(std::unique_ptr<ProtoValue> field);
+
+  // Deletes the field at a specified index.
+  bool DeleteField(size_t idx) {
+    if (idx >= fields_.size()) {
+      return false;
+    }
+    fields_.erase(fields_.begin() + idx);
+    return true;
+  }
 
   // Sorts the fields_ vector.
   void SortFields() {

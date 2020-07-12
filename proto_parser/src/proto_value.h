@@ -26,6 +26,7 @@
 
 #include "absl/types/variant.h"
 #include "absl/strings/string_view.h"
+#include "absl/strings/str_split.h"
 #include "absl/container/flat_hash_map.h"
 
 namespace wireless_android_play_analytics {

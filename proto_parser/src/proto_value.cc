@@ -15,8 +15,6 @@
 */
 
 #include "proto_value.h"
-#include "proto_parser.h"
-#include "message_value.h"
 
 namespace wireless_android_play_analytics {
 

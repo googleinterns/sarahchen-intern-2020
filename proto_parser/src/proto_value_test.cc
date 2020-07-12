@@ -67,13 +67,15 @@ class ProtoValueTest : public ::testing::Test {
  protected:
   
   virtual void SetUp() {
-    message_ = ProtoValue::Create(text_proto, test_);
+    parser_ = ProtoParser(text_proto);
+    message_ = parser_.Create(test_);
     message_val_ = dynamic_cast<MessageValue*>(message_.get());
   }
 
   TestProto test_;
   std::unique_ptr<ProtoValue> message_;
   MessageValue* message_val_;
+  ProtoParser parser_;
 };
 
 TEST_F(ProtoValueTest, PrintToTextProtoTest) {
