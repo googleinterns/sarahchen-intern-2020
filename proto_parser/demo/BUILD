@@ -16,4 +16,5 @@ cc_binary(
     "//proto:event_predicate_cc_proto",
     "//src:proto_value",
   ],
+  data = glob(["proto_texts/*.txt"])
 )
