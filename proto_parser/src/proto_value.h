@@ -68,7 +68,7 @@ class ProtoValue {
     comment_behind_field_ = std::string(val);
   }
 
-  int GetLineNumber() {
+  int GetLineNumber() const {
     return field_line_;
   }
 
@@ -81,7 +81,7 @@ class ProtoValue {
     comments_above_field_ = comments_above_field;
   }
 
-  int GetIndentCount() {
+  int GetIndentCount() const {
     return indent_count_;
   }
 

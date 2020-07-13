@@ -18,8 +18,6 @@
 #include <fstream>
 
 #include "../src/proto_value.h"
-// #include "../src/primitive_value.h"
-// #include "../src/message_value.h"
 #include "../src/proto_parser.h"
 #include "proto/event_predicate.pb.h"
 
