@@ -91,7 +91,7 @@ std::unique_ptr<ProtoValue> MakeMessageMatcher(const ProtoValue* message) {
         dynamic_cast<MessageValue*>(constructed_val.get());
     constructed_val_message->AddField(std::move(path));
     constructed_val_message->AddField(std::move(equals_int));
-  } else {
+  } else if (field.size() == 1){
     // event_matcher, only contains input_field -> field_exists.
     constructed_val = absl::make_unique<PrimitiveValue>("field_exists", 
         original->GetIndentCount(), original->GetLineNumber());
@@ -140,7 +140,10 @@ std::unique_ptr<ProtoValue> ValueFactory(const ProtoValue* message) {
           std::unique_ptr<ProtoValue> leaf_ui = absl::make_unique<MessageValue>(
               "leaf_ui", original->GetIndentCount() + 2, 0);
           CopyVal(leaf_ui.get(), fields[i].get());
-          
+          MessageValue* leaf_ui_val = 
+              dynamic_cast<MessageValue*>(leaf_ui.get());
+          std::unique_ptr<ProtoValue>
+          leaf_ui_val->AddField(MakeMessageMatcher(nested_fields[1].get()));
         } else {
 
         }
