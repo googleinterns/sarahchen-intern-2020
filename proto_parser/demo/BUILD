@@ -10,8 +10,8 @@ cc_binary(
 )
 
 cc_binary(
-  name = "demo",
-  srcs = ["demo.cc"],
+  name = "demo_main",
+  srcs = ["demo_main.cc"],
   deps = [
     "//proto:event_predicate_cc_proto",
     "//src:proto_value",
