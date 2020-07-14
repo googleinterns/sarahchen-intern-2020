@@ -11,13 +11,3 @@ cc_proto_library(
     name = "example_cc_proto",
     deps = [":example_proto"],
 )
-
-proto_library(
-    name = "event_predicate_proto",
-    srcs = ["event_predicate.proto"],
-)
-
-cc_proto_library(
-    name = "event_predicate_cc_proto",
-    deps = [":event_predicate_proto"],
-)
