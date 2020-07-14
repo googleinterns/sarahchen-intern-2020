@@ -4,3 +4,5 @@ hologram_dashboard/fetcher/.vscode
 /.vscode
 proto_parser/bazel-*
 proto_parser/.vscode
+hologram_dashboard/node_modules
+hologram_dashboard/package-lock.json
