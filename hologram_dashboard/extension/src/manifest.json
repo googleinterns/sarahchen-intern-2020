@@ -1,6 +1,6 @@
 {
     "name": "Hologram Data Availability",
-    "description": "Provides information about the newest Hologram jobs",
+    "description": "Provides information about the data availability in Hologram",
     "version": "1.0",
     "manifest_version": 2,
     "browser_action": {
