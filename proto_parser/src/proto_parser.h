@@ -30,16 +30,19 @@ class ProtoParser {
 
   ProtoParser() {}
 
-  ProtoParser(absl::string_view text_proto) {
+  ProtoParser(absl::string_view text_proto) 
+    : text_proto_(text_proto){
     lines_ = absl::StrSplit(text_proto, '\n');
   }
-  
+
+  std::unique_ptr<ProtoValue> Create(google::protobuf::Message& message);
+
+ private:
+
   // Populates the message with all the fields of the message.
   void PopulateFields(const google::protobuf::Message& message,
     const google::protobuf::TextFormat::ParseInfoTree& tree, int indent_count,
     ProtoValue* proto_value);
-
- private:
 
   // Acquires and populates the comments of a specific field.
   void PopulateComments(int field_loc, ProtoValue* message);
@@ -63,6 +66,8 @@ class ProtoParser {
       int repeated_field_index);
 
   std::vector<std::string> lines_;
+
+  std::string text_proto_;
 };
 
 } // namespace wireless_android_play_analytics

@@ -32,6 +32,23 @@ namespace{
     }
   }
 } // namespace
+
+std::unique_ptr<ProtoValue> ProtoParser::Create(
+    google::protobuf::Message& message) {
+  google::protobuf::TextFormat::Parser google_parser;
+  google::protobuf::TextFormat::ParseInfoTree tree;
+  google_parser.WriteLocationsTo(&tree);
+  google_parser.ParseFromString(text_proto_, &message);
+  
+  // Root Message has no field_name and no indentation.
+  std::unique_ptr<ProtoValue> message_val = absl::make_unique<MessageValue>(
+      /*field_name=*/"", /*indent_count=*/0, /*field_line=*/0); 
+
+  PopulateFields(message, tree, /*indent_count=*/0, 
+      message_val.get());
+
+  return message_val;
+}
   
 void ProtoParser::PopulateFields(const google::protobuf::Message& message,
     const google::protobuf::TextFormat::ParseInfoTree& tree, int indent_count,

@@ -26,6 +26,7 @@
 
 #include "absl/types/variant.h"
 #include "absl/strings/string_view.h"
+#include "absl/strings/str_split.h"
 #include "absl/container/flat_hash_map.h"
 
 namespace wireless_android_play_analytics {
@@ -41,9 +42,6 @@ class ProtoValue {
         field_line_(field_line) {}
 
   virtual ~ProtoValue() = default;
-
-  static std::unique_ptr<ProtoValue> Create(absl::string_view text_proto, 
-    google::protobuf::Message& message);
 
   // Gets the name of current variable.
   const std::string& GetName() const {
@@ -70,7 +68,7 @@ class ProtoValue {
     comment_behind_field_ = std::string(val);
   }
 
-  int GetLineNumber() {
+  int GetLineNumber() const {
     return field_line_;
   }
 
@@ -83,7 +81,7 @@ class ProtoValue {
     comments_above_field_ = comments_above_field;
   }
 
-  int GetIndentCount() {
+  int GetIndentCount() const {
     return indent_count_;
   }
 
