@@ -77,6 +77,8 @@ std::string Generate(MessageValue* message) {
 
 } // namespace
 
+// Given an original proto_text, this generates multiple copies of well-formed
+// protos with the same proto definition but different value and commments.
 int main() {
   std::ifstream ifs;
   std::string text_proto;
