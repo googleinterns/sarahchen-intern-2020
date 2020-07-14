@@ -36,7 +36,7 @@ std::string GenerateRandomSamples(MessageValue* message) {
 
   // Generate random int_comparator.
   MessageValue* event_matcher = static_cast<MessageValue*>(message_fields[0]);
-  if (rand() % 2) {
+  if (rand() % 2 == 1) {
     std::unique_ptr<ProtoValue> int_comparator = 
         absl::make_unique<PrimitiveValue>("int_comparator", 1, 8);
     
@@ -44,12 +44,12 @@ std::string GenerateRandomSamples(MessageValue* message) {
         static_cast<PrimitiveValue*>(int_comparator.get());
 
     // Generate comment
-    if (rand() % 2) {
+    if (rand() % 2 == 1) {
       int_comparator_ptr->SetCommentBehindField("# randomly generated comment");
     }
     std::vector<std::string> comments_above_field;
     int count = 0;
-    while(rand() % 2) {
+    while(rand() % 2 == 1) {
       comments_above_field.push_back("# randomly generated comment " + 
           std::to_string(count++));
     }
@@ -65,10 +65,10 @@ std::string GenerateRandomSamples(MessageValue* message) {
   // Randomly erase leaf_ui_predicates.
   MessageValue* ui_element_path_predicate = static_cast<MessageValue*>(
       message_fields[2]);
-  if (rand() % 2) {
+  if (rand() % 2 == 1) {
     ui_element_path_predicate->DeleteField(2);
   }
-  if (rand() % 2) {
+  if (rand() % 2 == 1) {
     ui_element_path_predicate->DeleteField(1);
   }
   
