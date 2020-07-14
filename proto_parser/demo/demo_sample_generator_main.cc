@@ -93,20 +93,29 @@ std::string ReadTextProtoFromStream(absl::string_view path) {
   return text_proto;
 }
 
+void WriteToTextProto(absl::string_view path, absl::string_view text_proto) {
+  std::ofstream outs;
+  outs.open(std::string(path));
+  outs << text_proto;
+  std::cout << text_proto << std::endl;
+}
+
 } // namespace
 
 // Given an original proto_text, this generates multiple copies of well-formed
 // protos with the same proto definition but different value and commments.
 int main() {
   EventPredicate event_predicate;
-  ProtoParser parser(
-      ReadTextProtoFromStream("demo/proto_texts/original_proto_text.txt"));
+  ProtoParser parser(ReadTextProtoFromStream(
+      "demo/proto_texts/original_proto_text.textproto"));
 
   for(int i = 0; i < 10; ++i) {
     std::unique_ptr<ProtoValue> message = parser.Create(event_predicate);
-    std::ofstream outs;
-    outs.open("demo/proto_texts/proto_text(" + std::to_string(i) +").txt");
-    outs << GenerateRandomSamples(static_cast<MessageValue*>(message.get()));
+    std::string path = "demo/proto_texts/proto_text(" + std::to_string(i) +
+        ").textproto";
+    std::string text_proto = 
+        GenerateRandomSamples(static_cast<MessageValue*>(message.get()));
+    WriteToTextProto(path, text_proto);
   }
 
   return 0;

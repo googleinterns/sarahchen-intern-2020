@@ -6,5 +6,5 @@ cc_binary(
     "//src:proto_value",
     "//src:proto_parser"
   ],
-  data = glob(["proto_texts/*.txt"])
+  data = glob(["proto_texts/*.textproto"])
 )
