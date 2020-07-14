@@ -32,6 +32,69 @@ namespace {
 class EventPredicateConverter {
  public:
 
+  // Original:
+  //           # comment
+  //           # to
+  //           # save
+
+  //           # Condition 1
+  //           event_matcher {
+  //             input_field: "PlayExtension.store.click"
+  //           }
+  //           # Condition 2
+  //           event_matcher {
+  //             input_field: "PlayExtension.log_source"
+  //             int_comparator: 65  # WEB_STORE
+  //           }
+  //           # Condition 3
+  //           ui_element_path_predicate {
+  //             ui_element_type: STORE_UI_ELEMENT
+  //             # Condition 3.1
+  //             leaf_ui_predicate {
+  //               # ...
+  //               ui_element_type: STORE_UI_ELEMENT
+  //               ui_element_matcher {
+  //                 input_field: "type"
+  //                 int_comparator: 7305  # AUTHENTICATION_OPT_OUT_CHECKED
+  //               }
+  //             }
+  //             # Condition 3.2
+  //             index_ui_matcher {
+  //               ui_element_type: STORE_UI_ELEMENT
+  //               index: -2
+  //               ui_element_matcher {
+  //                 input_field: "type"
+  //                 int_comparator: 1  # SOMETHING
+  //               }
+  //             }
+  //           }
+  // Modified:
+  //           and {
+  //             # Condition 1
+  //             field_exists: "PlayExtension.store.click"
+  //             # Condition 2
+  //             field_value {
+  //               path: "PlayExtension.log_source"
+  //               equals_int: 65  # WEB_STORE
+  //             }
+  //             # Condition 3
+  //             ui_element {
+  //               type: STORE_UI_ELEMENT
+  //               and {
+  //                 # Condition 3.1
+  //                 leaf_ui {
+  //                   path:  "type"
+  //                   equals_int: 7305  # AUTHENTICATION_OPT_OUT_CHECKED
+  //                 }
+  //                 # Condition 3.2
+  //                 index_ui {
+  //                   index: -2
+  //                   path: "type"
+  //                   equals_int: 1  # SOMETHING
+  //                 }
+  //               }
+  //             }
+  //           }
   std::unique_ptr<ProtoValue> ConvertEventPredicateFromFile(
       absl::string_view path) {
     ProtoParser parser(ReadTextProtoFromStream(path));
@@ -163,6 +226,22 @@ class EventPredicateConverter {
     return constructed_field;
   }
 
+  // Original: 
+  //            # Condition 3.1
+  //            leaf_ui_predicate {
+  //              # ...
+  //              ui_element_type: STORE_UI_ELEMENT
+  //              ui_element_matcher {
+  //                input_field: "type"
+  //                int_comparator: 7305  # AUTHENTICATION_OPT_OUT_CHECKED
+  //              }
+  //            }
+  // Modified: 
+  //            # Condition 3.1
+  //            leaf_ui {
+  //              path:  "type"
+  //              equals_int: 7305  # AUTHENTICATION_OPT_OUT_CHECKED
+  //            }
   std::unique_ptr<ProtoValue> LeafUiPredicateToLeafUi(
       const ProtoValue& original) {
     absl::flat_hash_map<std::string, ProtoValue*> name_to_ptr_map = 
@@ -171,6 +250,23 @@ class EventPredicateConverter {
         *name_to_ptr_map["ui_element_matcher"], "leaf_ui");
   }
 
+  // Original: 
+  //            # Condition 3.2
+  //            index_ui_matcher {
+  //              ui_element_type: STORE_UI_ELEMENT
+  //              index: -2
+  //              ui_element_matcher {
+  //                input_field: "type"
+  //                int_comparator: 1  # SOMETHING
+  //              }
+  //            }
+  // Modified: 
+  //            # Condition 3.2
+  //            index_ui {
+  //              index: -2
+  //              path: "type"
+  //              equals_int: 1  # SOMETHING
+  //            }
   std::unique_ptr<ProtoValue> IndexUiPredicateToIndexUi(
       const ProtoValue& original) {
     absl::flat_hash_map<std::string, ProtoValue*> name_to_ptr_map = 
@@ -180,16 +276,76 @@ class EventPredicateConverter {
         name_to_ptr_map["index"]);
   }
 
+  // Original: 
+  //            # Condition 1
+  //            event_matcher {
+  //              input_field: "PlayExtension.store.click"
+  //            }
+  // Modified:
+  //            # Condition 1
+  //            field_exists: "PlayExtension.store.click"
   std::unique_ptr<ProtoValue> EventMatcherToFieldExists(
       const ProtoValue& original) {
     return MessageMatcherUniversalConverter(original, "field_exists");
   }
 
+  // Original:
+  //           # Condition 2
+  //           event_matcher {
+  //             input_field: "PlayExtension.log_source"
+  //             int_comparator: 65  # WEB_STORE
+  //           }
+  // Modified:
+  //           # Condition 2
+  //           field_value {
+  //             path: "PlayExtension.log_source"
+  //             equals_int: 65  # WEB_STORE
+  //           }
   std::unique_ptr<ProtoValue> EventMatcherToFieldValue(
       const ProtoValue& original) {
     return MessageMatcherUniversalConverter(original, "field_value");
   }
 
+  // Original:
+  //           # Condition 3
+  //           ui_element_path_predicate {
+  //             ui_element_type: STORE_UI_ELEMENT
+  //             # Condition 3.1
+  //             leaf_ui_predicate {
+  //               # ...
+  //               ui_element_type: STORE_UI_ELEMENT
+  //               ui_element_matcher {
+  //                 input_field: "type"
+  //                 int_comparator: 7305  # AUTHENTICATION_OPT_OUT_CHECKED
+  //               }
+  //             }
+  //             # Condition 3.2
+  //             index_ui_matcher {
+  //               ui_element_type: STORE_UI_ELEMENT
+  //               index: -2
+  //               ui_element_matcher {
+  //                 input_field: "type"
+  //                 int_comparator: 1  # SOMETHING
+  //               }
+  //             }
+  //           }
+  // Modified:
+  //           ui_element {
+  //           type: STORE_UI_ELEMENT
+  //           and {
+  //             # Condition 3.1
+  //             leaf_ui {
+  //               path:  "type"
+  //               equals_int: 7305  # AUTHENTICATION_OPT_OUT_CHECKED
+  //             }
+  //             # Condition 3.2
+  //             index_ui {
+  //               index: -2
+  //               path: "type"
+  //               equals_int: 1  # SOMETHING
+  //             }
+  //           }
+  //         }
   std::unique_ptr<ProtoValue> UiElementPathPredicateToUiElement(
       const ProtoValue& original) {
     std::unique_ptr<ProtoValue> ui_element = absl::make_unique<MessageValue>(
