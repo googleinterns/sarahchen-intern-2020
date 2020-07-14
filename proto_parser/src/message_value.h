@@ -41,7 +41,7 @@ class MessageValue : public ProtoValue {
   void AddField(std::unique_ptr<ProtoValue> field);
 
   // Deletes the field at a specified index.
-  bool DeleteField(size_t idx) {
+  bool DeleteField(int idx) {
     if (idx >= fields_.size()) {
       return false;
     }

@@ -1,5 +1,5 @@
 cc_binary(
-  name = "demo_generator",
+  name = "demo_sample_generator_main",
   srcs = ["demo_sample_generator_main.cc"],
   deps = [
     "//proto:event_predicate_cc_proto",
