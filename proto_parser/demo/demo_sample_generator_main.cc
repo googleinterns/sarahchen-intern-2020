@@ -29,7 +29,7 @@ using ::wireless_android_play_analytics::ProtoParser;
 
 namespace {
 
-std::string Generate(MessageValue* message) {
+std::string GenerateRandomSamples(MessageValue* message) {
   const std::vector<ProtoValue*>& message_fields = message->GetFieldsMutable();
   absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
       const google::protobuf::EnumValueDescriptor*, std::string> val;
@@ -75,16 +75,12 @@ std::string Generate(MessageValue* message) {
   return message->PrintToTextProto();
 }
 
-} // namespace
-
-// Given an original proto_text, this generates multiple copies of well-formed
-// protos with the same proto definition but different value and commments.
-int main() {
+// Reads text proto into a string from a file.
+std::string ReadTextProtoFromStream(absl::string_view path) {
   std::ifstream ifs;
   std::string text_proto;
-  EventPredicate event_predicate;
 
-  ifs.open("demo/proto_texts/original_proto_text.txt");
+  ifs.open(std::string(path));
 
   assert(ifs.good());
 
@@ -94,13 +90,23 @@ int main() {
     text_proto += tmp + "\n";
   }
 
-  ProtoParser parser(text_proto);
+  return text_proto;
+}
+
+} // namespace
+
+// Given an original proto_text, this generates multiple copies of well-formed
+// protos with the same proto definition but different value and commments.
+int main() {
+  EventPredicate event_predicate;
+  ProtoParser parser(
+      ReadTextProtoFromStream("demo/proto_texts/original_proto_text.txt"));
 
   for(int i = 0; i < 10; ++i) {
     std::unique_ptr<ProtoValue> message = parser.Create(event_predicate);
     std::ofstream outs;
     outs.open("demo/proto_texts/proto_text(" + std::to_string(i) +").txt");
-    outs << Generate(static_cast<MessageValue*>(message.get()));
+    outs << GenerateRandomSamples(static_cast<MessageValue*>(message.get()));
   }
 
   return 0;
