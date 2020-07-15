@@ -103,7 +103,9 @@ class EventPredicateConverter {
         parser.Create(event_predicate_prototype);
     MessageValue* event_predicate_ptr = 
         static_cast<MessageValue*>(event_predicate.get());  
-    // and_field is the master message that encloses everything.
+    // We are converting event_matcher/ui_element_path_predicate to and here
+    // event_matcher {} => and {}
+    // ui_element_path_predicate{} => and{}
     std::unique_ptr<ProtoValue> and_field = 
         absl::make_unique<MessageValue>("and", 0, 0);
     MessageValue* and_field_ptr = static_cast<MessageValue*>(and_field.get());
@@ -112,7 +114,7 @@ class EventPredicateConverter {
         event_predicate_ptr->GetFields()) {
       if (field->GetName() == "event_matcher") {
         absl::flat_hash_map<std::string, ProtoValue*> field_name_to_value_ptr = 
-            GetFieldNameToPtrMap(*static_cast<MessageValue*>(field.get()));
+            GetFieldNameToValuePtrMap(*static_cast<MessageValue*>(field.get()));
         if (field_name_to_value_ptr.find("int_comparator") != 
             field_name_to_value_ptr.end()) {
           and_field_ptr->AddField(EventMatcherToFieldValue(*field));
@@ -164,7 +166,7 @@ class EventPredicateConverter {
 
   // Gets a hash table that maps field names of a message value to their
   // corresponding protovalue pointer.
-  absl::flat_hash_map<std::string, ProtoValue*> GetFieldNameToPtrMap(
+  absl::flat_hash_map<std::string, ProtoValue*> GetFieldNameToValuePtrMap(
       const MessageValue& original) {
     absl::flat_hash_map<std::string, ProtoValue*> field_name_to_value_ptr;
     for (const std::unique_ptr<ProtoValue>& field : original.GetFields()) {
@@ -176,50 +178,21 @@ class EventPredicateConverter {
 
   // A universal converter for message matcher into either index_ui,
   // field_value, or field_exists.
-  std::unique_ptr<ProtoValue> MessageMatcherUniversalConverter(
-      const ProtoValue& original, absl::string_view name, 
-      const ProtoValue* index = nullptr) {
-    std::unique_ptr<ProtoValue> constructed_field = nullptr;
+  void MessageMatcherConverter(const ProtoValue& original, 
+      MessageValue* constructed_field) {
     // Get the name of each field on the original proto.
     absl::flat_hash_map<std::string, ProtoValue*> field_name_to_value_ptr = 
-        GetFieldNameToPtrMap(*static_cast<const MessageValue*>(&original));
+        GetFieldNameToValuePtrMap(*static_cast<const MessageValue*>(&original));
 
-    if (name == "index_ui" || name == "field_value" || name == "leaf_ui") {
-      constructed_field = absl::make_unique<MessageValue>(name, 
-          original.GetIndentCount() + 1, 0);
-      MessageValue* constructed_field_ptr = static_cast<MessageValue*>(
-          constructed_field.get());
-      if (name == "index_ui") {
-        // Index UI has an extra field of index.
-        std::unique_ptr<ProtoValue> index_field = 
-            absl::make_unique<PrimitiveValue>("index", 
-            original.GetIndentCount() + 2, 0);
-        CopyVal(index_field.get(), *index);
-        constructed_field_ptr->AddField(std::move(index_field));
-      }
-      std::unique_ptr<ProtoValue> path = absl::make_unique<PrimitiveValue>(
-        "path", original.GetIndentCount() + 2, 1);
-      CopyVal(path.get(), *field_name_to_value_ptr["input_field"]);
-      std::unique_ptr<ProtoValue> equals_int = 
-          absl::make_unique<PrimitiveValue>("equals_int", 
-          original.GetIndentCount() + 2, 2);
-      CopyVal(equals_int.get(), *field_name_to_value_ptr["int_comparator"]);
-      constructed_field_ptr->AddField(std::move(path));
-      constructed_field_ptr->AddField(std::move(equals_int));
-    } else {
-      constructed_field = absl::make_unique<PrimitiveValue>(name, 
-          original.GetIndentCount() + 1, 0);
-      PrimitiveValue* constructed_field_ptr = static_cast<PrimitiveValue*>(
-          constructed_field.get());
-      PrimitiveValue* input_field_ptr = static_cast<PrimitiveValue*>(
-          field_name_to_value_ptr["input_field"]);
-      constructed_field_ptr->SetVal(input_field_ptr->GetVal());
-    }
-
-    // Copy the comments of the original proto to the constructed field
-    CopyVal(constructed_field.get(), original);
-
-    return constructed_field;
+    std::unique_ptr<ProtoValue> path = absl::make_unique<PrimitiveValue>(
+      "path", original.GetIndentCount() + 2, 1);
+    CopyVal(path.get(), *field_name_to_value_ptr["input_field"]);
+    std::unique_ptr<ProtoValue> equals_int = 
+        absl::make_unique<PrimitiveValue>("equals_int", 
+        original.GetIndentCount() + 2, 2);
+    CopyVal(equals_int.get(), *field_name_to_value_ptr["int_comparator"]);
+    constructed_field->AddField(std::move(path));
+    constructed_field->AddField(std::move(equals_int));
   }
 
   // Original: 
@@ -241,9 +214,14 @@ class EventPredicateConverter {
   std::unique_ptr<ProtoValue> LeafUiPredicateToLeafUi(
       const ProtoValue& original) {
     absl::flat_hash_map<std::string, ProtoValue*> field_name_to_value_ptr = 
-        GetFieldNameToPtrMap(*static_cast<const MessageValue*>(&original));
-    return MessageMatcherUniversalConverter(
-        *field_name_to_value_ptr["ui_element_matcher"], "leaf_ui");
+        GetFieldNameToValuePtrMap(*static_cast<const MessageValue*>(&original));
+    std::unique_ptr<ProtoValue> leaf_ui = 
+        absl::make_unique<MessageValue>("leaf_ui", 
+        original.GetIndentCount() + 2, 0);
+    CopyVal(leaf_ui.get(), original);
+    MessageMatcherConverter(*field_name_to_value_ptr["ui_element_matcher"],
+        static_cast<MessageValue*>(leaf_ui.get()));
+    return leaf_ui;
   }
 
   // Original: 
@@ -266,10 +244,23 @@ class EventPredicateConverter {
   std::unique_ptr<ProtoValue> IndexUiPredicateToIndexUi(
       const ProtoValue& original) {
     absl::flat_hash_map<std::string, ProtoValue*> field_name_to_value_ptr = 
-        GetFieldNameToPtrMap(*static_cast<const MessageValue*>(&original));
-    return MessageMatcherUniversalConverter(
-        *field_name_to_value_ptr["ui_element_matcher"], "index_ui", 
-        field_name_to_value_ptr["index"]);
+        GetFieldNameToValuePtrMap(*static_cast<const MessageValue*>(&original));
+    std::unique_ptr<ProtoValue> leaf_ui = 
+        absl::make_unique<MessageValue>("index_ui", 
+        original.GetIndentCount() + 2, 0);
+    CopyVal(leaf_ui.get(), original);
+    MessageValue* leaf_ui_ptr = static_cast<MessageValue*>(leaf_ui.get());
+
+    // Add the index before adding the rest.
+    std::unique_ptr<ProtoValue> index_field = 
+        absl::make_unique<PrimitiveValue>("index", 
+        original.GetIndentCount() + 3, 0);
+    CopyVal(index_field.get(), *field_name_to_value_ptr["index"]);
+    leaf_ui_ptr->AddField(std::move(index_field));
+
+    MessageMatcherConverter(*field_name_to_value_ptr["ui_element_matcher"],
+        leaf_ui_ptr);
+    return leaf_ui;
   }
 
   // Original: 
@@ -282,7 +273,18 @@ class EventPredicateConverter {
   //            field_exists: "PlayExtension.store.click"
   std::unique_ptr<ProtoValue> EventMatcherToFieldExists(
       const ProtoValue& original) {
-    return MessageMatcherUniversalConverter(original, "field_exists");
+    absl::flat_hash_map<std::string, ProtoValue*> field_name_to_value_ptr = 
+        GetFieldNameToValuePtrMap(*static_cast<const MessageValue*>(&original));
+    std::unique_ptr<ProtoValue> field_exists = 
+        absl::make_unique<PrimitiveValue>("index_ui", 
+        original.GetIndentCount() + 1, 0);
+    CopyVal(field_exists.get(), original);
+    PrimitiveValue* field_exists_ptr = static_cast<PrimitiveValue*>(
+        field_exists.get());
+    PrimitiveValue* input_field_ptr = static_cast<PrimitiveValue*>(
+        field_name_to_value_ptr["input_field"]);
+    field_exists_ptr->SetVal(input_field_ptr->GetVal());
+    return field_exists;
   }
 
   // Original:
@@ -299,7 +301,13 @@ class EventPredicateConverter {
   //           }
   std::unique_ptr<ProtoValue> EventMatcherToFieldValue(
       const ProtoValue& original) {
-    return MessageMatcherUniversalConverter(original, "field_value");
+    std::unique_ptr<ProtoValue> field_value = 
+        absl::make_unique<MessageValue>("field_value", 
+        original.GetIndentCount() + 1, 0);
+    CopyVal(field_value.get(), original);
+    MessageMatcherConverter(original, 
+        static_cast<MessageValue*>(field_value.get()));
+    return field_value;
   }
 
   // Original:
@@ -350,7 +358,7 @@ class EventPredicateConverter {
     CopyVal(ui_element.get(), original);
 
     absl::flat_hash_map<std::string, ProtoValue*> field_name_to_value_ptr = 
-        GetFieldNameToPtrMap(*static_cast<const MessageValue*>(&original));
+        GetFieldNameToValuePtrMap(*static_cast<const MessageValue*>(&original));
 
     // Convert ui_element_type to type
     std::unique_ptr<ProtoValue> type = absl::make_unique<PrimitiveValue>(
