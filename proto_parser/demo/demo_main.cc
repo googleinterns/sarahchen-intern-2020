@@ -99,29 +99,29 @@ class EventPredicateConverter {
       absl::string_view path) {
     ProtoParser parser(ReadTextProtoFromStream(path));
     EventPredicate event_predicate_prototype;
+    std::unique_ptr<ProtoValue> event_predicate = 
+        parser.Create(event_predicate_prototype);
+    MessageValue* event_predicate_ptr = 
+        static_cast<MessageValue*>(event_predicate.get());  
+    // and_field is the master message that encloses everything.
     std::unique_ptr<ProtoValue> and_field = 
         absl::make_unique<MessageValue>("and", 0, 0);
     MessageValue* and_field_ptr = static_cast<MessageValue*>(and_field.get());
 
-    std::unique_ptr<ProtoValue> event_predicate = 
-        parser.Create(event_predicate_prototype);
-    MessageValue* event_predicate_ptr = 
-        static_cast<MessageValue*>(event_predicate.get());
-    const std::vector<std::unique_ptr<ProtoValue>>& fields = 
-      event_predicate_ptr->GetFields();
-
-    for (const std::unique_ptr<ProtoValue>& field : fields) {
-      if (field.get()->GetName() == "event_matcher") {
-        absl::flat_hash_map<std::string, ProtoValue*> name_to_ptr_map = 
-            GetFieldNameToPtrMap(*field.get());
-        if (name_to_ptr_map.find("int_comparator") == name_to_ptr_map.end()) {
-          and_field_ptr->AddField(EventMatcherToFieldExists(*field.get()));
+    for (const std::unique_ptr<ProtoValue>& field : 
+        event_predicate_ptr->GetFields()) {
+      if (field->GetName() == "event_matcher") {
+        absl::flat_hash_map<std::string, ProtoValue*> field_name_to_value_ptr = 
+            GetFieldNameToPtrMap(*static_cast<MessageValue*>(field.get()));
+        if (field_name_to_value_ptr.find("int_comparator") != 
+            field_name_to_value_ptr.end()) {
+          and_field_ptr->AddField(EventMatcherToFieldValue(*field));
         } else {
-          and_field_ptr->AddField(EventMatcherToFieldValue(*field.get()));
+          and_field_ptr->AddField(EventMatcherToFieldExists(*field));
         }
         
-      } else if (field.get()->GetName() == "ui_element_path_predicate") {
-        and_field_ptr->AddField(UiElementPathPredicateToUiElement(*field.get()));
+      } else if (field->GetName() == "ui_element_path_predicate") {
+        and_field_ptr->AddField(UiElementPathPredicateToUiElement(*field));
       }
     }
 
@@ -165,17 +165,13 @@ class EventPredicateConverter {
   // Gets a hash table that maps field names of a message value to their
   // corresponding protovalue pointer.
   absl::flat_hash_map<std::string, ProtoValue*> GetFieldNameToPtrMap(
-      const ProtoValue& original) {
-    const MessageValue* original_ptr = 
-        static_cast<const MessageValue*>(&original);
-    absl::flat_hash_map<std::string, ProtoValue*> name_to_ptr_map;
-    const std::vector<std::unique_ptr<ProtoValue>>& fields = 
-        original_ptr->GetFields();
-    for (const std::unique_ptr<ProtoValue>& field : fields) {
-      name_to_ptr_map[field.get()->GetName()] = field.get();
+      const MessageValue& original) {
+    absl::flat_hash_map<std::string, ProtoValue*> field_name_to_value_ptr;
+    for (const std::unique_ptr<ProtoValue>& field : original.GetFields()) {
+      field_name_to_value_ptr[field->GetName()] = field.get();
     }
 
-    return name_to_ptr_map;
+    return field_name_to_value_ptr;
   }
 
   // A universal converter for message matcher into either index_ui,
@@ -185,8 +181,8 @@ class EventPredicateConverter {
       const ProtoValue* index = nullptr) {
     std::unique_ptr<ProtoValue> constructed_field = nullptr;
     // Get the name of each field on the original proto.
-    absl::flat_hash_map<std::string, ProtoValue*> name_to_ptr_map = 
-        GetFieldNameToPtrMap(original);
+    absl::flat_hash_map<std::string, ProtoValue*> field_name_to_value_ptr = 
+        GetFieldNameToPtrMap(*static_cast<const MessageValue*>(&original));
 
     if (name == "index_ui" || name == "field_value" || name == "leaf_ui") {
       constructed_field = absl::make_unique<MessageValue>(name, 
@@ -203,11 +199,11 @@ class EventPredicateConverter {
       }
       std::unique_ptr<ProtoValue> path = absl::make_unique<PrimitiveValue>(
         "path", original.GetIndentCount() + 2, 1);
-      CopyVal(path.get(), *name_to_ptr_map["input_field"]);
+      CopyVal(path.get(), *field_name_to_value_ptr["input_field"]);
       std::unique_ptr<ProtoValue> equals_int = 
           absl::make_unique<PrimitiveValue>("equals_int", 
           original.GetIndentCount() + 2, 2);
-      CopyVal(equals_int.get(), *name_to_ptr_map["int_comparator"]);
+      CopyVal(equals_int.get(), *field_name_to_value_ptr["int_comparator"]);
       constructed_field_ptr->AddField(std::move(path));
       constructed_field_ptr->AddField(std::move(equals_int));
     } else {
@@ -216,7 +212,7 @@ class EventPredicateConverter {
       PrimitiveValue* constructed_field_ptr = static_cast<PrimitiveValue*>(
           constructed_field.get());
       PrimitiveValue* input_field_ptr = static_cast<PrimitiveValue*>(
-          name_to_ptr_map["input_field"]);
+          field_name_to_value_ptr["input_field"]);
       constructed_field_ptr->SetVal(input_field_ptr->GetVal());
     }
 
@@ -244,10 +240,10 @@ class EventPredicateConverter {
   //            }
   std::unique_ptr<ProtoValue> LeafUiPredicateToLeafUi(
       const ProtoValue& original) {
-    absl::flat_hash_map<std::string, ProtoValue*> name_to_ptr_map = 
-        GetFieldNameToPtrMap(original);
+    absl::flat_hash_map<std::string, ProtoValue*> field_name_to_value_ptr = 
+        GetFieldNameToPtrMap(*static_cast<const MessageValue*>(&original));
     return MessageMatcherUniversalConverter(
-        *name_to_ptr_map["ui_element_matcher"], "leaf_ui");
+        *field_name_to_value_ptr["ui_element_matcher"], "leaf_ui");
   }
 
   // Original: 
@@ -269,11 +265,11 @@ class EventPredicateConverter {
   //            }
   std::unique_ptr<ProtoValue> IndexUiPredicateToIndexUi(
       const ProtoValue& original) {
-    absl::flat_hash_map<std::string, ProtoValue*> name_to_ptr_map = 
-        GetFieldNameToPtrMap(original);
+    absl::flat_hash_map<std::string, ProtoValue*> field_name_to_value_ptr = 
+        GetFieldNameToPtrMap(*static_cast<const MessageValue*>(&original));
     return MessageMatcherUniversalConverter(
-        *name_to_ptr_map["ui_element_matcher"], "index_ui", 
-        name_to_ptr_map["index"]);
+        *field_name_to_value_ptr["ui_element_matcher"], "index_ui", 
+        field_name_to_value_ptr["index"]);
   }
 
   // Original: 
@@ -353,28 +349,30 @@ class EventPredicateConverter {
     MessageValue* ui_element_ptr = static_cast<MessageValue*>(ui_element.get());
     CopyVal(ui_element.get(), original);
 
-    absl::flat_hash_map<std::string, ProtoValue*> name_to_ptr_map = 
-        GetFieldNameToPtrMap(original);
+    absl::flat_hash_map<std::string, ProtoValue*> field_name_to_value_ptr = 
+        GetFieldNameToPtrMap(*static_cast<const MessageValue*>(&original));
 
     // Convert ui_element_type to type
     std::unique_ptr<ProtoValue> type = absl::make_unique<PrimitiveValue>(
-        "type", name_to_ptr_map["ui_element_type"]->GetIndentCount() + 1, 
-        0);
-    CopyVal(type.get(), *name_to_ptr_map["ui_element_type"]);
+        "type", 
+        field_name_to_value_ptr["ui_element_type"]->GetIndentCount() + 1, 0);
+    CopyVal(type.get(), *field_name_to_value_ptr["ui_element_type"]);
     ui_element_ptr->AddField(std::move(type));
 
     // Create nested predicate only if they exist.
-    if (name_to_ptr_map.size() > 1) {
+    if (field_name_to_value_ptr.size() > 1) {
       std::unique_ptr<ProtoValue> and_field = absl::make_unique<MessageValue>(
           "and", original.GetIndentCount() + 2, 1);
       MessageValue* and_field_ptr = static_cast<MessageValue*>(and_field.get());
-      if (name_to_ptr_map.find("leaf_ui_predicate") != name_to_ptr_map.end()) {
+      if (field_name_to_value_ptr.find("leaf_ui_predicate") != 
+          field_name_to_value_ptr.end()) {
         and_field_ptr->AddField(LeafUiPredicateToLeafUi(
-            *name_to_ptr_map["leaf_ui_predicate"]));
+            *field_name_to_value_ptr["leaf_ui_predicate"]));
       }
-      if (name_to_ptr_map.find("index_ui_matcher") != name_to_ptr_map.end()) {
+      if (field_name_to_value_ptr.find("index_ui_matcher") != 
+          field_name_to_value_ptr.end()) {
         and_field_ptr->AddField(IndexUiPredicateToIndexUi(
-            *name_to_ptr_map["index_ui_matcher"]));
+            *field_name_to_value_ptr["index_ui_matcher"]));
       }
       ui_element_ptr->AddField(std::move(and_field));
     }
@@ -390,6 +388,6 @@ int main() {
   std::unique_ptr<ProtoValue> output = 
       converter.ConvertEventPredicateFromFile(
       "demo/proto_texts/original_proto_text.textproto");
-  std::cout << output.get()->PrintToTextProto();
+  std::cout << output->PrintToTextProto();
   return 0;
 }
