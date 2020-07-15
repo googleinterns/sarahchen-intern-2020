@@ -63,7 +63,7 @@ bool_field: false # comment 6
 )pb";
 
 
-class ProtoValueTest : public ::testing::Test {
+class ProtoParserTest : public ::testing::Test {
  protected:
   
   virtual void SetUp() {
@@ -78,12 +78,12 @@ class ProtoValueTest : public ::testing::Test {
   ProtoParser parser_;
 };
 
-TEST_F(ProtoValueTest, PrintToTextProtoTest) {
+TEST_F(ProtoParserTest, PrintToTextProtoTest) {
   std::string printed_text_proto = message_val_->PrintToTextProto();
   ASSERT_EQ(printed_text_proto, text_proto);
 }
 
-TEST_F(ProtoValueTest, PrintModifiedTextProtoTest) {
+TEST_F(ProtoParserTest, PrintModifiedTextProtoTest) {
   const std::vector<std::unique_ptr<ProtoValue>>& fields = 
       message_val_->GetFields();
   MessageValue* field_nested_message = dynamic_cast<MessageValue*>(
@@ -108,7 +108,7 @@ TEST_F(ProtoValueTest, PrintModifiedTextProtoTest) {
   EXPECT_EQ(printed_text_proto, modified_text_proto);
 }
 
-TEST_F(ProtoValueTest, OuterProtoTest) {
+TEST_F(ProtoParserTest, OuterProtoTest) {
   const std::vector<std::unique_ptr<ProtoValue>>& fields = 
       message_val_->GetFields();
   EXPECT_EQ(message_val_->GetName(), "");
@@ -118,7 +118,7 @@ TEST_F(ProtoValueTest, OuterProtoTest) {
   EXPECT_EQ(fields.size(), 5);
 }
 
-TEST_F(ProtoValueTest, FirstFieldTest) {
+TEST_F(ProtoParserTest, FirstFieldTest) {
   // Field detail:
   //
   // # comment 1
@@ -142,7 +142,7 @@ TEST_F(ProtoValueTest, FirstFieldTest) {
   EXPECT_EQ(int32_field->GetVal(), val);
 }
 
-TEST_F(ProtoValueTest, SecondFieldTest) {
+TEST_F(ProtoParserTest, SecondFieldTest) {
   // Field detail (this is a repeated field):
   //
   // # comment 2
@@ -182,7 +182,7 @@ TEST_F(ProtoValueTest, SecondFieldTest) {
   EXPECT_EQ(int64_field->GetVal(), val);
 }
   
-TEST_F(ProtoValueTest, ThirdFieldTest) {
+TEST_F(ProtoParserTest, ThirdFieldTest) {
   // Field detail (this is a repeated field):
   //
   // field_nested_message {
@@ -221,7 +221,7 @@ TEST_F(ProtoValueTest, ThirdFieldTest) {
   EXPECT_EQ(int64_field->GetVal(), val);
 }
   
-TEST_F(ProtoValueTest, FourthFieldTest) {
+TEST_F(ProtoParserTest, FourthFieldTest) {
   // Field detail (this is a repeated field):
   //
   // bool_field: true
@@ -243,7 +243,7 @@ TEST_F(ProtoValueTest, FourthFieldTest) {
   EXPECT_EQ(bool_field->GetVal(), val);
 }
 
-TEST_F(ProtoValueTest, FifthFieldTest) {
+TEST_F(ProtoParserTest, FifthFieldTest) {
   // Field detail (this is a repeated field):
   //
   // bool_field: false # comment 6
