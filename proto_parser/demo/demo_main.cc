@@ -389,7 +389,7 @@ int main() {
   EventPredicateConverter converter;
   std::unique_ptr<ProtoValue> output = 
       converter.ConvertEventPredicateFromFile(
-      "demo/proto_texts/original_proto_text.txt");
+      "demo/proto_texts/original_proto_text.textproto");
   std::cout << output.get()->PrintToTextProto();
   return 0;
 }

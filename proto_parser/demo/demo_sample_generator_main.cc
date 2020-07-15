@@ -27,43 +27,16 @@ using ::wireless_android_play_analytics::PrimitiveValue;
 using ::wireless_android_play_analytics::EventPredicate;
 using ::wireless_android_play_analytics::ProtoParser;
 
-std::string Generate(MessageValue* Message);
+namespace {
 
-int main() {
-  std::ifstream ifs;
-  std::string text_proto;
-  EventPredicate event_predicate;
-
-  ifs.open("demo/proto_texts/original_proto_text.textproto");
-
-  assert(ifs.good());
-
-  while (ifs.good()) {
-    std::string tmp;
-    std::getline(ifs, tmp);
-    text_proto += tmp + "\n";
-  }
-
-  ProtoParser parser(text_proto);
-
-  for(int i = 0; i < 10; ++i) {
-    std::unique_ptr<ProtoValue> message = parser.Create(event_predicate);
-    std::ofstream outs;
-    outs.open("demo/proto_texts/proto_text(" + std::to_string(i) +").textproto");
-    outs << Generate(static_cast<MessageValue*>(message.get()));
-  }
-
-  return 0;
-}
-
-std::string Generate(MessageValue* message) {
+std::string GenerateRandomSamples(MessageValue* message) {
   const std::vector<ProtoValue*>& message_fields = message->GetFieldsMutable();
   absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
       const google::protobuf::EnumValueDescriptor*, std::string> val;
 
   // Generate random int_comparator.
   MessageValue* event_matcher = static_cast<MessageValue*>(message_fields[0]);
-  if (rand() % 2) {
+  if (rand() % 2 == 1) {
     std::unique_ptr<ProtoValue> int_comparator = 
         absl::make_unique<PrimitiveValue>("int_comparator", 1, 8);
     
@@ -71,12 +44,12 @@ std::string Generate(MessageValue* message) {
         static_cast<PrimitiveValue*>(int_comparator.get());
 
     // Generate comment
-    if (rand() % 2) {
+    if (rand() % 2 == 1) {
       int_comparator_ptr->SetCommentBehindField("# randomly generated comment");
     }
     std::vector<std::string> comments_above_field;
     int count = 0;
-    while(rand() % 2) {
+    while(rand() % 2 == 1) {
       comments_above_field.push_back("# randomly generated comment " + 
           std::to_string(count++));
     }
@@ -92,12 +65,58 @@ std::string Generate(MessageValue* message) {
   // Randomly erase leaf_ui_predicates.
   MessageValue* ui_element_path_predicate = static_cast<MessageValue*>(
       message_fields[2]);
-  if (rand() % 2) {
+  if (rand() % 2 == 1) {
     ui_element_path_predicate->DeleteField(2);
   }
-  if (rand() % 2) {
+  if (rand() % 2 == 1) {
     ui_element_path_predicate->DeleteField(1);
   }
   
   return message->PrintToTextProto();
+}
+
+// Reads text proto into a string from a file.
+std::string ReadTextProtoFromStream(absl::string_view path) {
+  std::ifstream ifs;
+  std::string text_proto;
+
+  ifs.open(std::string(path));
+
+  assert(ifs.good());
+
+  while (ifs.good()) {
+    std::string tmp;
+    std::getline(ifs, tmp);
+    text_proto += tmp + "\n";
+  }
+
+  return text_proto;
+}
+
+void WriteToTextProto(absl::string_view path, absl::string_view text_proto) {
+  std::ofstream outs;
+  outs.open(std::string(path));
+  outs << text_proto;
+  std::cout << text_proto << std::endl;
+}
+
+} // namespace
+
+// Given an original proto_text, this generates multiple copies of well-formed
+// protos with the same proto definition but different value and commments.
+int main() {
+  EventPredicate event_predicate;
+  ProtoParser parser(ReadTextProtoFromStream(
+      "demo/proto_texts/original_proto_text.textproto"));
+
+  for(int i = 0; i < 10; ++i) {
+    std::unique_ptr<ProtoValue> message = parser.Create(event_predicate);
+    std::string path = "demo/proto_texts/proto_text(" + std::to_string(i) +
+        ").textproto";
+    std::string text_proto = 
+        GenerateRandomSamples(static_cast<MessageValue*>(message.get()));
+    WriteToTextProto(path, text_proto);
+  }
+
+  return 0;
 }
