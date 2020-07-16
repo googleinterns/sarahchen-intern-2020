@@ -28,18 +28,18 @@ class MessageValueTest : public ::testing::Test {
     field_0_ = absl::make_unique<MessageValue>("temp", 0, 0);
     field_1_ = absl::make_unique<MessageValue>("temp1", 0, 1);
     field_2_ = absl::make_unique<MessageValue>("temp2", 0, 2);
-    ProtoValue* field_0_ptr_ = field_0_.get();
-    ProtoValue* field_1_ptr_ = field_1_.get();
-    ProtoValue* field_2_ptr_ = field_2_.get();
+    field_0_copy = absl::make_unique<MessageValue>("temp", 0, 0);
+    field_1_copy = absl::make_unique<MessageValue>("temp1", 0, 1);
+    field_2_copy = absl::make_unique<MessageValue>("temp2", 0, 2);
   }
 
   MessageValue message_;
   std::unique_ptr<ProtoValue> field_0_;
   std::unique_ptr<ProtoValue> field_1_;
   std::unique_ptr<ProtoValue> field_2_;
-  ProtoValue* field_0_ptr_;
-  ProtoValue* field_1_ptr_;
-  ProtoValue* field_2_ptr_;
+  std::unique_ptr<ProtoValue> field_0_copy;
+  std::unique_ptr<ProtoValue> field_1_copy;
+  std::unique_ptr<ProtoValue> field_2_copy;
 };
 
 TEST_F(MessageValueTest, ProtoValueGetterTests) {
@@ -50,21 +50,63 @@ TEST_F(MessageValueTest, ProtoValueGetterTests) {
   EXPECT_EQ(message_.GetIndentCount(), 0);
 }
 
+MATCHER_P(ProtoValuePtrIsEqual, element, "") {
+  return arg.GetName() == element->GetName() && 
+      arg.GetIndentCount() == element->GetIndentCount() &&
+      arg.GetLineNumber() == element->GetLineNumber();
+}
+
 TEST_F(MessageValueTest, AddFieldsTest) {
   message_.AddField(std::move(field_2_));
   message_.AddField(std::move(field_0_)); 
   message_.AddField(std::move(field_1_)); 
-  EXPECT_THAT(message_.GetFieldsMutable(), 
-      testing::ElementsAre(testing::Pointee(*field_2_), testing::Pointee(*field_0_), 
-      testing::Pointee(*field_1_)));
-}
-
-Matcher<const ProtoValue&> Equals(const ProtoValue& expected) {
-  return AllOf
+  EXPECT_THAT(message_.GetFieldsMutable(), testing::ElementsAre(
+    testing::Pointee(ProtoValuePtrIsEqual(field_2_copy.get())), 
+    testing::Pointee(ProtoValuePtrIsEqual(field_0_copy.get())), 
+    testing::Pointee(ProtoValuePtrIsEqual(field_1_copy.get()))));
+  EXPECT_THAT(message_.GetFields(), testing::ElementsAre(
+    testing::Pointee(ProtoValuePtrIsEqual(field_2_copy.get())), 
+    testing::Pointee(ProtoValuePtrIsEqual(field_0_copy.get())), 
+    testing::Pointee(ProtoValuePtrIsEqual(field_1_copy.get()))));
 }
 
 TEST_F(MessageValueTest, SortFieldsTest) {
+  message_.AddField(std::move(field_2_));
+  message_.AddField(std::move(field_0_)); 
+  message_.AddField(std::move(field_1_)); 
   message_.SortFields();
+  EXPECT_THAT(message_.GetFieldsMutable(), testing::ElementsAre(
+    testing::Pointee(ProtoValuePtrIsEqual(field_0_copy.get())), 
+    testing::Pointee(ProtoValuePtrIsEqual(field_1_copy.get())), 
+    testing::Pointee(ProtoValuePtrIsEqual(field_2_copy.get()))));
+  EXPECT_THAT(message_.GetFields(), testing::ElementsAre(
+    testing::Pointee(ProtoValuePtrIsEqual(field_0_copy.get())), 
+    testing::Pointee(ProtoValuePtrIsEqual(field_1_copy.get())), 
+    testing::Pointee(ProtoValuePtrIsEqual(field_2_copy.get()))));
+}
+
+TEST_F(MessageValueTest, DeleteFieldTest) {
+  message_.AddField(std::move(field_2_));
+  message_.AddField(std::move(field_0_)); 
+  message_.AddField(std::move(field_1_)); 
+  EXPECT_TRUE(message_.DeleteField(0));
+  EXPECT_THAT(message_.GetFieldsMutable(), testing::ElementsAre( 
+    testing::Pointee(ProtoValuePtrIsEqual(field_0_copy.get())), 
+    testing::Pointee(ProtoValuePtrIsEqual(field_1_copy.get()))));
+  EXPECT_THAT(message_.GetFields(), testing::ElementsAre( 
+    testing::Pointee(ProtoValuePtrIsEqual(field_0_copy.get())), 
+    testing::Pointee(ProtoValuePtrIsEqual(field_1_copy.get()))));
+  EXPECT_FALSE(message_.DeleteField(2));
+  EXPECT_THAT(message_.GetFieldsMutable(), testing::ElementsAre( 
+    testing::Pointee(ProtoValuePtrIsEqual(field_0_copy.get())), 
+    testing::Pointee(ProtoValuePtrIsEqual(field_1_copy.get()))));
+  EXPECT_THAT(message_.GetFields(), testing::ElementsAre( 
+    testing::Pointee(ProtoValuePtrIsEqual(field_0_copy.get())), 
+    testing::Pointee(ProtoValuePtrIsEqual(field_1_copy.get()))));
+  EXPECT_TRUE(message_.DeleteField(0));
+  EXPECT_TRUE(message_.DeleteField(0));
+  EXPECT_EQ(message_.GetFields().size(), 0);
+  EXPECT_EQ(message_.GetFieldsMutable().size(), 0);
 }
 
 } // namespace wireless_android_play_analytics
