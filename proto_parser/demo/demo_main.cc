@@ -216,8 +216,8 @@ class EventPredicateConverter {
     absl::flat_hash_map<std::string, ProtoValue*> field_name_to_value_ptr = 
         GetFieldNameToValuePtrMap(*static_cast<const MessageValue*>(&original));
     std::unique_ptr<ProtoValue> leaf_ui = 
-        absl::make_unique<MessageValue>("leaf_ui", 
-        original.GetIndentCount() + 2, 0);
+        absl::make_unique<MessageValue>(/*field_name=*/"leaf_ui", 
+        original.GetIndentCount() + 2, /*line_number=*/0);
     CopyVal(original, leaf_ui.get());
     MessageMatcherConverter(*field_name_to_value_ptr["ui_element_matcher"],
         static_cast<MessageValue*>(leaf_ui.get()));
@@ -276,7 +276,7 @@ class EventPredicateConverter {
     absl::flat_hash_map<std::string, ProtoValue*> field_name_to_value_ptr = 
         GetFieldNameToValuePtrMap(*static_cast<const MessageValue*>(&original));
     std::unique_ptr<ProtoValue> field_exists = 
-        absl::make_unique<PrimitiveValue>("index_ui", 
+        absl::make_unique<PrimitiveValue>("field_exists", 
         original.GetIndentCount() + 1, 0);
     CopyVal(original, field_exists.get());
     PrimitiveValue* field_exists_ptr = static_cast<PrimitiveValue*>(
@@ -413,7 +413,9 @@ int main() {
   std::unique_ptr<ProtoValue> output = 
       converter.ConvertEventPredicateFromFile(
       "demo/proto_texts/original_proto_text.textproto");
-  std::cout << output->PrintToTextProto();
+  std::ofstream outs;
+  outs.open("demo/proto_texts/updated_proto_text.textproto");
+  outs << output->PrintToTextProto();
   for(int i = 0; i < 10; ++i) {
     UpdateSampleHelper(i);
   }
