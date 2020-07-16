@@ -23,7 +23,8 @@ namespace wireless_android_play_analytics{
 class PrimitiveValueTest : public ::testing::Test {
  protected:
   PrimitiveValueTest()
-    : primitive_(PrimitiveValue("test", 0, 0)) { }
+    : primitive_(PrimitiveValue(/*field_name=*/"test", /*indent_count=*/0, 
+        /*line_number=*/0)) { }
 
   virtual void SetUp() { }
 
