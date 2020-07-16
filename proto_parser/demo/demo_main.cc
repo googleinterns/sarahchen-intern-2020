@@ -105,7 +105,7 @@ class EventPredicateConverter {
         static_cast<MessageValue*>(event_predicate.get());  
     // We are converting event_matcher/ui_element_path_predicate to and here
     // event_matcher {} => and {}
-    // ui_element_path_predicate{} => and{}
+    // ui_element_path_predicate {} => and {}
     std::unique_ptr<ProtoValue> and_field = 
         absl::make_unique<MessageValue>("and", 0, 0);
     MessageValue* and_field_ptr = static_cast<MessageValue*>(and_field.get());
@@ -152,7 +152,7 @@ class EventPredicateConverter {
 
   // Copies the comments of an original proto value to a copy, if they're both
   // primitive types also copy the value.
-  void CopyVal(ProtoValue* copy, const ProtoValue& original) {
+  void CopyVal(const ProtoValue& original, ProtoValue* copy) {
     copy->SetCommentBehindField(original.GetCommentBehindField());
     copy->SetCommentAboveField(original.GetCommentAboveField());
     PrimitiveValue* copy_val = dynamic_cast<PrimitiveValue*>(copy);
@@ -186,11 +186,11 @@ class EventPredicateConverter {
 
     std::unique_ptr<ProtoValue> path = absl::make_unique<PrimitiveValue>(
       "path", original.GetIndentCount() + 2, 1);
-    CopyVal(path.get(), *field_name_to_value_ptr["input_field"]);
+    CopyVal(*field_name_to_value_ptr["input_field"], path.get());
     std::unique_ptr<ProtoValue> equals_int = 
         absl::make_unique<PrimitiveValue>("equals_int", 
         original.GetIndentCount() + 2, 2);
-    CopyVal(equals_int.get(), *field_name_to_value_ptr["int_comparator"]);
+    CopyVal(*field_name_to_value_ptr["int_comparator"], equals_int.get());
     constructed_field->AddField(std::move(path));
     constructed_field->AddField(std::move(equals_int));
   }
@@ -218,7 +218,7 @@ class EventPredicateConverter {
     std::unique_ptr<ProtoValue> leaf_ui = 
         absl::make_unique<MessageValue>("leaf_ui", 
         original.GetIndentCount() + 2, 0);
-    CopyVal(leaf_ui.get(), original);
+    CopyVal(original, leaf_ui.get());
     MessageMatcherConverter(*field_name_to_value_ptr["ui_element_matcher"],
         static_cast<MessageValue*>(leaf_ui.get()));
     return leaf_ui;
@@ -245,22 +245,22 @@ class EventPredicateConverter {
       const ProtoValue& original) {
     absl::flat_hash_map<std::string, ProtoValue*> field_name_to_value_ptr = 
         GetFieldNameToValuePtrMap(*static_cast<const MessageValue*>(&original));
-    std::unique_ptr<ProtoValue> leaf_ui = 
+    std::unique_ptr<ProtoValue> index_ui = 
         absl::make_unique<MessageValue>("index_ui", 
         original.GetIndentCount() + 2, 0);
-    CopyVal(leaf_ui.get(), original);
-    MessageValue* leaf_ui_ptr = static_cast<MessageValue*>(leaf_ui.get());
+    CopyVal(original, index_ui.get());
+    MessageValue* index_ui_ptr = static_cast<MessageValue*>(index_ui.get());
 
     // Add the index before adding the rest.
     std::unique_ptr<ProtoValue> index_field = 
         absl::make_unique<PrimitiveValue>("index", 
         original.GetIndentCount() + 3, 0);
-    CopyVal(index_field.get(), *field_name_to_value_ptr["index"]);
-    leaf_ui_ptr->AddField(std::move(index_field));
+    CopyVal(*field_name_to_value_ptr["index"], index_field.get());
+    index_ui_ptr->AddField(std::move(index_field));
 
     MessageMatcherConverter(*field_name_to_value_ptr["ui_element_matcher"],
-        leaf_ui_ptr);
-    return leaf_ui;
+        index_ui_ptr);
+    return index_ui;
   }
 
   // Original: 
@@ -278,7 +278,7 @@ class EventPredicateConverter {
     std::unique_ptr<ProtoValue> field_exists = 
         absl::make_unique<PrimitiveValue>("index_ui", 
         original.GetIndentCount() + 1, 0);
-    CopyVal(field_exists.get(), original);
+    CopyVal(original, field_exists.get());
     PrimitiveValue* field_exists_ptr = static_cast<PrimitiveValue*>(
         field_exists.get());
     PrimitiveValue* input_field_ptr = static_cast<PrimitiveValue*>(
@@ -301,10 +301,12 @@ class EventPredicateConverter {
   //           }
   std::unique_ptr<ProtoValue> EventMatcherToFieldValue(
       const ProtoValue& original) {
+    // Need to increase indent count by one to account for the fact that this
+    // primitive is wrapped in the and {} message.
     std::unique_ptr<ProtoValue> field_value = 
-        absl::make_unique<MessageValue>("field_value", 
-        original.GetIndentCount() + 1, 0);
-    CopyVal(field_value.get(), original);
+        absl::make_unique<MessageValue>(/*field_name=*/"field_value", 
+        /*indent_count=*/original.GetIndentCount() + 1, /*field_line=*/0);
+    CopyVal(original, field_value.get());
     MessageMatcherConverter(original, 
         static_cast<MessageValue*>(field_value.get()));
     return field_value;
@@ -355,7 +357,7 @@ class EventPredicateConverter {
     std::unique_ptr<ProtoValue> ui_element = absl::make_unique<MessageValue>(
         "ui_element", original.GetIndentCount() + 1, 0);
     MessageValue* ui_element_ptr = static_cast<MessageValue*>(ui_element.get());
-    CopyVal(ui_element.get(), original);
+    CopyVal(original, ui_element.get());
 
     absl::flat_hash_map<std::string, ProtoValue*> field_name_to_value_ptr = 
         GetFieldNameToValuePtrMap(*static_cast<const MessageValue*>(&original));
@@ -364,7 +366,7 @@ class EventPredicateConverter {
     std::unique_ptr<ProtoValue> type = absl::make_unique<PrimitiveValue>(
         "type", 
         field_name_to_value_ptr["ui_element_type"]->GetIndentCount() + 1, 0);
-    CopyVal(type.get(), *field_name_to_value_ptr["ui_element_type"]);
+    CopyVal(*field_name_to_value_ptr["ui_element_type"], type.get());
     ui_element_ptr->AddField(std::move(type));
 
     // Create nested predicate only if they exist.
@@ -389,6 +391,21 @@ class EventPredicateConverter {
   }
 };
 
+void UpdateSampleHelper(int idx) {
+  EventPredicateConverter converter;
+
+  std::string file_path = absl::StrCat("demo/proto_texts/proto_text(", 
+      std::to_string(idx), ").textproto");
+  std::unique_ptr<ProtoValue> updated_sample = 
+      converter.ConvertEventPredicateFromFile(file_path);
+  std::string output_file_path = 
+      absl::StrCat("demo/proto_texts/proto_text_updated(", std::to_string(idx), 
+      ").textproto");
+  std::ofstream outs;
+  outs.open(output_file_path);
+  outs << updated_sample->PrintToTextProto();
+}
+
 } // namespace
 
 int main() {
@@ -397,5 +414,8 @@ int main() {
       converter.ConvertEventPredicateFromFile(
       "demo/proto_texts/original_proto_text.textproto");
   std::cout << output->PrintToTextProto();
+  for(int i = 0; i < 10; ++i) {
+    UpdateSampleHelper(i);
+  }
   return 0;
 }

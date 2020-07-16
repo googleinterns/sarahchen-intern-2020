@@ -1,0 +1,22 @@
+# comment
+# to
+# save
+
+# Condition 1
+event_matcher {
+  input_field: "PlayExtension.store.click"
+  # randomly generated comment 0
+  # randomly generated comment 1
+  # randomly generated comment 2
+  # randomly generated comment 3
+  int_comparator: 492
+}
+# Condition 2
+event_matcher {
+  input_field: "PlayExtension.log_source"
+  int_comparator: 65 # WEB_STORE
+}
+# Condition 3
+ui_element_path_predicate {
+  ui_element_type: STORE_UI_ELEMENT
+}
