@@ -8,7 +8,7 @@ import { catchError, retry } from 'rxjs/operators';
 export class RequestHandler {
   url: string
   constructor(private http: HttpClient) { 
-    this.url = "http://localhost:8000/"
+    this.url = "http://localhost:4200/"
   }
 
   getDashboard(system: string) {
@@ -36,9 +36,9 @@ export class DashboardComponent implements OnInit {
   }
 
   onClick(system: string) {
-    this.requestHandler.getDashboard(system)
-      .subscribe((data: string) => this.chipper_dashboard = data);
-    console.log(this.chipper_dashboard);
+    this.requestHandler.getDashboard(system).toPromise()
+      .then((data) => {this.chipper_dashboard = data["message"]})
+      .then(() => {console.log(this.chipper_dashboard)});
   }
 
 }
