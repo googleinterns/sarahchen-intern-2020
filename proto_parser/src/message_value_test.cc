@@ -55,7 +55,12 @@ TEST_F(MessageValueTest, AddFieldsTest) {
   message_.AddField(std::move(field_0_)); 
   message_.AddField(std::move(field_1_)); 
   EXPECT_THAT(message_.GetFieldsMutable(), 
-      testing::ElementsAreArray({field_2_ptr_, field_0_ptr_, field_1_ptr_}));
+      testing::ElementsAre(testing::Pointee(*field_2_), testing::Pointee(*field_0_), 
+      testing::Pointee(*field_1_)));
+}
+
+Matcher<const ProtoValue&> Equals(const ProtoValue& expected) {
+  return AllOf
 }
 
 TEST_F(MessageValueTest, SortFieldsTest) {
