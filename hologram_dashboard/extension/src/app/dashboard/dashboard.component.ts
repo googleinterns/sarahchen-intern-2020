@@ -20,14 +20,14 @@ export class RequestHandler {
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css']
+  styleUrls: ['./dashboard.component.css'],
+  providers: [ RequestHandler ]
 })
 export class DashboardComponent implements OnInit {
   chipper_dashboard: string;
   chipper_gdpr_dashboard: string;
-  request_handler: RequestHandler;
 
-  constructor() { 
+  constructor(private requestHandler: RequestHandler) { 
     this.chipper_dashboard = "";
     this.chipper_gdpr_dashboard = "";
   }
@@ -36,7 +36,7 @@ export class DashboardComponent implements OnInit {
   }
 
   onClick(system: string) {
-    this.request_handler.getDashboard(system)
+    this.requestHandler.getDashboard(system)
       .subscribe((data: string) => this.chipper_dashboard = data);
     console.log(this.chipper_dashboard);
   }
