@@ -19,90 +19,97 @@
 #include "proto/event_predicate.pb.h"
 
 namespace wireless_android_play_analytics{
- 
-class PrimitiveValueTest : public ::testing::Test {
- protected:
-  PrimitiveValueTest()
-    : primitive_(PrimitiveValue(/*field_name=*/"test", /*indent_count=*/0, 
-        /*line_number=*/0)) { }
 
-  virtual void SetUp() { }
-
-  PrimitiveValue primitive_;
-};
-
-TEST_F(PrimitiveValueTest, ProtoValueGetterTests) {
-  EXPECT_EQ(primitive_.GetName(), "test");
-  EXPECT_EQ(primitive_.GetCommentAboveField().size(), 0);
-  EXPECT_EQ(primitive_.GetCommentBehindField(), "");
-  EXPECT_EQ(primitive_.GetLineNumber(), 0);
-  EXPECT_EQ(primitive_.GetIndentCount(), 0);
+TEST(PrimitiveValueTest, ProtoValueGetterTests) {
+  PrimitiveValue primitive(/*field_name=*/"test", /*indent_count=*/0, 
+      /*line_number=*/0);
+  EXPECT_EQ(primitive.GetName(), "test");
+  EXPECT_EQ(primitive.GetCommentAboveField().size(), 0);
+  EXPECT_EQ(primitive.GetCommentBehindField(), "");
+  EXPECT_EQ(primitive.GetLineNumber(), 0);
+  EXPECT_EQ(primitive.GetIndentCount(), 0);
 }
 
-TEST_F(PrimitiveValueTest, DoubleValTest) {
+TEST(PrimitiveValueTest, DoubleValTest) {
+  PrimitiveValue primitive(/*field_name=*/"test", /*indent_count=*/0, 
+      /*line_number=*/0);
   double val_in = -3.1415;
   absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
       const google::protobuf::EnumValueDescriptor*, std::string> val = val_in;
-  primitive_.SetVal(val);
-  EXPECT_EQ(primitive_.GetVal(), val);
-  EXPECT_EQ(primitive_.PrintToTextProto(), "test: -3.141500\n");
+  primitive.SetVal(val);
+  EXPECT_EQ(primitive.GetVal(), val);
+  EXPECT_EQ(primitive.PrintToTextProto(), "test: -3.141500\n");
 }
 
-TEST_F(PrimitiveValueTest, FloatValTest) {
+TEST(PrimitiveValueTest, FloatValTest) {
+  PrimitiveValue primitive(/*field_name=*/"test", /*indent_count=*/0, 
+      /*line_number=*/0);
   float val_in = 3.14;
   absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
       const google::protobuf::EnumValueDescriptor*, std::string> val = val_in;
-  primitive_.SetVal(val);
-  EXPECT_EQ(primitive_.GetVal(), val);
-  EXPECT_EQ(primitive_.PrintToTextProto(), "test: 3.140000\n");
+  primitive.SetVal(val);
+  EXPECT_EQ(primitive.GetVal(), val);
+  EXPECT_EQ(primitive.PrintToTextProto(), "test: 3.140000\n");
 }
 
-TEST_F(PrimitiveValueTest, IntValTest) {
+TEST(PrimitiveValueTest, IntValTest) {
+  PrimitiveValue primitive(/*field_name=*/"test", /*indent_count=*/0, 
+      /*line_number=*/0);
   int val_in = -2147483648;
   absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
       const google::protobuf::EnumValueDescriptor*, std::string> val = val_in;
-  primitive_.SetVal(val);
-  EXPECT_EQ(primitive_.GetVal(), val);
-  EXPECT_EQ(primitive_.PrintToTextProto(), "test: -2147483648\n");
+  primitive.SetVal(val);
+  EXPECT_EQ(primitive.GetVal(), val);
+  EXPECT_EQ(primitive.PrintToTextProto(), "test: -2147483648\n");
 }
 
-TEST_F(PrimitiveValueTest, UnsignedIntTest) {
+TEST(PrimitiveValueTest, UnsignedIntTest) {
+  PrimitiveValue primitive(/*field_name=*/"test", /*indent_count=*/0, 
+      /*line_number=*/0);
   unsigned int val_in = 4294967295;
   absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
       const google::protobuf::EnumValueDescriptor*, std::string> val = val_in;
-  primitive_.SetVal(val);
-  EXPECT_EQ(primitive_.GetVal(), val);
-  EXPECT_EQ(primitive_.PrintToTextProto(), "test: 4294967295\n");
+  primitive.SetVal(val);
+  EXPECT_EQ(primitive.GetVal(), val);
+  EXPECT_EQ(primitive.PrintToTextProto(), "test: 4294967295\n");
 }
 
-TEST_F(PrimitiveValueTest, Int64Test) {
+TEST(PrimitiveValueTest, Int64Test) {
+  PrimitiveValue primitive(/*field_name=*/"test", /*indent_count=*/0, 
+      /*line_number=*/0);
   int64_t val_in = -9223372036854775807;
   absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
       const google::protobuf::EnumValueDescriptor*, std::string> val = val_in;
-  primitive_.SetVal(val);
-  EXPECT_EQ(primitive_.GetVal(), val);
-  EXPECT_EQ(primitive_.PrintToTextProto(), "test: -9223372036854775807\n");
+  primitive.SetVal(val);
+  EXPECT_EQ(primitive.GetVal(), val);
+  EXPECT_EQ(primitive.PrintToTextProto(), "test: -9223372036854775807\n");
 }
 
-TEST_F(PrimitiveValueTest, UnsignedInt64Test) {
+TEST(PrimitiveValueTest, UnsignedInt64Test) {
+  PrimitiveValue primitive(/*field_name=*/"test", /*indent_count=*/0, 
+      /*line_number=*/0);
   uint64_t val_in = 18446744073709551615;
   absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
       const google::protobuf::EnumValueDescriptor*, std::string> val = val_in;
-  primitive_.SetVal(val);
-  EXPECT_EQ(primitive_.GetVal(), val);
-  EXPECT_EQ(primitive_.PrintToTextProto(), "test: 18446744073709551615\n");
+  primitive.SetVal(val);
+  EXPECT_EQ(primitive.GetVal(), val);
+  EXPECT_EQ(primitive.PrintToTextProto(), "test: 18446744073709551615\n");
 }
 
-TEST_F(PrimitiveValueTest, BoolTest) {
+TEST(PrimitiveValueTest, BoolTest) {
+  PrimitiveValue primitive(/*field_name=*/"test", /*indent_count=*/0, 
+      /*line_number=*/0);
   bool val_in = true;
   absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
       const google::protobuf::EnumValueDescriptor*, std::string> val = val_in;
-  primitive_.SetVal(val);
-  EXPECT_EQ(primitive_.GetVal(), val);
-  EXPECT_EQ(primitive_.PrintToTextProto(), "test: true\n");
+  primitive.SetVal(val);
+  EXPECT_EQ(primitive.GetVal(), val);
+  EXPECT_EQ(primitive.PrintToTextProto(), "test: true\n");
 }
 
-TEST_F(PrimitiveValueTest, EnumTest) {
+TEST(PrimitiveValueTest, EnumTest) {
+  PrimitiveValue primitive(/*field_name=*/"test", /*indent_count=*/0, 
+      /*line_number=*/0);
   EventPredicate event_predicate_prototype;
   const google::protobuf::EnumDescriptor* enum_descriptor = 
       event_predicate_prototype.UiElementType_descriptor();
@@ -110,18 +117,20 @@ TEST_F(PrimitiveValueTest, EnumTest) {
       enum_descriptor->FindValueByName("STORE_UI_ELEMENT");
   absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
       const google::protobuf::EnumValueDescriptor*, std::string> val = val_in;
-  primitive_.SetVal(val);
-  EXPECT_EQ(primitive_.GetVal(), val);
-  EXPECT_EQ(primitive_.PrintToTextProto(), "test: STORE_UI_ELEMENT\n");
+  primitive.SetVal(val);
+  EXPECT_EQ(primitive.GetVal(), val);
+  EXPECT_EQ(primitive.PrintToTextProto(), "test: STORE_UI_ELEMENT\n");
 }
 
-TEST_F(PrimitiveValueTest, StringTest) {
+TEST(PrimitiveValueTest, StringTest) {
+  PrimitiveValue primitive(/*field_name=*/"test", /*indent_count=*/0, 
+      /*line_number=*/0);
   std::string val_in = "# Hello World!";
   absl::variant<double, float, int, unsigned int, int64_t, uint64_t, bool, 
       const google::protobuf::EnumValueDescriptor*, std::string> val = val_in;
-  primitive_.SetVal(val);
-  EXPECT_EQ(primitive_.GetVal(), val);
-  EXPECT_EQ(primitive_.PrintToTextProto(), "test: \"# Hello World!\"\n");
+  primitive.SetVal(val);
+  EXPECT_EQ(primitive.GetVal(), val);
+  EXPECT_EQ(primitive.PrintToTextProto(), "test: \"# Hello World!\"\n");
 }
 
 } // namespace wireless_android_play_analytics
