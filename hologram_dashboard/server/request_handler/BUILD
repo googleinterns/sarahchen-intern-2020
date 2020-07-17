@@ -8,6 +8,7 @@ cc_library(
     hdrs = ["request_handler.h"],
     deps = [
         "@pistache//:pistache_lib",
+        "@github_nlohmann_json//:json"
     ],
 )
 

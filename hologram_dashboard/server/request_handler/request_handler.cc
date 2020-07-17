@@ -38,34 +38,30 @@ void RequestHandler::GetDashboard(const Pistache::Rest::Request& request,
         "5/15/2020", "5/14/2020", "5/13/2020"};
     std::string system_in = request.param(":system").as<std::string>();
     std::string status = "111010111110001011100100111000100110001010000010100111010";
+    
+    nlohmann::json message;
+
+
     auto stream = response.stream(Pistache::Http::Code::Ok);
-    const char* system = system_in.c_str();
-    // track the online or offline bits
-    int i = 0;
-
-    // Since the html file may be large, stream the data as we write it for
-    // more efficiency
-    stream << "<table id=\"" << system << "%TEXT\">\n";
-    stream << "\t<br/>\n\t<p>" << system << "</p>\n";
-
-    for(const std::string &data : dataSources) {
-        stream << "\t<tr>\n";
-        stream << "\t\t<td>" << data.c_str() << "&nbsp&nbsp</td>\n";
-        for(const std::string& date : dates) {
-            stream << "\t\t<td class=";
-            if (status[i++] == '1') {
-                stream << "\"online\"";
+    if (system_in == "Chipper") {
+        int status_idx = 0;
+        for (const std::string& data : dataSources) {
+            message[data] = nlohmann::json::array();
+            for (const std::string& date : dates) {
+                message[data].push_back({date, status[status_idx++] == '1'});
             }
-            else {
-                stream << "\"offline\"";
-            }
-            stream << " title=\"" << date.c_str() << "\" id=\"" << data.c_str() 
-                << "%" << date.c_str() << "%" << system << "\"></td>\n";
         }
-        stream << "\t</tr>\n\n";
+    } else {
+        int status_idx = status.size() - 1;
+        for (const std::string& data : dataSources) {
+            message[data] = nlohmann::json::array();
+            for (const std::string& date : dates) {
+                message[data].push_back({date, status[status_idx--] == '1'});
+            }
+        }
     }
-    stream << "</table>\n";
-    stream.ends();
+
+    response.send(Pistache::Http::Code::Ok, message.dump());
 }
 
 void RequestHandler::PopulateBackfillCommand

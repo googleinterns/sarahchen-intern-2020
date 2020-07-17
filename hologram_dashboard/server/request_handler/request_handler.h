@@ -18,6 +18,8 @@
 #include <pistache/router.h>
 #include <pistache/endpoint.h>
 
+#include "nlohmann/json.hpp"
+
 namespace wireless_android_play_analytics {
 
 class RequestHandler {
