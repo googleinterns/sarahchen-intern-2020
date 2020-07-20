@@ -45,23 +45,23 @@ TEST(MessageValueTest, AddFieldsTest) {
       absl::make_unique<MessageValue>("temp1", 0, 1);
   std::unique_ptr<ProtoValue> field_2 = 
       absl::make_unique<MessageValue>("temp2", 0, 2);
-  std::unique_ptr<ProtoValue> field_0_copy = 
+  std::unique_ptr<ProtoValue> field_0_expect = 
       absl::make_unique<MessageValue>("temp", 0, 0);
-  std::unique_ptr<ProtoValue> field_1_copy = 
+  std::unique_ptr<ProtoValue> field_1_expect = 
       absl::make_unique<MessageValue>("temp1", 0, 1);
-  std::unique_ptr<ProtoValue> field_2_copy = 
+  std::unique_ptr<ProtoValue> field_2_expect = 
       absl::make_unique<MessageValue>("temp2", 0, 2);
   message.AddField(std::move(field_2));
   message.AddField(std::move(field_0)); 
   message.AddField(std::move(field_1)); 
   EXPECT_THAT(message.GetFieldsMutable(), testing::ElementsAre(
-    testing::Pointee(ProtoValuePtrIsEqual(field_2_copy.get())), 
-    testing::Pointee(ProtoValuePtrIsEqual(field_0_copy.get())), 
-    testing::Pointee(ProtoValuePtrIsEqual(field_1_copy.get()))));
+    testing::Pointee(ProtoValuePtrIsEqual(field_2_expect.get())), 
+    testing::Pointee(ProtoValuePtrIsEqual(field_0_expect.get())), 
+    testing::Pointee(ProtoValuePtrIsEqual(field_1_expect.get()))));
   EXPECT_THAT(message.GetFields(), testing::ElementsAre(
-    testing::Pointee(ProtoValuePtrIsEqual(field_2_copy.get())), 
-    testing::Pointee(ProtoValuePtrIsEqual(field_0_copy.get())), 
-    testing::Pointee(ProtoValuePtrIsEqual(field_1_copy.get()))));
+    testing::Pointee(ProtoValuePtrIsEqual(field_2_expect.get())), 
+    testing::Pointee(ProtoValuePtrIsEqual(field_0_expect.get())), 
+    testing::Pointee(ProtoValuePtrIsEqual(field_1_expect.get()))));
 }
 
 TEST(MessageValueTest, SortFieldsTest) {
@@ -73,24 +73,24 @@ TEST(MessageValueTest, SortFieldsTest) {
       absl::make_unique<MessageValue>("temp1", 0, 1);
   std::unique_ptr<ProtoValue> field_2 = 
       absl::make_unique<MessageValue>("temp2", 0, 2);
-  std::unique_ptr<ProtoValue> field_0_copy = 
+  std::unique_ptr<ProtoValue> field_0_expect = 
       absl::make_unique<MessageValue>("temp", 0, 0);
-  std::unique_ptr<ProtoValue> field_1_copy = 
+  std::unique_ptr<ProtoValue> field_1_expect = 
       absl::make_unique<MessageValue>("temp1", 0, 1);
-  std::unique_ptr<ProtoValue> field_2_copy = 
+  std::unique_ptr<ProtoValue> field_2_expect = 
       absl::make_unique<MessageValue>("temp2", 0, 2);
   message.AddField(std::move(field_2));
   message.AddField(std::move(field_0)); 
   message.AddField(std::move(field_1)); 
   message.SortFields();
   EXPECT_THAT(message.GetFieldsMutable(), testing::ElementsAre(
-    testing::Pointee(ProtoValuePtrIsEqual(field_0_copy.get())), 
-    testing::Pointee(ProtoValuePtrIsEqual(field_1_copy.get())), 
-    testing::Pointee(ProtoValuePtrIsEqual(field_2_copy.get()))));
+    testing::Pointee(ProtoValuePtrIsEqual(field_0_expect.get())), 
+    testing::Pointee(ProtoValuePtrIsEqual(field_1_expect.get())), 
+    testing::Pointee(ProtoValuePtrIsEqual(field_2_expect.get()))));
   EXPECT_THAT(message.GetFields(), testing::ElementsAre(
-    testing::Pointee(ProtoValuePtrIsEqual(field_0_copy.get())), 
-    testing::Pointee(ProtoValuePtrIsEqual(field_1_copy.get())), 
-    testing::Pointee(ProtoValuePtrIsEqual(field_2_copy.get()))));
+    testing::Pointee(ProtoValuePtrIsEqual(field_0_expect.get())), 
+    testing::Pointee(ProtoValuePtrIsEqual(field_1_expect.get())), 
+    testing::Pointee(ProtoValuePtrIsEqual(field_2_expect.get()))));
 }
 
 TEST(MessageValueTest, DeleteFieldTest) {
@@ -102,29 +102,29 @@ TEST(MessageValueTest, DeleteFieldTest) {
       absl::make_unique<MessageValue>("temp1", 0, 1);
   std::unique_ptr<ProtoValue> field_2 = 
       absl::make_unique<MessageValue>("temp2", 0, 2);
-  std::unique_ptr<ProtoValue> field_0_copy = 
+  std::unique_ptr<ProtoValue> field_0_expect = 
       absl::make_unique<MessageValue>("temp", 0, 0);
-  std::unique_ptr<ProtoValue> field_1_copy = 
+  std::unique_ptr<ProtoValue> field_1_expect = 
       absl::make_unique<MessageValue>("temp1", 0, 1);
-  std::unique_ptr<ProtoValue> field_2_copy = 
+  std::unique_ptr<ProtoValue> field_2_expect = 
       absl::make_unique<MessageValue>("temp2", 0, 2);
   message.AddField(std::move(field_2));
   message.AddField(std::move(field_0)); 
   message.AddField(std::move(field_1)); 
   EXPECT_TRUE(message.DeleteField(0));
   EXPECT_THAT(message.GetFieldsMutable(), testing::ElementsAre( 
-    testing::Pointee(ProtoValuePtrIsEqual(field_0_copy.get())), 
-    testing::Pointee(ProtoValuePtrIsEqual(field_1_copy.get()))));
+    testing::Pointee(ProtoValuePtrIsEqual(field_0_expect.get())), 
+    testing::Pointee(ProtoValuePtrIsEqual(field_1_expect.get()))));
   EXPECT_THAT(message.GetFields(), testing::ElementsAre( 
-    testing::Pointee(ProtoValuePtrIsEqual(field_0_copy.get())), 
-    testing::Pointee(ProtoValuePtrIsEqual(field_1_copy.get()))));
+    testing::Pointee(ProtoValuePtrIsEqual(field_0_expect.get())), 
+    testing::Pointee(ProtoValuePtrIsEqual(field_1_expect.get()))));
   EXPECT_FALSE(message.DeleteField(2));
   EXPECT_THAT(message.GetFieldsMutable(), testing::ElementsAre( 
-    testing::Pointee(ProtoValuePtrIsEqual(field_0_copy.get())), 
-    testing::Pointee(ProtoValuePtrIsEqual(field_1_copy.get()))));
+    testing::Pointee(ProtoValuePtrIsEqual(field_0_expect.get())), 
+    testing::Pointee(ProtoValuePtrIsEqual(field_1_expect.get()))));
   EXPECT_THAT(message.GetFields(), testing::ElementsAre( 
-    testing::Pointee(ProtoValuePtrIsEqual(field_0_copy.get())), 
-    testing::Pointee(ProtoValuePtrIsEqual(field_1_copy.get()))));
+    testing::Pointee(ProtoValuePtrIsEqual(field_0_expect.get())), 
+    testing::Pointee(ProtoValuePtrIsEqual(field_1_expect.get()))));
   EXPECT_TRUE(message.DeleteField(0));
   EXPECT_TRUE(message.DeleteField(0));
   EXPECT_EQ(message.GetFields().size(), 0);
