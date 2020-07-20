@@ -73,7 +73,7 @@ void PrimitiveValue::SetVal(const
         absl::get<const google::protobuf::EnumValueDescriptor*>(val);
     val_as_string_ = input_val->name();
   } else {
-    val_as_string_ = absl::StrCat("\"" ,absl::get<std::string>(val) ,"\"");
+    val_as_string_ = absl::StrCat("\"", absl::get<std::string>(val), "\"");
   }
 }
 } // namespace wireless_android_play_analytics
