@@ -31,13 +31,16 @@ void RequestHandler::GetLastRefreshed(const Pistache::Rest::Request& request,
 void RequestHandler::GetDashboard(const Pistache::Rest::Request& request, 
     Pistache::Http::ResponseWriter response) {
     // TODO(alexanderlin): Use real data once I get access to them.
-    std::vector<std::string> dataSources {"SPAM", "PLAY_COUNTRY", 
+    std::vector<std::string> data_sources {"SPAM", "PLAY_COUNTRY", 
         "APP_COUNTRY_PUBLISH_TIME", "QUERY_CATEGORY_SOURCE", 
             "UNIFIED_USER_DATA_SOURCE"};
-    std::vector<std::string> dates {"5/19/2020", "5/18/2020", "5/17/2020", "5/16/2020", 
-        "5/15/2020", "5/14/2020", "5/13/2020"};
+    std::vector<std::string> dates {"5/19/2020", "5/18/2020", "5/17/2020",
+            "5/16/2020", "5/15/2020", "5/14/2020", "5/13/2020"};
     std::string system_in = request.param(":system").as<std::string>();
-    std::string status = "111010111110001011100100111000100110001010000010100111010";
+    // Randomly generated bits that hardcodes whether the data source is online
+    // or not for specific dates since real data not available yet.
+    std::string status = 
+            "111010111110001011100100111000100110001010000010100111010";
     
     nlohmann::json message;
 
@@ -45,15 +48,17 @@ void RequestHandler::GetDashboard(const Pistache::Rest::Request& request,
     auto stream = response.stream(Pistache::Http::Code::Ok);
     if (system_in == "Chipper") {
         int status_idx = 0;
-        for (const std::string& data : dataSources) {
+        for (const std::string& data : data_sources) {
             message[data] = nlohmann::json::array();
             for (const std::string& date : dates) {
                 message[data].push_back({date, status[status_idx++] == '1'});
             }
         }
     } else {
+        // Reverse ordering so that Chipper and Chipper GDPR has different 
+        // hardcoded values. 
         int status_idx = status.size() - 1;
-        for (const std::string& data : dataSources) {
+        for (const std::string& data : data_sources) {
             message[data] = nlohmann::json::array();
             for (const std::string& date : dates) {
                 message[data].push_back({date, status[status_idx--] == '1'});
