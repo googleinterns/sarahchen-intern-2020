@@ -1,0 +1,37 @@
+# comment
+# to
+# save
+
+# Condition 1
+event_matcher {
+  input_field: "PlayExtension.store.click"
+  # randomly generated comment 0
+  int_comparator: 537 # randomly generated comment
+}
+# Condition 2
+event_matcher {
+  input_field: "PlayExtension.log_source"
+  int_comparator: 65 # WEB_STORE
+}
+# Condition 3
+ui_element_path_predicate {
+  ui_element_type: STORE_UI_ELEMENT
+  # Condition 3.1
+  leaf_ui_predicate {
+    # ...
+    ui_element_type: STORE_UI_ELEMENT
+    ui_element_matcher {
+      input_field: "type"
+      int_comparator: 7305 # AUTHENTICATION_OPT_OUT_CHECKED
+    }
+  }
+  # Condition 3.2
+  index_ui_matcher {
+    ui_element_type: STORE_UI_ELEMENT
+    index: -2
+    ui_element_matcher {
+      input_field: "type"
+      int_comparator: 1 # SOMETHING
+    }
+  }
+}

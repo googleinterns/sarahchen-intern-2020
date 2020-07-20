@@ -20,4 +20,4 @@ proto_library(
 cc_proto_library(
     name = "event_predicate_cc_proto",
     deps = [":event_predicate_proto"],
-)
+) 

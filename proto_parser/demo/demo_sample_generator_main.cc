@@ -97,7 +97,6 @@ void WriteToTextProto(absl::string_view path, absl::string_view text_proto) {
   std::ofstream outs;
   outs.open(std::string(path));
   outs << text_proto;
-  std::cout << text_proto << std::endl;
 }
 
 } // namespace
