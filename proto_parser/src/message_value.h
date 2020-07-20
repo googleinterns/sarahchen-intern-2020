@@ -25,9 +25,12 @@ class MessageValue : public ProtoValue {
 
  public:
 
+  MessageValue()
+    : ProtoValue("", 0, -1) {}
+
   explicit MessageValue(absl::string_view field_name, int indent_count, 
       int field_line) 
-   :ProtoValue(field_name, indent_count, field_line) {}
+   : ProtoValue(field_name, indent_count, field_line) {}
 
   // Gets all the fields of the current Message
   const std::vector<std::unique_ptr<ProtoValue>>& GetFields() const {
