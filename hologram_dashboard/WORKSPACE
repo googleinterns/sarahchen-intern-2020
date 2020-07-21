@@ -106,6 +106,25 @@ http_archive(
     ],
 )
 
+http_archive(
+    name = "github_nlohmann_json",
+    sha256 = "8590fbcc2346a3eefc341935765dd57598022ada1081b425678f0da9a939a3c0",
+    urls = [
+        "https://github.com/nlohmann/json/releases/download/v3.8.0/include.zip",
+    ],
+    build_file_content = """
+cc_library(
+    name = "json",
+    hdrs = glob([
+        "include/**/*.hpp",
+    ]),
+    includes = ["include"],
+    visibility = ["//visibility:public"],
+    alwayslink = 1,
+)
+""",
+)
+
 load("@rules_cc//cc:repositories.bzl", "rules_cc_dependencies")
 rules_cc_dependencies()
 

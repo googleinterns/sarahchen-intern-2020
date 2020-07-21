@@ -1,39 +1,55 @@
-/*
-*   Copyright 2020 Google LLC
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       https://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*/
-
 syntax = "proto2";
 
 package wireless_android_play_analytics;
 
 import "fetcher/proto/enums.proto";
 
-// Next tag: 3
-message DataSourceDetail {
-    optional int64 date = 1;
-    optional StatusType status = 2;
-}
-
+// Proto that shows the SourceType availability for a hologram_client.
+//
+// Sample:
+//
+//   hologram_client: CHIPPER_BATCH
+//   source_type: PLAY_COUNTRY
+//   availability_status {
+//     date: "2020-06-20"
+//     source_ingestion_status: INGESTED_SUCCESSFULLY
+//   }
+//   availability_status {
+//     date: "2020-06-21"
+//     source_ingestion_status: NOT_INGESTED
+//     update_timestamp_millis: 1234567890
+//   }
+//
 // Next tag: 4
 message HologramDataAvailability {
-  // Specification about which data source is currently accessed.
-  optional DataSource data_source = 1;
-  
-  // Current day status.
-  optional DataSourceDetail latest_status = 2;
+  // Next tag: 3
+  enum HologramClient {
+    UNKNOWN_CLIENT = 0;
 
-  // An array of status of up to the last 7 days.
-  repeated DataSourceDetail history = 3;
+    CHIPPER_BATCH = 1;
+
+    CHIPPER_GDPR = 2;
+  }
+
+  optional HologramClient hologram_client = 1;
+
+  optional SourceType source_type = 2;
+
+  // Next tag: 3
+  enum IngestionStatus {
+    UNKNOWN_STATUS = 0;
+
+    INGESTED = 1;
+
+    NOT_INGESTED = 2;
+  }
+
+  // Next tag: 3
+  message AvailabilityStatus {
+    optional string date = 1;
+
+    optional IngestionStatus source_ingestion_status = 2;
+  }
+
+  repeated AvailabilityStatus availability_status = 3;
 }
