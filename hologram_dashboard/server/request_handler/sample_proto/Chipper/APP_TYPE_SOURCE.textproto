@@ -1,0 +1,30 @@
+hologram_client: CHIPPER_BATCH
+source_type: APP_TYPE_SOURCE
+availability_status {
+  date: "5/19/2020"
+  source_ingestion_status: NOT_INGESTED
+}
+availability_status {
+  date: "5/18/2020"
+  source_ingestion_status: INGESTED
+}
+availability_status {
+  date: "5/17/2020"
+  source_ingestion_status: NOT_INGESTED
+}
+availability_status {
+  date: "5/16/2020"
+  source_ingestion_status: INGESTED
+}
+availability_status {
+  date: "5/15/2020"
+  source_ingestion_status: INGESTED
+}
+availability_status {
+  date: "5/14/2020"
+  source_ingestion_status: INGESTED
+}
+availability_status {
+  date: "5/13/2020"
+  source_ingestion_status: NOT_INGESTED
+}

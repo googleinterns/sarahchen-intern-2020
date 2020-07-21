@@ -8,8 +8,16 @@ cc_library(
     hdrs = ["request_handler.h"],
     deps = [
         "@pistache//:pistache_lib",
-        "@github_nlohmann_json//:json"
+        "@github_nlohmann_json//:json",
+        "//fetcher/proto:hologram_config_cc_proto", 
+        "//fetcher/proto:hologram_availability_cc_proto",
+        "@com_google_absl//absl/strings"
     ],
+    data = glob([
+        "sample_proto/Chipper/*.textproto",
+        "sample_proto/Chipper_GDPR/*.textproto",
+        "sample_proto/hologram_config.ascii"
+    ])
 )
 
 filegroup(
