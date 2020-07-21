@@ -2,5 +2,16 @@
   <button #CHIPPER (click)="onClick(CHIPPER.innerHTML)">Chipper</button>
 </div>
 <div class="inline">
-  <button #CHIPPERGDPR (click)="onClick(CHIPPERGDPR.innerHTML)">Chipper GDPR</button>
+  <button #CHIPPERGDPR (click)="onClick(CHIPPERGDPR.innerHTML)">Chipper_GDPR</button>
 </div>
+<table *ngIf="display">
+  <tr *ngFor="let dataset of dashboard">
+      <td>
+        {{ dataset.name }}
+      </td>
+      <td *ngFor="let date of dataset.dates" title = "{{ date.date }}">
+        <span *ngIf="date.status" class="online"></span>
+        <span *ngIf="!date.status" class="offline"></span>
+      </td>
+  </tr>
+</table>
