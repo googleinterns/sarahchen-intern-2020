@@ -20,7 +20,7 @@ package wireless_android_play_analytics;
 
 // Specify different data sources.
 // Next tag: 17
-enum DataSource {
+enum SourceType {
     UNKNOWN_DATA_TYPE = 0;
     ANDROID_SPAM_ABUSE = 1;
     APPS_DAILY_DATA_SOURCE = 2;
