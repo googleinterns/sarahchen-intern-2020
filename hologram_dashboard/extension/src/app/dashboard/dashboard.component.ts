@@ -3,12 +3,12 @@ import { RequestHandler } from '../request-handler.component'
 
 export interface DateAvailability {
   date: string;
-  status: boolean;
+  isAvailable: boolean;
 }
 
 export interface HologramDataAvailability {
-  name: string;
-  dates: Array<DateAvailability>
+  sourceType: string;
+  dateAvailabilityList: Array<DateAvailability>
 }
 
 @Component({
@@ -20,12 +20,12 @@ export interface HologramDataAvailability {
 export class DashboardComponent implements OnInit {
   dashboard: Array<HologramDataAvailability>;
   chipper: boolean
-  chipper_gdpr: boolean
+  chipperGDPR: boolean
   display: boolean
 
   constructor(private requestHandler: RequestHandler) { 
     this.chipper = false;
-    this.chipper_gdpr = false;
+    this.chipperGDPR = false;
     this.display = false;
     this.dashboard = []
   }
@@ -36,13 +36,13 @@ export class DashboardComponent implements OnInit {
   renderTemplate(hologram_data_availability: JSON, system: string) {
     for (let key in hologram_data_availability) {
       let data_set_availability = {} as HologramDataAvailability;
-      data_set_availability.name = key;
-      data_set_availability.dates = [];
+      data_set_availability.sourceType = key;
+      data_set_availability.dateAvailabilityList = [];
       hologram_data_availability[key].forEach(data => {
         let date_info = {} as DateAvailability;
         date_info.date = data[0];
-        date_info.status = data[1];
-        data_set_availability.dates.push(date_info);
+        date_info.isAvailable = data[1];
+        data_set_availability.dateAvailabilityList.push(date_info);
       });
       this.dashboard.push(data_set_availability);
     }
@@ -54,18 +54,18 @@ export class DashboardComponent implements OnInit {
         this.chipper = false;
       } else {
         this.chipper = true;
-        this.chipper_gdpr = false;
+        this.chipperGDPR = false;
       }
     } else if (system === "Chipper_GDPR") {
-      if (this.chipper_gdpr) {
-        this.chipper_gdpr = false;
+      if (this.chipperGDPR) {
+        this.chipperGDPR = false;
       } else {
-        this.chipper_gdpr = true;
+        this.chipperGDPR = true;
         this.chipper = false;
       }
     }
     this.dashboard = [];
-    this.display = (this.chipper || this.chipper_gdpr);
+    this.display = (this.chipper || this.chipperGDPR);
     if(this.display) {
       this.requestHandler.getDashboard(system).toPromise()
           .then((data) => this.renderTemplate(data, system));

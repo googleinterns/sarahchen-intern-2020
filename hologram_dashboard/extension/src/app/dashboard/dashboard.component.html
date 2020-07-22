@@ -7,11 +7,11 @@
 <table *ngIf="display">
   <tr *ngFor="let dataset of dashboard">
       <td>
-        {{ dataset.name }}
+        {{ dataset.sourceType }}
       </td>
-      <td *ngFor="let date of dataset.dates" title = "{{ date.date }}">
-        <span *ngIf="date.status" class="online"></span>
-        <span *ngIf="!date.status" class="offline"></span>
+      <td *ngFor="let date of dataset.dateAvailabilityList" title = "{{ date.date }}">
+        <span *ngIf="date.isAvailable" class="online"></span>
+        <span *ngIf="!date.isAvailable" class="offline"></span>
       </td>
   </tr>
 </table>

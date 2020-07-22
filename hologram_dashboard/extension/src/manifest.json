@@ -8,7 +8,6 @@
         "default_icon": "GoogleG_FullColor_192px_xxhdpi.png"
     },
     "permissions": [
-        "http://localhost:4200/",
-        "http://localhost:8000/"
+        "http://localhost:4200/"
     ]
 }
