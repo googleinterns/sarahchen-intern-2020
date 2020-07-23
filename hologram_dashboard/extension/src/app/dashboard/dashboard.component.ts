@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { RequestHandler } from '../request-handler.component'
 
+// Interface for keeping track of whether a data set is available for a specific
+// date.
 export interface DateAvailability {
   date: string;
   isAvailable: boolean;
 }
 
+// Interface for keeping track of all the availability of a specific source.
 export interface HologramDataAvailability {
   sourceType: string;
   dateAvailabilityList: Array<DateAvailability>
@@ -19,13 +22,13 @@ export interface HologramDataAvailability {
 })
 export class DashboardComponent implements OnInit {
   dashboard: Array<HologramDataAvailability>;
-  chipper: boolean
-  chipperGDPR: boolean
+  showChipper: boolean
+  showChipperGDPR: boolean
   display: boolean
 
   constructor(private requestHandler: RequestHandler) { 
-    this.chipper = false;
-    this.chipperGDPR = false;
+    this.showChipper = false;
+    this.showChipperGDPR = false;
     this.display = false;
     this.dashboard = []
   }
@@ -37,9 +40,11 @@ export class DashboardComponent implements OnInit {
     for (let key in hologram_data_availability) {
       let data_set_availability = {} as HologramDataAvailability;
       data_set_availability.sourceType = key;
+      // Need to initialize the list before pushing into it;
       data_set_availability.dateAvailabilityList = [];
       hologram_data_availability[key].forEach(data => {
         let date_info = {} as DateAvailability;
+        // data is a list of format [date, availability]
         date_info.date = data[0];
         date_info.isAvailable = data[1];
         data_set_availability.dateAvailabilityList.push(date_info);
@@ -49,23 +54,21 @@ export class DashboardComponent implements OnInit {
   }
 
   onClick(system: string) {
+    // By setting chipper and chipperGDPR to be complements of themselves we 
+    // ensure that if the clicked system is already showing we hide the 
+    // dashboard while maintaining ability to switch between dashboards 
+    // seamlessly.
     if (system === "Chipper") {
-      if (this.chipper) {
-        this.chipper = false;
-      } else {
-        this.chipper = true;
-        this.chipperGDPR = false;
-      }
+      this.showChipper = !this.showChipper;
+      this.showChipperGDPR = false;
     } else if (system === "Chipper_GDPR") {
-      if (this.chipperGDPR) {
-        this.chipperGDPR = false;
-      } else {
-        this.chipperGDPR = true;
-        this.chipper = false;
-      }
+      this.showChipperGDPR = !this.showChipperGDPR
+      this.showChipper = false;
     }
     this.dashboard = [];
-    this.display = (this.chipper || this.chipperGDPR);
+    // Only display the dashboard if one of the two are true (they'll never
+    // both be true).
+    this.display = (this.showChipper || this.showChipperGDPR);
     if(this.display) {
       this.requestHandler.getDashboard(system).toPromise()
           .then((data) => this.renderTemplate(data, system));
