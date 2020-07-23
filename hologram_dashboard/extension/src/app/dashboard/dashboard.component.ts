@@ -24,12 +24,10 @@ export class DashboardComponent implements OnInit {
   dashboard: Array<HologramDataAvailability>;
   showChipper: boolean
   showChipperGDPR: boolean
-  display: boolean
 
   constructor(private requestHandler: RequestHandler) { 
     this.showChipper = false;
     this.showChipperGDPR = false;
-    this.display = false;
     this.dashboard = []
   }
 
@@ -68,8 +66,7 @@ export class DashboardComponent implements OnInit {
     this.dashboard = [];
     // Only display the dashboard if one of the two are true (they'll never
     // both be true).
-    this.display = (this.showChipper || this.showChipperGDPR);
-    if(this.display) {
+    if(this.showChipper || this.showChipperGDPR) {
       this.requestHandler.getDashboard(system).toPromise()
           .then((data) => this.renderTemplate(data, system));
     }
