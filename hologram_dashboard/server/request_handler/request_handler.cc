@@ -37,6 +37,7 @@ void RequestHandler::GetLastRefreshed(const Pistache::Rest::Request& request,
 
 void RequestHandler::GetDashboard(const Pistache::Rest::Request& request, 
     Pistache::Http::ResponseWriter response) {
+  response.headers().add<Pistache::Http::Header::AccessControlAllowOrigin>("*");
   std::string system = request.param(":system").as<std::string>();
   // TODO(alexanderlin): Use real data once I get access to them.
   nlohmann::json message;

@@ -1,0 +1,17 @@
+<div class="inline">
+  <button #CHIPPER (click)="onClick(CHIPPER.innerHTML)">Chipper</button>
+</div>
+<div class="inline">
+  <button #CHIPPERGDPR (click)="onClick(CHIPPERGDPR.innerHTML)">Chipper_GDPR</button>
+</div>
+<table *ngIf="showChipper || showChipperGDPR">
+  <tr *ngFor="let dataset of dashboard">
+      <td>
+        {{ dataset.sourceType }}
+      </td>
+      <td *ngFor="let date of dataset.dateAvailabilityList" title = "{{ date.date }}">
+        <span *ngIf="date.isAvailable" class="online"></span>
+        <span *ngIf="!date.isAvailable" class="offline"></span>
+      </td>
+  </tr>
+</table>
