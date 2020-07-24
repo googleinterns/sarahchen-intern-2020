@@ -20,6 +20,14 @@ cc_library(
     ])
 )
 
+cc_test(
+    name = "request_handler_test",
+    srcs = ["request_handler_test.cc"],
+    deps = [
+        "request_handler_lib",
+    ]
+)
+
 filegroup(
     name = "srcs",
     srcs = ["BUILD"] + glob(["*.cc"]),
