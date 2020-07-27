@@ -25,6 +25,8 @@ cc_test(
     srcs = ["request_handler_test.cc"],
     deps = [
         "request_handler_lib",
+        "@com_google_gtest//:gtest",
+        "@pistache//:pistache_lib"
     ]
 )
 

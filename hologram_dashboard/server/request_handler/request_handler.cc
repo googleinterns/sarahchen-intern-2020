@@ -56,8 +56,7 @@ void RequestHandler::GetDashboard(const Pistache::Rest::Request& request,
   } else {
     path = absl::StrCat(path, "/Chipper_GDPR/");
   }
-  for (int i = 0; i < configs.data_source_config_size(); ++i) {
-    const HologramConfig config = configs.data_source_config(i);
+  for (const HologramConfig& config : configs.data_source_config()) {
     // This simulates the second key (source type).
     std::string data_set_path = 
         absl::StrCat(path, SourceType_Name(config.source_type()), 
