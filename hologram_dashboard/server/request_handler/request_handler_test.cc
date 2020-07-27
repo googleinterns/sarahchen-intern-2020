@@ -27,6 +27,8 @@ namespace wireless_android_play_analytics {
 const std::string expected_mock_time = "Wed May 19 15:46:11 2020";
 const std::string expected_chipper_value = R"json({"ANDROID_SPAM_ABUSE":[["5/19/2020",true],["5/18/2020",true],["5/17/2020",true],["5/16/2020",true],["5/15/2020",true],["5/14/2020",true],["5/13/2020",true]],"APPS_DAILY_DATA_SOURCE":[["5/19/2020",false],["5/18/2020",true],["5/17/2020",false],["5/16/2020",true],["5/15/2020",false],["5/14/2020",false],["5/13/2020",false]],"APPS_TITLE_TIER":[["5/19/2020",false],["5/18/2020",false],["5/17/2020",true],["5/16/2020",false],["5/15/2020",true],["5/14/2020",false],["5/13/2020",false]],"APP_COUNTRY_PUBLISH_TIME":[["5/19/2020",false],["5/18/2020",false],["5/17/2020",true],["5/16/2020",true],["5/15/2020",true],["5/14/2020",false],["5/13/2020",false]],"APP_TYPE_SOURCE":[["5/19/2020",false],["5/18/2020",true],["5/17/2020",false],["5/16/2020",true],["5/15/2020",true],["5/14/2020",true],["5/13/2020",false]],"DEVICE_INTEGRITY_SOURCE":[["5/19/2020",false],["5/18/2020",true],["5/17/2020",true],["5/16/2020",false],["5/15/2020",false],["5/14/2020",true],["5/13/2020",false]],"PLAY_COUNTRY":[["5/19/2020",true],["5/18/2020",false],["5/17/2020",false],["5/16/2020",true],["5/15/2020",true],["5/14/2020",true],["5/13/2020",false]],"PRIME_MERIDIAN":[["5/19/2020",true],["5/18/2020",true],["5/17/2020",true],["5/16/2020",true],["5/15/2020",true],["5/14/2020",true],["5/13/2020",true]],"QUERY_CATEGORY_SOURCE":[["5/19/2020",true],["5/18/2020",false],["5/17/2020",false],["5/16/2020",false],["5/15/2020",true],["5/14/2020",true],["5/13/2020",true]],"SHIELD_ID":[["5/19/2020",true],["5/18/2020",true],["5/17/2020",false],["5/16/2020",true],["5/15/2020",false],["5/14/2020",true],["5/13/2020",true]],"SPAM":[["5/19/2020",true],["5/18/2020",true],["5/17/2020",true],["5/16/2020",true],["5/15/2020",true],["5/14/2020",true],["5/13/2020",true]],"USER_ATTRIBUTE":[["5/19/2020",true],["5/18/2020",true],["5/17/2020",true],["5/16/2020",true],["5/15/2020",true],["5/14/2020",true],["5/13/2020",true]],"USER_EXPERIMENT_ID_AND_TEST_CODE":[["5/19/2020",true],["5/18/2020",true],["5/17/2020",false],["5/16/2020",true],["5/15/2020",true],["5/14/2020",true],["5/13/2020",true]]})json";
 const std::string expected_chipper_GDPR_value = R"json({"ANDROID_SPAM_ABUSE":[["5/19/2020",true],["5/18/2020",true],["5/17/2020",true],["5/16/2020",true],["5/15/2020",true],["5/14/2020",true],["5/13/2020",true]],"APPS_DAILY_DATA_SOURCE":[["5/19/2020",true],["5/18/2020",true],["5/17/2020",true],["5/16/2020",true],["5/15/2020",false],["5/14/2020",false],["5/13/2020",false]],"APPS_TITLE_TIER":[["5/19/2020",true],["5/18/2020",false],["5/17/2020",true],["5/16/2020",true],["5/15/2020",true],["5/14/2020",false],["5/13/2020",false]],"APP_COUNTRY_PUBLISH_TIME":[["5/19/2020",false],["5/18/2020",false],["5/17/2020",true],["5/16/2020",false],["5/15/2020",false],["5/14/2020",true],["5/13/2020",true]],"APP_TYPE_SOURCE":[["5/19/2020",true],["5/18/2020",true],["5/17/2020",true],["5/16/2020",false],["5/15/2020",true],["5/14/2020",false],["5/13/2020",true]],"DEVICE_INTEGRITY_SOURCE":[["5/19/2020",true],["5/18/2020",false],["5/17/2020",false],["5/16/2020",true],["5/15/2020",true],["5/14/2020",true],["5/13/2020",false]],"PLAY_COUNTRY":[["5/19/2020",false],["5/18/2020",false],["5/17/2020",false],["5/16/2020",true],["5/15/2020",false],["5/14/2020",true],["5/13/2020",false]],"PRIME_MERIDIAN":[["5/19/2020",true],["5/18/2020",true],["5/17/2020",true],["5/16/2020",true],["5/15/2020",true],["5/14/2020",true],["5/13/2020",true]],"QUERY_CATEGORY_SOURCE":[["5/19/2020",false],["5/18/2020",false],["5/17/2020",false],["5/16/2020",false],["5/15/2020",true],["5/14/2020",false],["5/13/2020",true]],"SHIELD_ID":[["5/19/2020",false],["5/18/2020",false],["5/17/2020",true],["5/16/2020",true],["5/15/2020",true],["5/14/2020",false],["5/13/2020",true]],"SPAM":[["5/19/2020",false],["5/18/2020",true],["5/17/2020",true],["5/16/2020",true],["5/15/2020",true],["5/14/2020",true],["5/13/2020",true]],"USER_ATTRIBUTE":[["5/19/2020",true],["5/18/2020",true],["5/17/2020",true],["5/16/2020",true],["5/15/2020",true],["5/14/2020",true],["5/13/2020",true]],"USER_EXPERIMENT_ID_AND_TEST_CODE":[["5/19/2020",true],["5/18/2020",true],["5/17/2020",true],["5/16/2020",true],["5/15/2020",true],["5/14/2020",true],["5/13/2020",true]]})json";
+const std::string expected_mock_injection_command = 
+    "sample command to run backfill for SPAM on Chipper for 08-07-2020";
 
 class RequestHandlerTest : public ::testing::Test {
  protected:
@@ -37,6 +39,9 @@ class RequestHandlerTest : public ::testing::Test {
   virtual void SetUp() {
     Pistache::Rest::Routes::Get(router_, "/", 
         Pistache::Rest::Routes::bind (&RequestHandler::GetLastRefreshed, 
+        &handler_));
+    Pistache::Rest::Routes::Get(router_, "/:system/:source/:date", 
+        Pistache::Rest::Routes::bind(&RequestHandler::PopulateBackfillCommand, 
         &handler_));
     Pistache::Rest::Routes::Get(router_, "/:system", 
         Pistache::Rest::Routes::bind(&RequestHandler::GetDashboard, &handler_));
@@ -77,6 +82,14 @@ TEST_F(RequestHandlerTest, GetChipperGDPRTest) {
   std::shared_ptr<httplib::Response> res = client.Get("/ChipperGDPR");
 
   EXPECT_EQ(res->body, expected_chipper_GDPR_value);
+}
+
+TEST_F(RequestHandlerTest, GetInjectionCommandTest) {  
+  httplib::Client client("localhost", end_point_.getPort());
+
+  std::shared_ptr<httplib::Response> res = client.Get("/Chipper/SPAM/08-07-2020");
+
+  EXPECT_EQ(res->body, expected_mock_injection_command);
 }
 
 } // namespace wireless_android_play_analytics
