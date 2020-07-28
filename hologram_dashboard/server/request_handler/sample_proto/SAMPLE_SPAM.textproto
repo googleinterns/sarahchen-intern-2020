@@ -1,0 +1,10 @@
+hologram_client: CHIPPER_BATCH
+source_type: SPAM
+availability_status {
+  date: "5/19/2020"
+  source_ingestion_status: INGESTED
+}
+availability_status {
+  date: "5/18/2020"
+  source_ingestion_status: INGESTED
+}

@@ -27,7 +27,8 @@ cc_test(
         "request_handler_lib",
         "@com_google_gtest//:gtest",
         "@pistache//:pistache_lib"
-    ]
+    ],
+    data = ["sample_proto/SAMPLE_SPAM.textproto"]
 )
 
 filegroup(

@@ -15,16 +15,6 @@
 */
 
 #include "request_handler.h"
-#include "fetcher/proto/hologram_availability.pb.h"
-#include "fetcher/proto/hologram_config.pb.h"
-#include "absl/strings/str_cat.h"
-
-#include <vector>
-#include <filesystem>
-#include <sstream>
-#include <fstream>
-#include <google/protobuf/text_format.h>
-#include <google/protobuf/io/zero_copy_stream_impl.h>
 
 namespace wireless_android_play_analytics {
 
@@ -67,23 +57,23 @@ void RequestHandler::GetDashboard(const Pistache::Rest::Request& request,
         data_set_stream(&data_set_stream_in);
     assert(google::protobuf::TextFormat::Parse(&data_set_stream, 
         &data_set_availability));
-    std::string data_set = 
-        SourceType_Name(data_set_availability.source_type());
-    message[data_set] = nlohmann::json::array();
-    for (int j = 0; j < data_set_availability.availability_status_size(); 
-        j++) {
-      const HologramDataAvailability_AvailabilityStatus availability_status 
-          = data_set_availability.availability_status(j);
-      if (availability_status.source_ingestion_status() == 
-          HologramDataAvailability_IngestionStatus::
-          HologramDataAvailability_IngestionStatus_INGESTED) {
-        message[data_set].push_back({availability_status.date(), true});
-      } else {
-        message[data_set].push_back({availability_status.date(), false});
-      }        
-    }
+    DataAvailabilityReader(data_set_availability, &message);
   }
   response.send(Pistache::Http::Code::Ok, message.dump());
+}
+
+void RequestHandler::DataAvailabilityReader(
+    const HologramDataAvailability& hologram_data_availability, 
+    nlohmann::json* message) {
+  std::string data_set = 
+      SourceType_Name(hologram_data_availability.source_type());
+  (*message)[data_set] = nlohmann::json::array();
+  for (const HologramDataAvailability_AvailabilityStatus& availability_status 
+      : hologram_data_availability.availability_status() ) {
+    (*message)[data_set].push_back({availability_status.date(), 
+        availability_status.source_ingestion_status() == 
+        HologramDataAvailability::INGESTED});   
+    }
 }
 
 void RequestHandler::PopulateBackfillCommand

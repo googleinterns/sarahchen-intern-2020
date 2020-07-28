@@ -25,10 +25,10 @@
 namespace wireless_android_play_analytics {
 
 const std::string expected_mock_time = "Wed May 19 15:46:11 2020";
-const std::string expected_chipper_value = R"json({"ANDROID_SPAM_ABUSE":[["5/19/2020",true],["5/18/2020",true],["5/17/2020",true],["5/16/2020",true],["5/15/2020",true],["5/14/2020",true],["5/13/2020",true]],"APPS_DAILY_DATA_SOURCE":[["5/19/2020",false],["5/18/2020",true],["5/17/2020",false],["5/16/2020",true],["5/15/2020",false],["5/14/2020",false],["5/13/2020",false]],"APPS_TITLE_TIER":[["5/19/2020",false],["5/18/2020",false],["5/17/2020",true],["5/16/2020",false],["5/15/2020",true],["5/14/2020",false],["5/13/2020",false]],"APP_COUNTRY_PUBLISH_TIME":[["5/19/2020",false],["5/18/2020",false],["5/17/2020",true],["5/16/2020",true],["5/15/2020",true],["5/14/2020",false],["5/13/2020",false]],"APP_TYPE_SOURCE":[["5/19/2020",false],["5/18/2020",true],["5/17/2020",false],["5/16/2020",true],["5/15/2020",true],["5/14/2020",true],["5/13/2020",false]],"DEVICE_INTEGRITY_SOURCE":[["5/19/2020",false],["5/18/2020",true],["5/17/2020",true],["5/16/2020",false],["5/15/2020",false],["5/14/2020",true],["5/13/2020",false]],"PLAY_COUNTRY":[["5/19/2020",true],["5/18/2020",false],["5/17/2020",false],["5/16/2020",true],["5/15/2020",true],["5/14/2020",true],["5/13/2020",false]],"PRIME_MERIDIAN":[["5/19/2020",true],["5/18/2020",true],["5/17/2020",true],["5/16/2020",true],["5/15/2020",true],["5/14/2020",true],["5/13/2020",true]],"QUERY_CATEGORY_SOURCE":[["5/19/2020",true],["5/18/2020",false],["5/17/2020",false],["5/16/2020",false],["5/15/2020",true],["5/14/2020",true],["5/13/2020",true]],"SHIELD_ID":[["5/19/2020",true],["5/18/2020",true],["5/17/2020",false],["5/16/2020",true],["5/15/2020",false],["5/14/2020",true],["5/13/2020",true]],"SPAM":[["5/19/2020",true],["5/18/2020",true],["5/17/2020",true],["5/16/2020",true],["5/15/2020",true],["5/14/2020",true],["5/13/2020",true]],"USER_ATTRIBUTE":[["5/19/2020",true],["5/18/2020",true],["5/17/2020",true],["5/16/2020",true],["5/15/2020",true],["5/14/2020",true],["5/13/2020",true]],"USER_EXPERIMENT_ID_AND_TEST_CODE":[["5/19/2020",true],["5/18/2020",true],["5/17/2020",false],["5/16/2020",true],["5/15/2020",true],["5/14/2020",true],["5/13/2020",true]]})json";
-const std::string expected_chipper_GDPR_value = R"json({"ANDROID_SPAM_ABUSE":[["5/19/2020",true],["5/18/2020",true],["5/17/2020",true],["5/16/2020",true],["5/15/2020",true],["5/14/2020",true],["5/13/2020",true]],"APPS_DAILY_DATA_SOURCE":[["5/19/2020",true],["5/18/2020",true],["5/17/2020",true],["5/16/2020",true],["5/15/2020",false],["5/14/2020",false],["5/13/2020",false]],"APPS_TITLE_TIER":[["5/19/2020",true],["5/18/2020",false],["5/17/2020",true],["5/16/2020",true],["5/15/2020",true],["5/14/2020",false],["5/13/2020",false]],"APP_COUNTRY_PUBLISH_TIME":[["5/19/2020",false],["5/18/2020",false],["5/17/2020",true],["5/16/2020",false],["5/15/2020",false],["5/14/2020",true],["5/13/2020",true]],"APP_TYPE_SOURCE":[["5/19/2020",true],["5/18/2020",true],["5/17/2020",true],["5/16/2020",false],["5/15/2020",true],["5/14/2020",false],["5/13/2020",true]],"DEVICE_INTEGRITY_SOURCE":[["5/19/2020",true],["5/18/2020",false],["5/17/2020",false],["5/16/2020",true],["5/15/2020",true],["5/14/2020",true],["5/13/2020",false]],"PLAY_COUNTRY":[["5/19/2020",false],["5/18/2020",false],["5/17/2020",false],["5/16/2020",true],["5/15/2020",false],["5/14/2020",true],["5/13/2020",false]],"PRIME_MERIDIAN":[["5/19/2020",true],["5/18/2020",true],["5/17/2020",true],["5/16/2020",true],["5/15/2020",true],["5/14/2020",true],["5/13/2020",true]],"QUERY_CATEGORY_SOURCE":[["5/19/2020",false],["5/18/2020",false],["5/17/2020",false],["5/16/2020",false],["5/15/2020",true],["5/14/2020",false],["5/13/2020",true]],"SHIELD_ID":[["5/19/2020",false],["5/18/2020",false],["5/17/2020",true],["5/16/2020",true],["5/15/2020",true],["5/14/2020",false],["5/13/2020",true]],"SPAM":[["5/19/2020",false],["5/18/2020",true],["5/17/2020",true],["5/16/2020",true],["5/15/2020",true],["5/14/2020",true],["5/13/2020",true]],"USER_ATTRIBUTE":[["5/19/2020",true],["5/18/2020",true],["5/17/2020",true],["5/16/2020",true],["5/15/2020",true],["5/14/2020",true],["5/13/2020",true]],"USER_EXPERIMENT_ID_AND_TEST_CODE":[["5/19/2020",true],["5/18/2020",true],["5/17/2020",true],["5/16/2020",true],["5/15/2020",true],["5/14/2020",true],["5/13/2020",true]]})json";
 const std::string expected_mock_injection_command = 
     "sample command to run backfill for SPAM on Chipper for 08-07-2020";
+const std::string expected_message_string = 
+    R"json({"SPAM":[["5/19/2020",true],["5/18/2020",true]]})json";
 
 class RequestHandlerTest : public ::testing::Test {
  protected:
@@ -68,21 +68,19 @@ TEST_F(RequestHandlerTest, GetTimeTest) {
   EXPECT_EQ(res->body, expected_mock_time);
 }
 
-TEST_F(RequestHandlerTest, GetChipperTest) {  
-  httplib::Client client("localhost", end_point_.getPort());
-
-  std::shared_ptr<httplib::Response> res = client.Get("/Chipper");
-
-  EXPECT_EQ(res->body, expected_chipper_value);
+TEST_F (RequestHandlerTest, DataAvailabilityReaderTest) {  
+  HologramDataAvailability hologram_data_availability;
+  std::ifstream data_set_stream_in(
+      "server/request_handler/sample_proto/SAMPLE_SPAM.textproto");
+  google::protobuf::io::IstreamInputStream 
+      data_set_stream(&data_set_stream_in);
+  ASSERT_TRUE(google::protobuf::TextFormat::Parse(&data_set_stream, 
+      &hologram_data_availability));
+  nlohmann::json message;
+  handler_.DataAvailabilityReader(hologram_data_availability, &message);
+  EXPECT_EQ(message.dump(), expected_message_string);
 }
-
-TEST_F(RequestHandlerTest, GetChipperGDPRTest) {  
-  httplib::Client client("localhost", end_point_.getPort());
-
-  std::shared_ptr<httplib::Response> res = client.Get("/ChipperGDPR");
-
-  EXPECT_EQ(res->body, expected_chipper_GDPR_value);
-}
+  
 
 TEST_F(RequestHandlerTest, GetInjectionCommandTest) {  
   httplib::Client client("localhost", end_point_.getPort());
