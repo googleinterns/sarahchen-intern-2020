@@ -1,18 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { RequestHandler } from '../request-handler.component'
-
-// Interface for keeping track of whether a data set is available for a specific
-// date.
-export interface DateAvailability {
-  date: string;
-  isAvailable: boolean;
-}
-
-// Interface for keeping track of all the availability of a specific source.
-export interface HologramDataAvailability {
-  sourceType: string;
-  dateAvailabilityList: Array<DateAvailability>
-}
+import { RequestHandler } from '../request-handler.component';
+import { HologramDataAvailability, DateAvailability } from '../app.constants';
 
 @Component({
   selector: 'app-dashboard',
@@ -22,32 +10,32 @@ export interface HologramDataAvailability {
 })
 export class DashboardComponent implements OnInit {
   dashboard: Array<HologramDataAvailability>;
-  showChipper: boolean
-  showChipperGDPR: boolean
+  showChipper: boolean;
+  showChipperGDPR: boolean;
 
   constructor(private requestHandler: RequestHandler) { 
     this.showChipper = false;
     this.showChipperGDPR = false;
-    this.dashboard = []
+    this.dashboard = [];
   }
 
   ngOnInit(): void {
   }
 
-  renderTemplate(hologram_data_availability: JSON, system: string) {
-    for (let key in hologram_data_availability) {
-      let data_set_availability = {} as HologramDataAvailability;
-      data_set_availability.sourceType = key;
+  renderTemplate(inputData: JSON) {
+    for (let key of Object.keys(inputData)) {
+      let hologramDataAvailability = {} as HologramDataAvailability;
+      hologramDataAvailability.sourceType = key;
       // Need to initialize the list before pushing into it;
-      data_set_availability.dateAvailabilityList = [];
-      hologram_data_availability[key].forEach(data => {
-        let date_info = {} as DateAvailability;
+      hologramDataAvailability.dateAvailabilityList = [];
+      inputData[key].forEach(data => {
+        let dateInfo = {} as DateAvailability;
         // data is a list of format [date, availability]
-        date_info.date = data[0];
-        date_info.isAvailable = data[1];
-        data_set_availability.dateAvailabilityList.push(date_info);
+        dateInfo.date = data[0];
+        dateInfo.isAvailable = data[1];
+        hologramDataAvailability.dateAvailabilityList.push(dateInfo);
       });
-      this.dashboard.push(data_set_availability);
+      this.dashboard.push(hologramDataAvailability);
     }
   }
 
@@ -68,7 +56,7 @@ export class DashboardComponent implements OnInit {
     // both be true).
     if(this.showChipper || this.showChipperGDPR) {
       this.requestHandler.getDashboard(system).toPromise()
-          .then((data) => this.renderTemplate(data, system));
+          .then((data) => this.renderTemplate(data));
     }
   }
 }
