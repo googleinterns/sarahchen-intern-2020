@@ -34,7 +34,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  renderTemplate(hologram_data_availability: JSON, system: string) {
+  renderTemplate(hologram_data_availability: JSON) {
     for (let key in hologram_data_availability) {
       let data_set_availability = {} as HologramDataAvailability;
       data_set_availability.sourceType = key;
@@ -68,7 +68,7 @@ export class DashboardComponent implements OnInit {
     // both be true).
     if(this.showChipper || this.showChipperGDPR) {
       this.requestHandler.getDashboard(system).toPromise()
-          .then((data) => this.renderTemplate(data, system));
+          .then((data) => this.renderTemplate(data));
     }
   }
 }
