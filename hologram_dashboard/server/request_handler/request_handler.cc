@@ -30,50 +30,17 @@ void RequestHandler::GetDashboard(const Pistache::Rest::Request& request,
   response.headers().add<Pistache::Http::Header::AccessControlAllowOrigin>("*");
   std::string system = request.param(":system").as<std::string>();
   // TODO(alexanderlin): Use real data once I get access to them.
+  HologramDataAvailabilityReader reader("server/request_handler/sample_proto/");
   nlohmann::json message;
-  HologramConfigSet configs;
-  std::string path = "server/request_handler/sample_proto";
-  std::ifstream ins;
-  ins.open("server/request_handler/sample_proto/hologram_config.ascii");
-  google::protobuf::io::IstreamInputStream config_stream(&ins);
-
-
-  assert(google::protobuf::TextFormat::Parse(&config_stream, &configs));
 
   if (system == "Chipper") {
     // This simulates the first key (system).
-    path = absl::StrCat(path, "/Chipper/");
+    message = reader.GetDashboardJSON("Chipper/");
   } else {
-    path = absl::StrCat(path, "/Chipper_GDPR/");
+    message = reader.GetDashboardJSON("Chipper_GDPR/");
   }
-  for (const HologramConfig& config : configs.data_source_config()) {
-    // This simulates the second key (source type).
-    std::string data_set_path = 
-        absl::StrCat(path, SourceType_Name(config.source_type()), 
-        ".textproto");
-    HologramDataAvailability data_set_availability;
-    std::ifstream data_set_stream_in(data_set_path);
-    google::protobuf::io::IstreamInputStream 
-        data_set_stream(&data_set_stream_in);
-    assert(google::protobuf::TextFormat::Parse(&data_set_stream, 
-        &data_set_availability));
-    DataAvailabilityReader(data_set_availability, &message);
-  }
-  response.send(Pistache::Http::Code::Ok, message.dump());
-}
 
-void RequestHandler::DataAvailabilityReader(
-    const HologramDataAvailability& hologram_data_availability, 
-    nlohmann::json* message) {
-  std::string data_set = 
-      SourceType_Name(hologram_data_availability.source_type());
-  (*message)[data_set] = nlohmann::json::array();
-  for (const HologramDataAvailability_AvailabilityStatus& availability_status 
-      : hologram_data_availability.availability_status() ) {
-    (*message)[data_set].push_back({availability_status.date(), 
-        availability_status.source_ingestion_status() == 
-        HologramDataAvailability::INGESTED});   
-    }
+  response.send(Pistache::Http::Code::Ok, message.dump());
 }
 
 void RequestHandler::PopulateBackfillCommand

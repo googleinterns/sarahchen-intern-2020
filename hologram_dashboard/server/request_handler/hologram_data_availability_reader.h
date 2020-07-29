@@ -14,9 +14,6 @@
 *   limitations under the License.
 */
 
-#include <pistache/http.h>
-#include <pistache/router.h>
-#include <pistache/endpoint.h>
 #include <vector>
 #include <filesystem>
 #include <sstream>
@@ -26,27 +23,26 @@
 
 #include "fetcher/proto/hologram_availability.pb.h"
 #include "fetcher/proto/hologram_config.pb.h"
-#include "absl/strings/str_cat.h"
 #include "nlohmann/json.hpp"
-#include "hologram_data_availability_reader.h"
+#include "absl/strings/str_cat.h"
 
 namespace wireless_android_play_analytics {
 
-class RequestHandler {
+class HologramDataAvailabilityReader {
 
  public:
-  // Constructs the html code for the dashboard of the specific system.
-  void GetDashboard(const Pistache::Rest::Request& request, 
-      Pistache::Http::ResponseWriter response);
+  // Non-default constructor with the root path of files to simulate reading
+  // from database.
+  HologramDataAvailabilityReader(absl::string_view path);
 
-  // Constructs a command to backfill a specified pipe and send said 
-  // command to the user.
-  void PopulateBackfillCommand(const Pistache::Rest::Request& request, 
-      Pistache::Http::ResponseWriter response);
+  nlohmann::json GetDashboardJSON(absl::string_view system_dir);
 
-  // Acquires the latest refresh time and send it to the user.
-  void GetLastRefreshed(const Pistache::Rest::Request& request, 
-      Pistache::Http::ResponseWriter response);
+ private:
+  std::string root_path;
+  HologramConfigSet configs;
+
+  // Parses the proto given by the path
+  void Parse(absl::string_view path, google::protobuf::Message* message);
 };
 
 } // namespace wireless_android_play_analytics

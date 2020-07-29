@@ -68,20 +68,6 @@ TEST_F(RequestHandlerTest, GetTimeTest) {
   EXPECT_EQ(res->body, expected_mock_time);
 }
 
-TEST_F (RequestHandlerTest, DataAvailabilityReaderTest) {  
-  HologramDataAvailability hologram_data_availability;
-  std::ifstream data_set_stream_in(
-      "server/request_handler/sample_proto/SAMPLE_SPAM.textproto");
-  google::protobuf::io::IstreamInputStream 
-      data_set_stream(&data_set_stream_in);
-  ASSERT_TRUE(google::protobuf::TextFormat::Parse(&data_set_stream, 
-      &hologram_data_availability));
-  nlohmann::json message;
-  handler_.DataAvailabilityReader(hologram_data_availability, &message);
-  EXPECT_EQ(message.dump(), expected_message_string);
-}
-  
-
 TEST_F(RequestHandlerTest, GetInjectionCommandTest) {  
   httplib::Client client("localhost", end_point_.getPort());
 

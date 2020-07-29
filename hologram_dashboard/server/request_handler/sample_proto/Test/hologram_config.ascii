@@ -1,0 +1,4 @@
+data_source_config {
+    source_type: SPAM 
+    kvick_corpus: HOLOGRAM_SPAM
+}
