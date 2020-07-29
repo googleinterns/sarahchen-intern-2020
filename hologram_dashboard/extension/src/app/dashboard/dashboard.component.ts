@@ -15,7 +15,7 @@ export interface HologramDataAvailability {
   availabilityStatusList: AvailabilityStatus[];
 }
 
-/** Component for using the retrieved protobuf from database and rendering it
+/** Component for using the retrieved JSON from server and rendering it
  *  on the dashboard.
  */
 @Component({
