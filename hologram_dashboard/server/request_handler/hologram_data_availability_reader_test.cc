@@ -25,7 +25,7 @@ const std::string test_root = "server/request_handler/sample_proto/Test/";
 
 TEST(HologramDataAvailabilityReaderTest, GetDashboardJSONTest) {
   HologramDataAvailabilityReader reader(test_root);
-  nlohmann::json message = reader.GetDashboardJSON("Chipper/");
+  std::vector<HologramDataAvailability>& protos = reader.GetDashboardJSON("Chipper/");
   EXPECT_EQ(message.dump(), expected_message_string);
 }
 

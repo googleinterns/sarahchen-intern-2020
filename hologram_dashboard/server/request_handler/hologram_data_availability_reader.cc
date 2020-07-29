@@ -33,31 +33,22 @@ namespace wireless_android_play_analytics {
     assert(google::protobuf::TextFormat::Parse(&istream_input_stream, message));
   }
 
-  nlohmann::json HologramDataAvailabilityReader::GetDashboardJSON
-      (absl::string_view system_dir) {
-    nlohmann::json message;
+  std::vector<HologramDataAvailability> HologramDataAvailabilityReader::
+      GetDashboardJSON(absl::string_view system_dir) {
+    std::vector<HologramDataAvailability> output(
+        configs.data_source_config_size());
     std::string protos_path = absl::StrCat(root_path, system_dir);
+    int output_index = 0;
 
     for (const HologramConfig& config : configs.data_source_config()) {
       // This simulates the second key (source type).
       std::string data_set_path = 
           absl::StrCat(protos_path, SourceType_Name(config.source_type()), 
           ".textproto");
-      HologramDataAvailability hologram_data_availability;
-      Parse(data_set_path, &hologram_data_availability);
-      std::string data_set = 
-          SourceType_Name(hologram_data_availability.source_type());
-      message[data_set] = nlohmann::json::array();
-      for (const HologramDataAvailability_AvailabilityStatus& 
-          availability_status : hologram_data_availability.availability_status()
-          ) {
-        message[data_set].push_back({availability_status.date(), 
-            availability_status.source_ingestion_status() == 
-            HologramDataAvailability::INGESTED});   
-      }
+      Parse(data_set_path, &output[output_index++]);
     }
 
-    return message;
+    return output;
   }
 
 } // namespace wireless_android_play_analytics

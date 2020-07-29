@@ -35,7 +35,8 @@ class HologramDataAvailabilityReader {
   // from database.
   HologramDataAvailabilityReader(absl::string_view path);
 
-  nlohmann::json GetDashboardJSON(absl::string_view system_dir);
+  std::vector<HologramDataAvailability> GetDashboardJSON(
+      absl::string_view system_dir);
 
  private:
   std::string root_path;
