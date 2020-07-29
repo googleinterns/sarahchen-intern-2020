@@ -9,7 +9,7 @@
       <td>
         {{ dataset.sourceType }}
       </td>
-      <td *ngFor="let date of dataset.dateAvailabilityList" title = "{{ date.date }}">
+      <td *ngFor="let date of dataset.availabilityStatusList" title = "{{ date.date }}">
         <span *ngIf="date.isAvailable" class="online"></span>
         <span *ngIf="!date.isAvailable" class="offline"></span>
       </td>

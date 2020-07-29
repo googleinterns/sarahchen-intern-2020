@@ -1,16 +1,12 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BACKEND_BASE_URL } from './constants'
+
+@Injectable()
 export class DashboardService {
-  public static API_ENDPOINT='http://localhost:8000/';
-}
+  constructor(private http: HttpClient) { }
 
-/** Interface for keeping track of whether a data set is available for a 
- * specific date. */
-export interface DateAvailability {
-  date: string;
-  isAvailable: boolean;
-}
-
-/** Interface for keeping track of all the availability of a specific source. */
-export interface HologramDataAvailability {
-  sourceType: string;
-  dateAvailabilityList: Array<DateAvailability>;
+  getDashboard(system: string) {
+    return this.http.get<JSON>(BACKEND_BASE_URL.concat(system));
+  }
 }
