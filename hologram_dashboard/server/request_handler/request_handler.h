@@ -29,6 +29,7 @@
 #include "absl/strings/str_cat.h"
 #include "nlohmann/json.hpp"
 #include "hologram_data_availability_reader.h"
+#include "flags.h"
 
 namespace wireless_android_play_analytics {
 
@@ -47,6 +48,10 @@ class RequestHandler {
   // Acquires the latest refresh time and send it to the user.
   void GetLastRefreshed(const Pistache::Rest::Request& request, 
       Pistache::Http::ResponseWriter response);
+
+ private:
+    nlohmann::json ConvertProtoIntoJSON(const 
+        std::vector<HologramDataAvailability>& hologram_data_availabilities);
 };
 
 } // namespace wireless_android_play_analytics

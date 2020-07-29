@@ -1,6 +1,13 @@
 package(default_visibility = ["//visibility:public"])
 
 cc_library(
+    name = "flags_lib",
+    srcs = ["flags.cc"],
+    hdrs = ["flags.h"],
+    deps = ["@com_google_absl//absl/flags:flag"]
+)
+
+cc_library(
     name = "hologram_data_availability_reader_lib",
     srcs = [
         "hologram_data_availability_reader.cc"
@@ -39,7 +46,8 @@ cc_library(
         "//fetcher/proto:hologram_config_cc_proto", 
         "//fetcher/proto:hologram_availability_cc_proto",
         "@com_google_absl//absl/strings",
-        "hologram_data_availability_reader_lib"
+        "hologram_data_availability_reader_lib",
+        "flags_lib"
     ],
     data = glob([
         "sample_proto/Chipper/*.textproto",
@@ -55,7 +63,9 @@ cc_test(
         "request_handler_lib",
         "@com_google_gtest//:gtest",
         "@pistache//:pistache_lib"
-    ]
+    ],
+    data = ["sample_proto/Test/Chipper/SPAM.textproto",
+            "sample_proto/Test/hologram_config.ascii"]
 )
 
 filegroup(

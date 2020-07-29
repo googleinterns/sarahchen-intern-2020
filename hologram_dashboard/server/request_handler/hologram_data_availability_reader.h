@@ -33,9 +33,9 @@ class HologramDataAvailabilityReader {
  public:
   // Non-default constructor with the root path of files to simulate reading
   // from database.
-  HologramDataAvailabilityReader(absl::string_view path);
+  explicit HologramDataAvailabilityReader(absl::string_view path);
 
-  std::vector<HologramDataAvailability> GetDashboardJSON(
+  std::vector<HologramDataAvailability> GetDashboardJSON (
       absl::string_view system_dir);
 
  private:

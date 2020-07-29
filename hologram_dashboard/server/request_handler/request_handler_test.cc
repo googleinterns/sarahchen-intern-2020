@@ -37,6 +37,8 @@ class RequestHandlerTest : public ::testing::Test {
       end_point_(Pistache::Http::Endpoint(addr_)) { }
 
   virtual void SetUp() {
+    absl::SetFlag(&FLAGS_database_root_path, 
+        "server/request_handler/sample_proto/Test/");
     Pistache::Rest::Routes::Get(router_, "/", 
         Pistache::Rest::Routes::bind (&RequestHandler::GetLastRefreshed, 
         &handler_));
@@ -66,6 +68,14 @@ TEST_F(RequestHandlerTest, GetTimeTest) {
   std::shared_ptr<httplib::Response> res = client.Get("/");
 
   EXPECT_EQ(res->body, expected_mock_time);
+}
+
+TEST_F(RequestHandlerTest, GetDashboardTest) {
+  httplib::Client client("localhost", end_point_.getPort());
+
+  std::shared_ptr<httplib::Response> res = client.Get("/Chipper");
+
+  EXPECT_EQ(res->body, expected_message_string);
 }
 
 TEST_F(RequestHandlerTest, GetInjectionCommandTest) {  

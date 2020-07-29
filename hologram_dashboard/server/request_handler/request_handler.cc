@@ -25,19 +25,42 @@ void RequestHandler::GetLastRefreshed(const Pistache::Rest::Request& request,
   response.send(Pistache::Http::Code::Ok, "Wed May 19 15:46:11 2020");
 }
 
+nlohmann::json RequestHandler::ConvertProtoIntoJSON(
+    const std::vector<HologramDataAvailability>& hologram_data_availabilities) {
+  nlohmann::json message;
+  for (const HologramDataAvailability& hologram_data_availability :
+      hologram_data_availabilities) {
+    std::string data_set = 
+          SourceType_Name(hologram_data_availability.source_type());
+    message[data_set] = 
+        nlohmann::json::array();
+    for (const HologramDataAvailability_AvailabilityStatus& 
+        availability_status : hologram_data_availability.availability_status()) 
+        {
+      message[data_set].push_back({availability_status.date(), 
+          availability_status.source_ingestion_status() == 
+          HologramDataAvailability::INGESTED});   
+    }
+  }
+
+  return message;
+}
+
 void RequestHandler::GetDashboard(const Pistache::Rest::Request& request, 
     Pistache::Http::ResponseWriter response) {
   response.headers().add<Pistache::Http::Header::AccessControlAllowOrigin>("*");
   std::string system = request.param(":system").as<std::string>();
   // TODO(alexanderlin): Use real data once I get access to them.
-  HologramDataAvailabilityReader reader("server/request_handler/sample_proto/");
+  assert(!absl::GetFlag(FLAGS_database_root_path).empty());
+  HologramDataAvailabilityReader reader(absl::GetFlag(
+      FLAGS_database_root_path));
   nlohmann::json message;
 
   if (system == "Chipper") {
     // This simulates the first key (system).
-    message = reader.GetDashboardJSON("Chipper/");
+    message = ConvertProtoIntoJSON(reader.GetDashboardJSON("Chipper/"));
   } else {
-    message = reader.GetDashboardJSON("Chipper_GDPR/");
+    message = ConvertProtoIntoJSON(reader.GetDashboardJSON("Chipper_GDPR/"));
   }
 
   response.send(Pistache::Http::Code::Ok, message.dump());
