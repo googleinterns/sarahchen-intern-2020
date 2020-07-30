@@ -25,11 +25,11 @@ export interface HologramDataAvailability {
   providers: [ DashboardService ]
 })
 export class DashboardComponent implements OnInit {
-  dashboard: Array<HologramDataAvailability>;
+  dashboard: HologramDataAvailability[];
   showChipper: boolean;
   showChipperGDPR: boolean;
 
-  constructor(private requestHandler: DashboardService) {
+  constructor(private dashboardService: DashboardService) {
     this.showChipper = false;
     this.showChipperGDPR = false;
     this.dashboard = [];
@@ -39,12 +39,12 @@ export class DashboardComponent implements OnInit {
   }
 
   renderTemplate(inputData: JSON) {
-    for (let key of Object.keys(inputData)) {
+    for (const key of Object.keys(inputData)) {
       let hologramDataAvailability = {} as HologramDataAvailability;
       hologramDataAvailability.sourceType = key;
       // Need to initialize the list before pushing into it.
       hologramDataAvailability.availabilityStatusList = [];
-      inputData[key].forEach(data => {
+      inputData[key].forEach((data: [string, boolean]) => {
         let dateInfo = {} as AvailabilityStatus;
         // data is a list of format [date, availability].
         dateInfo.date = data[0];
@@ -71,7 +71,7 @@ export class DashboardComponent implements OnInit {
     // Only display the dashboard if one of the two are true (they'll never
     // both be true).
     if(this.showChipper || this.showChipperGDPR) {
-      this.requestHandler.getDashboard(system).toPromise()
+      this.dashboardService.getDashboard(system).toPromise()
           .then((data) => this.renderTemplate(data));
     }
   }
