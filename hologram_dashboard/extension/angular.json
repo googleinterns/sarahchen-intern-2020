@@ -20,7 +20,7 @@
             "tsConfig": "tsconfig.app.json",
             "aot": true,
             "assets": [
-              "src/GoogleG_FullColor_192px_xxhdpi.png",
+              "src/HOLO.png",
               "src/assets",
               "src/manifest.json"
             ],
