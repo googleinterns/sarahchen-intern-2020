@@ -40,7 +40,7 @@ export class DashboardComponent implements OnInit {
 
   renderTemplate(inputData: JSON) {
     for (const key of Object.keys(inputData)) {
-      let hologramDataAvailability = {} as HologramDataAvailability;
+      const hologramDataAvailability = {} as HologramDataAvailability;
       hologramDataAvailability.sourceType = key;
       // Need to initialize the list before pushing into it.
       hologramDataAvailability.availabilityStatusList = [];
