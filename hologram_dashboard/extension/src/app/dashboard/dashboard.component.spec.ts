@@ -46,7 +46,7 @@ describe('DashboardComponent', () => {
     expect(dashboard).toBeTruthy();
     sourceTypeElement = fixture.nativeElement.querySelector('td');
     firstDateElement = fixture.nativeElement.querySelector('td[title="5/19/2020"]');
-    secondDateElement = fixture.nativeElement.querySelector('td[title="5/18/2020"');
+    secondDateElement = fixture.nativeElement.querySelector('td[title="5/18/2020"]');
     expect(sourceTypeElement.textContent).toEqual(' SPAM ');
     // Only one of online and offline should be online for either elements.
     expect(firstDateElement.querySelector('.online')).toBeTruthy();
