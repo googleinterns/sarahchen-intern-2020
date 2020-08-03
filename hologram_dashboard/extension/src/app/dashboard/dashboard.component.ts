@@ -1,60 +1,64 @@
 import { Component, OnInit } from '@angular/core';
-import { RequestHandler } from '../request-handler.component'
+import { DashboardService } from '../dashboard.service';
 
-// Interface for keeping track of whether a data set is available for a specific
-// date.
-export interface DateAvailability {
+/** Interface for keeping track of whether a data set is available for a 
+ *  specific date. 
+ */
+export interface AvailabilityStatus {
   date: string;
   isAvailable: boolean;
 }
 
-// Interface for keeping track of all the availability of a specific source.
+/** Interface for keeping track of all the availability of a specific source. */
 export interface HologramDataAvailability {
   sourceType: string;
-  dateAvailabilityList: Array<DateAvailability>
+  availabilityStatusList: AvailabilityStatus[];
 }
 
+/** Component for using the retrieved JSON from server and rendering it
+ *  on the dashboard.
+ */
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
-  providers: [ RequestHandler ]
+  providers: [ DashboardService ]
 })
 export class DashboardComponent implements OnInit {
-  dashboard: Array<HologramDataAvailability>;
-  showChipper: boolean
-  showChipperGDPR: boolean
+  dashboard: HologramDataAvailability[];
+  showChipper: boolean;
+  showChipperGDPR: boolean;
 
-  constructor(private requestHandler: RequestHandler) { 
+  constructor(private dashboardService: DashboardService) {
     this.showChipper = false;
     this.showChipperGDPR = false;
-    this.dashboard = []
+    this.dashboard = [];
   }
 
   ngOnInit(): void {
   }
 
-  renderTemplate(hologram_data_availability: JSON) {
-    for (let key in hologram_data_availability) {
-      let data_set_availability = {} as HologramDataAvailability;
-      data_set_availability.sourceType = key;
-      // Need to initialize the list before pushing into it;
-      data_set_availability.dateAvailabilityList = [];
-      hologram_data_availability[key].forEach(data => {
-        let date_info = {} as DateAvailability;
-        // data is a list of format [date, availability]
-        date_info.date = data[0];
-        date_info.isAvailable = data[1];
-        data_set_availability.dateAvailabilityList.push(date_info);
+  renderTemplate(inputData: JSON) {
+    for (const key of Object.keys(inputData)) {
+      const hologramDataAvailability = {} as HologramDataAvailability;
+      hologramDataAvailability.sourceType = key;
+      // Need to initialize the list before pushing into it.
+      hologramDataAvailability.availabilityStatusList = [];
+      inputData[key].forEach((data: [string, boolean]) => {
+        let dateInfo = {} as AvailabilityStatus;
+        // data is a list of format [date, availability].
+        dateInfo.date = data[0];
+        dateInfo.isAvailable = data[1];
+        hologramDataAvailability.availabilityStatusList.push(dateInfo);
       });
-      this.dashboard.push(data_set_availability);
+      this.dashboard.push(hologramDataAvailability);
     }
   }
 
   onClick(system: string) {
-    // By setting chipper and chipperGDPR to be complements of themselves we 
-    // ensure that if the clicked system is already showing we hide the 
-    // dashboard while maintaining ability to switch between dashboards 
+    // By setting chipper and chipperGDPR to be complements of themselves we
+    // ensure that if the clicked system is already showing we hide the
+    // dashboard while maintaining ability to switch between dashboards
     // seamlessly.
     if (system === "Chipper") {
       this.showChipper = !this.showChipper;
@@ -67,7 +71,7 @@ export class DashboardComponent implements OnInit {
     // Only display the dashboard if one of the two are true (they'll never
     // both be true).
     if(this.showChipper || this.showChipperGDPR) {
-      this.requestHandler.getDashboard(system).toPromise()
+      this.dashboardService.getDashboard(system).toPromise()
           .then((data) => this.renderTemplate(data));
     }
   }
