@@ -25,7 +25,7 @@ describe('TimeComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should have', () => {
+  it('should show time', () => {
     expect(time.textContent).toEqual('Last Refreshed: TODO');
   });
 });

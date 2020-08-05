@@ -28,11 +28,11 @@ describe('DashboardComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should create the app', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should render', () => {
+  it('should render dashboard', () => {
     dashboard = fixture.nativeElement.querySelector('table');
     input = JSON.parse(mockJSONInput);
     component.renderTemplate(input);
@@ -55,7 +55,7 @@ describe('DashboardComponent', () => {
     expect(secondDateElement.querySelector('.online')).toBeFalsy();
   });
 
-  it('should set', () =>{
+  it('should set vars based on user clicks', () =>{
     expect(component.showChipper).toBe(false);
     expect(component.showChipperGDPR).toBe(false);
     // First clicking either buttons.
