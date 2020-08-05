@@ -24,19 +24,20 @@ namespace wireless_android_play_analytics {
 
 const std::string expected_message_string = 
     R"json({"SPAM":[["5/19/2020",true],["5/18/2020",true]]})json";
-const std::string test_root = "server/request_handler/sample_proto/Test/";
+const std::string spam_proto_path = 
+    "server/request_handler/sample_proto/Test/Chipper/SPAM.textproto";
 
 MATCHER_P(EqualsProto, element, "matches whether two protos are equal") {
   return google::protobuf::util::MessageDifferencer::Equals(arg, element);
 }
 
 TEST(HologramDataAvailabilityReaderTest, GetDashboardJSONTest) {
-  HologramDataAvailabilityReader reader(test_root);
+  absl::SetFlag(&FLAGS_database_root_path, 
+      "server/request_handler/sample_proto/Test/");
+  HologramDataAvailabilityReader reader;
   const std::vector<HologramDataAvailability>& protos = 
       reader.GetAvailabilityInfo("Chipper/");
   HologramDataAvailability expected_spam_proto;
-  std::string spam_proto_path = absl::StrCat(test_root, 
-      "Chipper/SPAM.textproto");
   std::ifstream ins;
   ins.open(spam_proto_path);
   google::protobuf::io::IstreamInputStream istream_input_stream(&ins);

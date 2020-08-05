@@ -52,8 +52,7 @@ void RequestHandler::GetDashboard(const Pistache::Rest::Request& request,
   std::string system = request.param(":system").as<std::string>();
   // TODO(alexanderlin): Use real data once I get access to them.
   assert(!absl::GetFlag(FLAGS_database_root_path).empty());
-  HologramDataAvailabilityReader reader(absl::GetFlag(
-      FLAGS_database_root_path));
+  HologramDataAvailabilityReader reader;
   nlohmann::json message;
 
   if (system == "Chipper") {

@@ -25,21 +25,19 @@
 #include "fetcher/proto/hologram_config.pb.h"
 #include "nlohmann/json.hpp"
 #include "absl/strings/str_cat.h"
-
+#include "flags.h"
 namespace wireless_android_play_analytics {
 
 class HologramDataAvailabilityReader {
 
  public:
-  // Non-default constructor with the root path of files to simulate reading
-  // from database.
-  explicit HologramDataAvailabilityReader(absl::string_view path);
+  // Default constructor calls parse to populate the configs.
+  explicit HologramDataAvailabilityReader();
 
   std::vector<HologramDataAvailability> GetAvailabilityInfo (
       absl::string_view system_dir);
 
  private:
-  std::string root_path;
   HologramConfigSet configs;
 
   // Parses the proto given by the path

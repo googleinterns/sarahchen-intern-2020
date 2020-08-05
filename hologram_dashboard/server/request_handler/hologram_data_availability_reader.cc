@@ -18,10 +18,11 @@
 
 namespace wireless_android_play_analytics {
 
-  HologramDataAvailabilityReader::HologramDataAvailabilityReader
-      (absl::string_view path)
-      : root_path(std::string(path)) {
-    std::string config_path = absl::StrCat(path, "hologram_config.ascii");
+  HologramDataAvailabilityReader::HologramDataAvailabilityReader() {
+    assert(!absl::GetFlag(FLAGS_database_root_path).empty());
+    std::string config_path = 
+        absl::StrCat(absl::GetFlag(FLAGS_database_root_path), 
+        "hologram_config.ascii");
     Parse(config_path, &configs);
   }
 
@@ -37,7 +38,8 @@ namespace wireless_android_play_analytics {
       GetAvailabilityInfo(absl::string_view system_dir) {
     std::vector<HologramDataAvailability> output(
         configs.data_source_config_size());
-    std::string protos_path = absl::StrCat(root_path, system_dir);
+    std::string protos_path = 
+        absl::StrCat(absl::GetFlag(FLAGS_database_root_path), system_dir);
     int output_index = 0;
 
     for (const HologramConfig& config : configs.data_source_config()) {

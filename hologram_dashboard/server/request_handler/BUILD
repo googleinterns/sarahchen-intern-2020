@@ -13,13 +13,14 @@ cc_library(
         "hologram_data_availability_reader.cc"
     ],
     hdrs = [
-        "hologram_data_availability_reader.h"
+        "hologram_data_availability_reader.h",
     ],
     deps = [
         "@github_nlohmann_json//:json",
         "//fetcher/proto:hologram_config_cc_proto", 
         "//fetcher/proto:hologram_availability_cc_proto",
-        "@com_google_absl//absl/strings"
+        "@com_google_absl//absl/strings",
+        "flags_lib"
     ],
 )
 
