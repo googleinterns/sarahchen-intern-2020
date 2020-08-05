@@ -35,7 +35,7 @@ class HologramDataAvailabilityReader {
   // from database.
   explicit HologramDataAvailabilityReader(absl::string_view path);
 
-  std::vector<HologramDataAvailability> GetDashboardJSON (
+  std::vector<HologramDataAvailability> GetAvailabilityInfo (
       absl::string_view system_dir);
 
  private:

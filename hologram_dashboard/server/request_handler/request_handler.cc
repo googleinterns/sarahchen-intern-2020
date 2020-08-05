@@ -30,14 +30,14 @@ nlohmann::json RequestHandler::ConvertProtoIntoJSON(
   nlohmann::json message;
   for (const HologramDataAvailability& hologram_data_availability :
       hologram_data_availabilities) {
-    std::string data_set = 
+    std::string source_type = 
           SourceType_Name(hologram_data_availability.source_type());
-    message[data_set] = 
+    message[source_type] = 
         nlohmann::json::array();
     for (const HologramDataAvailability_AvailabilityStatus& 
         availability_status : hologram_data_availability.availability_status()) 
         {
-      message[data_set].push_back({availability_status.date(), 
+      message[source_type].push_back({availability_status.date(), 
           availability_status.source_ingestion_status() == 
           HologramDataAvailability::INGESTED});   
     }
@@ -58,9 +58,9 @@ void RequestHandler::GetDashboard(const Pistache::Rest::Request& request,
 
   if (system == "Chipper") {
     // This simulates the first key (system).
-    message = ConvertProtoIntoJSON(reader.GetDashboardJSON("Chipper/"));
+    message = ConvertProtoIntoJSON(reader.GetAvailabilityInfo("Chipper/"));
   } else {
-    message = ConvertProtoIntoJSON(reader.GetDashboardJSON("Chipper_GDPR/"));
+    message = ConvertProtoIntoJSON(reader.GetAvailabilityInfo("Chipper_GDPR/"));
   }
 
   response.send(Pistache::Http::Code::Ok, message.dump());

@@ -33,7 +33,7 @@ MATCHER_P(EqualsProto, element, "matches whether two protos are equal") {
 TEST(HologramDataAvailabilityReaderTest, GetDashboardJSONTest) {
   HologramDataAvailabilityReader reader(test_root);
   const std::vector<HologramDataAvailability>& protos = 
-      reader.GetDashboardJSON("Chipper/");
+      reader.GetAvailabilityInfo("Chipper/");
   HologramDataAvailability expected_spam_proto;
   std::string spam_proto_path = absl::StrCat(test_root, 
       "Chipper/SPAM.textproto");

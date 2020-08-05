@@ -34,7 +34,7 @@ namespace wireless_android_play_analytics {
   }
 
   std::vector<HologramDataAvailability> HologramDataAvailabilityReader::
-      GetDashboardJSON(absl::string_view system_dir) {
+      GetAvailabilityInfo(absl::string_view system_dir) {
     std::vector<HologramDataAvailability> output(
         configs.data_source_config_size());
     std::string protos_path = absl::StrCat(root_path, system_dir);
