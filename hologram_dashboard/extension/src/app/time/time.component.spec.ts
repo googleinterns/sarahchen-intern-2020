@@ -5,7 +5,6 @@ import { TimeComponent } from './time.component';
 describe('TimeComponent', () => {
   let component: TimeComponent;
   let fixture: ComponentFixture<TimeComponent>;
-  let time: HTMLElement
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -18,7 +17,6 @@ describe('TimeComponent', () => {
     fixture = TestBed.createComponent(TimeComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-    time = fixture.nativeElement.querySelector('p');
   });
 
   it('should create', () => {
@@ -26,6 +24,7 @@ describe('TimeComponent', () => {
   });
 
   it('should show time', () => {
+    const time = fixture.nativeElement.querySelector('p');
     expect(time.textContent).toEqual('Last Refreshed: TODO');
   });
 });

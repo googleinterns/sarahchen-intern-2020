@@ -6,11 +6,6 @@ describe('DashboardComponent', () => {
   let component: DashboardComponent;
   let fixture: ComponentFixture<DashboardComponent>;
   const mockJSONInput = '{"SPAM":[["5/19/2020",true],["5/18/2020",false]]}';
-  let sourceTypeElement: HTMLElement;
-  let firstDateElement: HTMLElement;
-  let secondDateElement: HTMLElement;
-  let dashboard: HTMLElement;
-  let input : JSON;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -33,20 +28,20 @@ describe('DashboardComponent', () => {
   });
 
   it('should render dashboard', () => {
-    dashboard = fixture.nativeElement.querySelector('table');
-    input = JSON.parse(mockJSONInput);
+    let dashboard = fixture.nativeElement.querySelector('table');
+    const input = JSON.parse(mockJSONInput);
     component.renderTemplate(input);
     // dashboard should not be displayed as long as both showChipper and
     // showChipperGDPR are false.
     expect(dashboard).toBeFalsy();
     component.showChipper = true;
     fixture.detectChanges();
-    // Now it should display the entire table.
+    // Need to reselect dashboard as it should display the entire table now.
     dashboard = fixture.nativeElement.querySelector('table');
     expect(dashboard).toBeTruthy();
-    sourceTypeElement = fixture.nativeElement.querySelector('td');
-    firstDateElement = fixture.nativeElement.querySelector('td[title="5/19/2020"]');
-    secondDateElement = fixture.nativeElement.querySelector('td[title="5/18/2020"]');
+    const sourceTypeElement = fixture.nativeElement.querySelector('td');
+    const firstDateElement = fixture.nativeElement.querySelector('td[title="5/19/2020"]');
+    const secondDateElement = fixture.nativeElement.querySelector('td[title="5/18/2020"]');
     expect(sourceTypeElement.textContent).toEqual(' SPAM ');
     // Only one of online and offline should be online for either elements.
     expect(firstDateElement.querySelector('.online')).toBeTruthy();
