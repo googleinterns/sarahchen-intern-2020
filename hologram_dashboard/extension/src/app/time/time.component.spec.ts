@@ -22,4 +22,9 @@ describe('TimeComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should show time', () => {
+    const time = fixture.nativeElement.querySelector('p');
+    expect(time.textContent).toEqual('Last Refreshed: TODO');
+  });
 });
