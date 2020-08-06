@@ -15,7 +15,9 @@ cc_binary(
   deps = [
     "//proto:event_predicate_cc_proto",
     "//src:proto_value",
-    "//src:proto_parser"
+    "//src:proto_parser",
+    "@com_google_absl//absl/flags:flag",
+    "@com_google_absl//absl/flags:parse"
   ],
   data = glob(["proto_texts/*.textproto"])
 )
