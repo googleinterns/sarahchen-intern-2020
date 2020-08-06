@@ -14,5 +14,5 @@ Follow the following steps to compile the parser for your project
     2.  Since bazel does not allow changes in working directory (to maintain
         the invariant that the workspace is consistent) we need to specify where
         demo_main would print the changed files.
-    3.  Type bazel run //demo:demo_main -- <Absolute path of output> 
+    3.  Type bazel run //demo:demo_main -- --output_dir="<Absolute path of output>" 
         to run the demo.

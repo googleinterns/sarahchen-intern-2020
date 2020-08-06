@@ -20,12 +20,16 @@
 #include "../src/proto_value.h"
 #include "../src/proto_parser.h"
 #include "proto/event_predicate.pb.h"
+#include "absl/flags/flag.h"
+#include "absl/flags/parse.h"
 
 using ::wireless_android_play_analytics::ProtoValue;
 using ::wireless_android_play_analytics::MessageValue;
 using ::wireless_android_play_analytics::PrimitiveValue;
 using ::wireless_android_play_analytics::EventPredicate;
 using ::wireless_android_play_analytics::ProtoParser;
+
+ABSL_FLAG(std::string, output_dir, "", "Output file directory");
 
 namespace {
 
@@ -391,7 +395,7 @@ class EventPredicateConverter {
   }
 };
 
-void UpdateSampleHelper(int idx) {
+void UpdateSampleHelper(absl::string_view output_dir, int idx) {
   EventPredicateConverter converter;
 
   std::string file_path = absl::StrCat("demo/proto_texts/proto_text(", 
@@ -399,7 +403,7 @@ void UpdateSampleHelper(int idx) {
   std::unique_ptr<ProtoValue> updated_sample = 
       converter.ConvertEventPredicateFromFile(file_path);
   std::string output_file_path = 
-      absl::StrCat("demo/proto_texts/proto_text_updated(", std::to_string(idx), 
+      absl::StrCat(output_dir, "updated_proto_text(", std::to_string(idx), 
       ").textproto");
   std::ofstream outs;
   outs.open(output_file_path);
@@ -409,16 +413,21 @@ void UpdateSampleHelper(int idx) {
 } // namespace
 
 int main(int argc, char* argv[]) {
-  assert(argc == 2);
+  absl::ParseCommandLine(argc, argv);
+  assert(!absl::GetFlag(FLAGS_output_dir).empty());
   EventPredicateConverter converter;
   std::unique_ptr<ProtoValue> output = 
       converter.ConvertEventPredicateFromFile(
       "demo/proto_texts/original_proto_text.textproto");
   std::ofstream outs;
-  outs.open(std::string(argv[1]));
+  std::string output_dir = absl::GetFlag(FLAGS_output_dir);
+  if(output_dir[output_dir.size() - 1] != '/') {
+    output_dir = absl::StrCat(output_dir, "/");
+  }
+  outs.open(absl::StrCat(output_dir, "updated_proto_text.textproto"));
   outs << output->PrintToTextProto();
   for(int i = 0; i < 10; ++i) {
-    UpdateSampleHelper(i);
+    UpdateSampleHelper(output_dir, i);
   }
   return 0;
 }
