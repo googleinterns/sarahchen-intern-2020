@@ -408,13 +408,14 @@ void UpdateSampleHelper(int idx) {
 
 } // namespace
 
-int main() {
+int main(int argc, char* argv[]) {
+  assert(argc == 2);
   EventPredicateConverter converter;
   std::unique_ptr<ProtoValue> output = 
       converter.ConvertEventPredicateFromFile(
       "demo/proto_texts/original_proto_text.textproto");
   std::ofstream outs;
-  outs.open("demo/proto_texts/updated_proto_text.textproto");
+  outs.open(std::string(argv[1]));
   outs << output->PrintToTextProto();
   for(int i = 0; i < 10; ++i) {
     UpdateSampleHelper(i);
