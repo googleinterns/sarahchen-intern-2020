@@ -20,6 +20,8 @@ using ::wireless_android_play_analytics::RequestHandler;;
 
 int main(int argc, char* argv[]) {
     // Initiates the server.
+    absl::SetFlag(&FLAGS_database_root_path, 
+        "server/request_handler/sample_proto/");
     Pistache::Http::Endpoint server(Pistache::Address(Pistache::Ipv4::any(), 
         Pistache::Port(8000)));
     Pistache::Rest::Router router;
