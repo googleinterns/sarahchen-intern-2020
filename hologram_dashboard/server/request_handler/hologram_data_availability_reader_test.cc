@@ -31,7 +31,7 @@ MATCHER_P(EqualsProto, element, "matches whether two protos are equal") {
   return google::protobuf::util::MessageDifferencer::Equals(arg, element);
 }
 
-TEST(HologramDataAvailabilityReaderTest, GetDashboardJSONTest) {
+TEST(HologramDataAvailabilityReaderTest, GetAvailabilityInfo) {
   absl::SetFlag(&FLAGS_database_root_path, 
       "server/request_handler/sample_proto/Test/");
   HologramDataAvailabilityReader reader;
